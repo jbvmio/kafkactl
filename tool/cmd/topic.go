@@ -15,31 +15,33 @@
 package cmd
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
 
-var confirmation bool
+var (
+	topicList []string
+	meta      bool
+)
 
-var deleteCmd = &cobra.Command{
-	Use:     "delete",
-	Short:   "Delete a Topic",
-	Aliases: []string{"del"},
+var topicCmd = &cobra.Command{
+	Use:   "topic",
+	Short: "Search and Retrieve Available Topics",
+	Long: `Provides a summary view of available topics.
+  Example: kafkactl topic topic1 topic2 topic3
+  
+If no arguments are provided, all topics are retrieved.
+To see detailed metadata information, use the meta command or the -m flag here.
+  Example: kafkactl --broker kafkahost --topic topic1 --exact --metadata`,
+	Aliases: []string{"topics"},
 	Run: func(cmd *cobra.Command, args []string) {
-		if targetTopic != "" {
-			args = append(args, targetTopic)
-		}
-		if len(args) == 0 {
-			cmd.Help()
-			log.Fatalf("\nProvide a topic name to delete.\n")
-		} else {
-			deleteTopic(ctx, args)
-		}
+		fmt.Println("TOPIC")
 	},
 }
 
 func init() {
-	topicCmd.AddCommand(deleteCmd)
-	deleteCmd.Flags().BoolVar(&confirmation, "confirmed", false, "Additional confirmation needed for topic deletion")
+	rootCmd.AddCommand(topicCmd)
+	topicCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
+	topicCmd.Flags().BoolVarP(&meta, "metadata", "m", false, "Show metadata details")
 }

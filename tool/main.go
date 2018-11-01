@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/jbvmio/kafkactl/cmd"
+import "github.com/jbvmio/kafkactl/tool/cmd"
 
 func main() {
 	cmd.Execute()
