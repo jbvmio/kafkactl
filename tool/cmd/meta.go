@@ -27,13 +27,16 @@ var metaCmd = &cobra.Command{
 	Short:   "Return Metadata",
 	Aliases: []string{"metadata"},
 	Run: func(cmd *cobra.Command, args []string) {
-		client, _ := kafkactl.NewClient("aus-glb-kaf03.nix.corp.pps.io:9092")
+		client, err := kafkactl.NewClient(bootStrap)
+		if err != nil {
+			log.Fatalf("Error: %v\n", err)
+		}
 		defer func() {
 			if err := client.Close(); err != nil {
 				log.Fatalf("Error closing client: %v\n", err)
 			}
 		}()
-		//client.Logger("")
+		client.Logger("")
 
 		/*
 			//meta, err := client.GetClusterMeta()
@@ -49,7 +52,7 @@ var metaCmd = &cobra.Command{
 		//err = client.AddPartitions("NewTopicHere", 1)
 		//err = client.SetTopicConfig("NewTopicHere", "delete.retention.ms", "43200000")
 		//err = client.DeleteToOffset("testtopic", 3, 561)
-		err := client.RemoveGroup("jblap")
+		err = client.RemoveGroup("jblap")
 
 		if err != nil {
 			log.Fatalf("Error: %v\n", err)

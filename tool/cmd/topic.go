@@ -15,14 +15,11 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 var (
 	topicList []string
-	meta      bool
 )
 
 var topicCmd = &cobra.Command{
@@ -33,15 +30,18 @@ var topicCmd = &cobra.Command{
   
 If no arguments are provided, all topics are retrieved.
 To see detailed metadata information, use the meta command or the -m flag here.
-  Example: kafkactl --broker kafkahost --topic topic1 --exact --metadata`,
+  Example: kafkactl --broker kafkahost topic1 --exact`,
 	Aliases: []string{"topics"},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("TOPIC")
+		if len(args) < 1 {
+			args = []string{""}
+		}
+		tm := searchTopicMeta(args...)
+		printOutput(tm)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(topicCmd)
 	topicCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
-	topicCmd.Flags().BoolVarP(&meta, "metadata", "m", false, "Show metadata details")
 }

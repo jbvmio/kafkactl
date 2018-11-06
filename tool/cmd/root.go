@@ -17,8 +17,10 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"net"
 	"os"
 	"runtime"
+	"strings"
 	"sync"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -27,10 +29,12 @@ import (
 )
 
 var (
-	cfgFile   string
-	bootStrap string
-	bsport    string
-	exact     bool
+	cfgFile     string
+	bootStrap   string
+	bsport      string
+	targetTopic string
+	exact       bool
+	verbose     bool
 
 	numCPU = runtime.NumCPU()
 )
@@ -41,7 +45,7 @@ var ctx = context.Background()
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "kafkactl",
-	Short: "kafkactl: Manage Kafka Groups Partitions and Topics",
+	Short: "kafkactl: Kafka Management Tool",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		/*
 			if bootStrap == "" {
@@ -49,10 +53,10 @@ var rootCmd = &cobra.Command{
 					bootStrap = getCurrentTarget()
 				}
 			}
-			if !strings.Contains(bootStrap, ":") {
-				bootStrap = net.JoinHostPort(bootStrap, bsport)
-			}
 		*/
+		if !strings.Contains(bootStrap, ":") {
+			bootStrap = net.JoinHostPort(bootStrap, bsport)
+		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Run(metaCmd, args)
@@ -70,7 +74,9 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&bootStrap, "broker", "b", "", "Bootstrap Kafka Broker")
+	rootCmd.PersistentFlags().StringVarP(&targetTopic, "topic", "t", "", "Specify a Target Topic")
 	rootCmd.PersistentFlags().StringVar(&bsport, "port", "9092", "Port used for Bootstrap Kafka Broker")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Display any additional info and error output.")
 }
 
 func initConfig() {
