@@ -12,6 +12,7 @@ type OffsetAdmin interface {
 	Valid() bool
 	GetOffsetLag(partition int32) (int64, int64, error)
 	GetTotalLag(partitions []int32) (int64, error)
+	ResetOffset(partition int32, targetOffset int64) error
 }
 
 type offsetAdmin struct {
@@ -73,6 +74,7 @@ func (oa *offsetAdmin) GetOffsetLag(partition int32) (groupOffset int64, partiti
 	return
 }
 
+// Improve or Remove this:
 // GetTotalLag returns the sum of total lag given for a group of partitions.
 func (oa *offsetAdmin) GetTotalLag(partitions []int32) (totalLag int64, err error) {
 	if !oa.Valid() {
@@ -102,5 +104,24 @@ func (oa *offsetAdmin) GetTotalLag(partitions []int32) (totalLag int64, err erro
 		oa.pom.Close()
 	}
 	oa.om.Close()
+	return
+}
+
+func (oa *offsetAdmin) ResetOffset(partition int32, targetOffset int64) (err error) {
+	if !oa.Valid() {
+		err = fmt.Errorf("No specified Group and/or Topic")
+		return
+	}
+	oa.om, err = sarama.NewOffsetManagerFromClient(oa.grp, oa.client)
+	if err != nil {
+		return
+	}
+	oa.pom, err = oa.om.ManagePartition(oa.top, partition)
+	if err != nil {
+		return
+	}
+	oa.pom.ResetOffset(targetOffset, "reset_offset")
+	oa.om.Close()
+	oa.pom.Close()
 	return
 }
