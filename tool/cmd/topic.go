@@ -51,5 +51,4 @@ func init() {
 	rootCmd.AddCommand(topicCmd)
 	topicCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 	topicCmd.Flags().BoolVarP(&meta, "meta", "m", false, "Show extra/metadata details")
-	topicCmd.Flags().BoolVar(&showConfig, "conf", false, "Show Configuration details (only if passing to --meta)")
 }

@@ -10,7 +10,9 @@ import (
 type ClusterMeta struct {
 	Brokers    []string
 	Topics     []string
+	Groups     []string
 	Controller int32
+	Version    int16
 }
 
 func (cm ClusterMeta) BrokerCount() int {
@@ -21,9 +23,17 @@ func (cm ClusterMeta) TopicCount() int {
 	return len(cm.Topics)
 }
 
+func (cm ClusterMeta) GroupCount() int {
+	return len(cm.Groups)
+}
+
 func (kc *KClient) GetClusterMeta() (ClusterMeta, error) {
 	cm := ClusterMeta{}
 	res, err := kc.ReqMetadata()
+	if err != nil {
+		return cm, err
+	}
+	grps, err := kc.ListGroups()
 	if err != nil {
 		return cm, err
 	}
@@ -37,6 +47,9 @@ func (kc *KClient) GetClusterMeta() (ClusterMeta, error) {
 	for _, t := range res.Topics {
 		cm.Topics = append(cm.Topics, t.Name)
 	}
+	cm.Version = res.Version
+	cm.Groups = grps
+	sort.Strings(cm.Groups)
 	sort.Strings(cm.Brokers)
 	sort.Strings(cm.Topics)
 	return cm, nil

@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +29,6 @@ var groupCmd = &cobra.Command{
 	Long:    `Example kafkactl group group1 group2`,
 	Aliases: []string{"groups"},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("START", args)
 		if len(args) < 1 {
 			args = []string{""}
 		}

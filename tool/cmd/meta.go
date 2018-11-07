@@ -17,7 +17,7 @@ package cmd
 import (
 	"fmt"
 	"log"
-	"os"
+	"strings"
 
 	"github.com/jbvmio/kafkactl"
 	"github.com/spf13/cobra"
@@ -37,39 +37,32 @@ var metaCmd = &cobra.Command{
 				log.Fatalf("Error closing client: %v\n", err)
 			}
 		}()
-		client.Logger("")
-
-		c, err := client.GetTopicConfig(targetTopic)
+		if verbose {
+			client.Logger("")
+		}
+		meta, err := client.GetClusterMeta()
 		if err != nil {
-			log.Fatalf("Error: %v\n", err)
+			log.Fatalf("Error getting cluster metadata: %v\n", err)
 		}
-		for _, i := range c {
-			fmt.Printf("%+v\n", i)
+		if err != nil {
+			log.Fatalf("Error getting group metadata: %v\n", err)
 		}
-
-		os.Exit(0)
-		/*
-			//meta, err := client.GetClusterMeta()
-			meta, err := client.GetTopicMeta()
-			if err != nil {
-				log.Fatalf("Error getting metadata: %v\n", err)
+		c, err := client.Controller()
+		if err != nil {
+			log.Fatalf("Error obtaining controller: %v\n", err)
+		}
+		fmt.Println("\nBrokers: ", meta.BrokerCount())
+		fmt.Println(" Topics: ", meta.TopicCount())
+		fmt.Println(" Groups: ", meta.GroupCount())
+		fmt.Printf("\nCluster: (version: %v)\n", meta.Version)
+		for _, b := range meta.Brokers {
+			if strings.Contains(b, c.Addr()) {
+				fmt.Println("*", b)
+			} else {
+				fmt.Println(" ", b)
 			}
-			fmt.Println(meta)
-		*/
-
-		//err = client.AddTopic("NewTopicHere", 3, 1)
-		//err = client.RemoveTopic("NewTopicHere")
-		//err = client.AddPartitions("NewTopicHere", 1)
-		//err = client.SetTopicConfig("NewTopicHere", "delete.retention.ms", "43200000")
-		//err = client.DeleteToOffset("testtopic", 3, 561)
-		//err = client.RemoveGroup("jblap")
-
-		//c, err := client.GetTopicConfig("replicated.test.topic", "flush.messages", "delete.retention.ms")
-		//c, err := client.GetTopicConfig("replicated.test.topic")
-		//c, err := client.ListTopics()
-		//c, err := client.ListGroups()
-		//c, err := client.BrokerGroups(6)
-
+		}
+		fmt.Printf("\n(*)Controller\n\n")
 	},
 }
 

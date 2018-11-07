@@ -20,14 +20,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jbvmio/kafkactl"
-
 	"github.com/spf13/cobra"
 )
 
 var (
 	showLag     bool
-	showConfig  bool
 	targetMatch = true
 )
 
@@ -67,16 +64,6 @@ var describeCmd = &cobra.Command{
 			printOutput(grps)
 			return
 		case strings.Contains(target, "top"):
-			if showConfig {
-				var topics []string
-				ts := kafkactl.GetTopicSummary(searchTopicMeta(args...))
-				for _, t := range ts {
-					topics = append(topics, t.Topic)
-				}
-				configs := getTopicConfig(topics...)
-				printOutput(configs)
-				return
-			}
 			tm := searchTopicMeta(args...)
 			if len(tm) < 1 {
 				log.Fatalf("no results for that group/topic combination\n")
@@ -94,6 +81,5 @@ func init() {
 	rootCmd.AddCommand(describeCmd)
 	describeCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 	describeCmd.Flags().BoolVarP(&showLag, "lag", "l", false, "Display Offset and Lag details")
-	describeCmd.Flags().BoolVar(&showConfig, "conf", false, "Show Configuration details (Topics)")
 	//describeCmd.Flags().StringVarP(&clientID, "clientid", "i", "", "Find groups by ClientID")
 }
