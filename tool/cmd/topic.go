@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"github.com/jbvmio/kafkactl"
 	"github.com/spf13/cobra"
 )
 
@@ -36,12 +37,19 @@ To see detailed metadata information, use the meta command or the -m flag here.
 		if len(args) < 1 {
 			args = []string{""}
 		}
-		tm := searchTopicMeta(args...)
-		printOutput(tm)
+		if meta {
+			desc := []string{"topic"}
+			desc = append(desc, args...)
+			describeCmd.Run(cmd, desc)
+			return
+		}
+		printOutput(kafkactl.GetTopicSummary(searchTopicMeta(args...)))
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(topicCmd)
 	topicCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
+	topicCmd.Flags().BoolVarP(&meta, "meta", "m", false, "Show extra/metadata details")
+	topicCmd.Flags().BoolVar(&showConfig, "conf", false, "Show Configuration details (only if passing to --meta)")
 }

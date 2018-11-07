@@ -1,5 +1,20 @@
 package kafkactl
 
+import (
+	"sort"
+
+	"github.com/spf13/cast"
+)
+
+type TopicSummary struct {
+	Topic           string
+	Partitions      string
+	RFactor         int
+	ISRs            int
+	OfflineReplicas int
+	Leader          int32
+}
+
 type TopicMeta struct {
 	Topic           string
 	Partition       int32
@@ -7,6 +22,37 @@ type TopicMeta struct {
 	Replicas        []int32
 	ISRs            []int32
 	OfflineReplicas []int32
+}
+
+func GetTopicSummary(topicMeta []TopicMeta) []TopicSummary {
+	var topicSummary []TopicSummary
+	parts := make(map[string][]int32, len(topicMeta))
+	isrs := make(map[string][]int32, len(topicMeta))
+	reps := make(map[string][]int32, len(topicMeta))
+	off := make(map[string][]int32, len(topicMeta))
+	done := make(map[string]bool)
+	for _, tm := range topicMeta {
+		parts[tm.Topic] = append(parts[tm.Topic], tm.Partition)
+		isrs[tm.Topic] = append(isrs[tm.Topic], tm.ISRs...)
+		reps[tm.Topic] = append(reps[tm.Topic], tm.Replicas...)
+		off[tm.Topic] = append(off[tm.Topic], tm.OfflineReplicas...)
+	}
+	for _, tm := range topicMeta {
+		if !done[tm.Topic] {
+			done[tm.Topic] = true
+			partitions := MakeSeqStr(parts[tm.Topic])
+			ts := TopicSummary{
+				Topic:           tm.Topic,
+				Partitions:      partitions,
+				Leader:          tm.Leader,
+				RFactor:         len(reps[tm.Topic]) / len(parts[tm.Topic]),
+				ISRs:            len(isrs[tm.Topic]),
+				OfflineReplicas: len(off[tm.Topic]),
+			}
+			topicSummary = append(topicSummary, ts)
+		}
+	}
+	return topicSummary
 }
 
 func (kc *KClient) GetTopicMeta() ([]TopicMeta, error) {
@@ -42,4 +88,42 @@ func (kc *KClient) ListTopics() ([]string, error) {
 		topics = append(topics, t.Name)
 	}
 	return topics, nil
+}
+
+func MakeSeqStr(nums []int32) string {
+	seqMap := make(map[int][]int32)
+	sort.Slice(nums, func(i, j int) bool {
+		return nums[i] < nums[j]
+	})
+	var mapCount int
+	var done int
+	var switchInt int
+	seqMap[mapCount] = append(seqMap[mapCount], nums[done])
+	done++
+	switchInt = done
+	for done < len(nums) {
+		if nums[done] == ((seqMap[mapCount][(switchInt - 1)]) + 1) {
+			seqMap[mapCount] = append(seqMap[mapCount], nums[done])
+			switchInt++
+		} else {
+			mapCount++
+			seqMap[mapCount] = append(seqMap[mapCount], nums[done])
+			switchInt = 1
+		}
+		done++
+	}
+	var seqStr string
+	for k, v := range seqMap {
+		if k > 0 {
+			seqStr += ","
+		}
+		if len(v) > 1 {
+			seqStr += cast.ToString(v[0])
+			seqStr += "-"
+			seqStr += cast.ToString(v[len(v)-1])
+		} else {
+			seqStr += cast.ToString(v[0])
+		}
+	}
+	return seqStr
 }

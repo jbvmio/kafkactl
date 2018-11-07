@@ -20,12 +20,14 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jbvmio/kafkactl"
+
 	"github.com/spf13/cobra"
 )
 
 var (
 	showLag     bool
-	targetGroup string
+	showConfig  bool
 	targetMatch = true
 )
 
@@ -35,7 +37,7 @@ var describeCmd = &cobra.Command{
 	Long: `Examples:
   kafkactl describe group myConsumerGroup
   kafkactl describe topic myTopic`,
-	Aliases: []string{"desc", "des"},
+	Aliases: []string{"desc", "descr", "des"},
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			cmd.Help()
@@ -53,16 +55,33 @@ var describeCmd = &cobra.Command{
 				log.Fatalf("no results for that group/topic combination\n")
 			}
 			if showLag {
-				groupLag := getGroupLag(grps)
-				printOutput(groupLag)
+				var partitionLag []PartitionLag
+				if useFast {
+					partitionLag = chanGetPartitionLag(grps)
+				} else {
+					partitionLag = getPartitionLag(grps)
+				}
+				printOutput(partitionLag)
 				return
 			}
 			printOutput(grps)
 			return
 		case strings.Contains(target, "top"):
-
-			testOSA()
-
+			if showConfig {
+				var topics []string
+				ts := kafkactl.GetTopicSummary(searchTopicMeta(args...))
+				for _, t := range ts {
+					topics = append(topics, t.Topic)
+				}
+				configs := getTopicConfig(topics...)
+				printOutput(configs)
+				return
+			}
+			tm := searchTopicMeta(args...)
+			if len(tm) < 1 {
+				log.Fatalf("no results for that group/topic combination\n")
+			}
+			printOutput(tm)
 			return
 		default:
 			fmt.Println("no such resource to describe:", target)
@@ -75,5 +94,6 @@ func init() {
 	rootCmd.AddCommand(describeCmd)
 	describeCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 	describeCmd.Flags().BoolVarP(&showLag, "lag", "l", false, "Display Offset and Lag details")
+	describeCmd.Flags().BoolVar(&showConfig, "conf", false, "Show Configuration details (Topics)")
 	//describeCmd.Flags().StringVarP(&clientID, "clientid", "i", "", "Find groups by ClientID")
 }

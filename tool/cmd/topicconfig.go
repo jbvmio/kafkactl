@@ -16,13 +16,21 @@ package cmd
 
 import (
 	"log"
-	"sort"
-	"strings"
 
 	"github.com/jbvmio/kafkactl"
 )
 
-func searchTopicMeta(topics ...string) []kafkactl.TopicMeta {
+// TopicConfig struct def:
+type TopicConfig struct {
+	Topic     string
+	Config    string
+	Value     string
+	ReadOnly  bool
+	Default   bool
+	Sensitive bool
+}
+
+func getTopicConfig(topics ...string) []TopicConfig {
 	client, err := kafkactl.NewClient(bootStrap)
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
@@ -35,41 +43,23 @@ func searchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 	if verbose {
 		client.Logger("")
 	}
-
-	tMeta, err := client.GetTopicMeta()
-	if err != nil {
-		log.Fatalf("Error getting topic metadata: %s\n", err)
-	}
-
-	var topicMeta []kafkactl.TopicMeta
-	if len(topics) >= 1 {
-		if topics[0] != "" {
-			for _, t := range topics {
-				for _, m := range tMeta {
-					if exact {
-						if m.Topic == t {
-							topicMeta = append(topicMeta, m)
-						}
-					} else {
-						if strings.Contains(m.Topic, t) {
-							topicMeta = append(topicMeta, m)
-						}
-					}
-				}
+	var topicConfig []TopicConfig
+	for _, t := range topics {
+		c, err := client.GetTopicConfig(t)
+		if err != nil {
+			log.Fatalf("Error getting config for topic %v: %v\n", t, err)
+		}
+		for _, v := range c {
+			tc := TopicConfig{
+				Topic:     t,
+				Config:    v.Name,
+				Value:     v.Value,
+				ReadOnly:  v.ReadOnly,
+				Default:   v.Default,
+				Sensitive: v.Sensitive,
 			}
+			topicConfig = append(topicConfig, tc)
 		}
 	}
-	if len(topicMeta) < 1 {
-		topicMeta = tMeta
-	}
-	sort.Slice(topicMeta, func(i, j int) bool {
-		if topicMeta[i].Topic < topicMeta[j].Topic {
-			return true
-		}
-		if topicMeta[i].Topic > topicMeta[j].Topic {
-			return false
-		}
-		return topicMeta[i].Partition < topicMeta[j].Partition
-	})
-	return topicMeta
+	return topicConfig
 }

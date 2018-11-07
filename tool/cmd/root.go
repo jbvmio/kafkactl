@@ -33,8 +33,11 @@ var (
 	bootStrap   string
 	bsport      string
 	targetTopic string
+	targetGroup string
 	exact       bool
 	verbose     bool
+	useFast     bool
+	meta        bool
 
 	numCPU = runtime.NumCPU()
 )
@@ -75,8 +78,10 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&bootStrap, "broker", "b", "", "Bootstrap Kafka Broker")
 	rootCmd.PersistentFlags().StringVarP(&targetTopic, "topic", "t", "", "Specify a Target Topic")
+	rootCmd.PersistentFlags().StringVarP(&targetGroup, "group", "g", "", "Specify a Target Group")
 	rootCmd.PersistentFlags().StringVar(&bsport, "port", "9092", "Port used for Bootstrap Kafka Broker")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Display any additional info and error output.")
+	rootCmd.PersistentFlags().BoolVarP(&useFast, "fast", "F", true, "Use go routine methods when available for faster results")
 }
 
 func initConfig() {

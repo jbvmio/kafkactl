@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/jbvmio/kafkactl"
 	"github.com/spf13/cobra"
@@ -38,6 +39,15 @@ var metaCmd = &cobra.Command{
 		}()
 		client.Logger("")
 
+		c, err := client.GetTopicConfig(targetTopic)
+		if err != nil {
+			log.Fatalf("Error: %v\n", err)
+		}
+		for _, i := range c {
+			fmt.Printf("%+v\n", i)
+		}
+
+		os.Exit(0)
 		/*
 			//meta, err := client.GetClusterMeta()
 			meta, err := client.GetTopicMeta()
@@ -52,24 +62,13 @@ var metaCmd = &cobra.Command{
 		//err = client.AddPartitions("NewTopicHere", 1)
 		//err = client.SetTopicConfig("NewTopicHere", "delete.retention.ms", "43200000")
 		//err = client.DeleteToOffset("testtopic", 3, 561)
-		err = client.RemoveGroup("jblap")
-
-		if err != nil {
-			log.Fatalf("Error: %v\n", err)
-		}
+		//err = client.RemoveGroup("jblap")
 
 		//c, err := client.GetTopicConfig("replicated.test.topic", "flush.messages", "delete.retention.ms")
 		//c, err := client.GetTopicConfig("replicated.test.topic")
 		//c, err := client.ListTopics()
-		c, err := client.ListGroups()
+		//c, err := client.ListGroups()
 		//c, err := client.BrokerGroups(6)
-
-		if err != nil {
-			log.Fatalf("Error: %v\n", err)
-		}
-		for _, i := range c {
-			fmt.Printf("%+v\n", i)
-		}
 
 	},
 }

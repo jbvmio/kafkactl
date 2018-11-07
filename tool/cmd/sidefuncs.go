@@ -2,12 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/fatih/color"
 	"github.com/jbvmio/kafkactl"
 	"github.com/rodaine/table"
-	"github.com/spf13/cast"
 )
 
 func printOutput(i interface{}) {
@@ -15,8 +13,13 @@ func printOutput(i interface{}) {
 	columnFmt := color.New(color.FgYellow).SprintfFunc()
 	var tbl table.Table
 	switch i := i.(type) {
+	case []kafkactl.TopicSummary:
+		tbl = table.New("TOPIC", "PART", "RFactor", "ISRs", "OFFLINE", "LEADER")
+		for _, v := range i {
+			tbl.AddRow(v.Topic, v.Partitions, v.RFactor, v.ISRs, v.OfflineReplicas, v.Leader)
+		}
 	case []kafkactl.TopicMeta:
-		tbl = table.New("TOPIC", "PART", "REPLs", "ISRs", "OFF", "LDR")
+		tbl = table.New("TOPIC", "PART", "REPLICAS", "ISRs", "OFFLINE", "LEADER")
 		for _, v := range i {
 			tbl.AddRow(v.Topic, v.Partition, v.Replicas, v.ISRs, v.OfflineReplicas, v.Leader)
 		}
@@ -32,7 +35,7 @@ func printOutput(i interface{}) {
 			for _, m := range v.MemberAssignments {
 				cID := m.ClientID
 				for t, p := range m.TopicPartitions {
-					tbl.AddRow(grpName, t, makeSeqStr(p), cID)
+					tbl.AddRow(grpName, t, kafkactl.MakeSeqStr(p), cID)
 				}
 			}
 		}
@@ -40,6 +43,11 @@ func printOutput(i interface{}) {
 		tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER", "OFFSET", "LAG")
 		for _, v := range i {
 			tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag)
+		}
+	case []TopicConfig:
+		tbl = table.New("TOPIC", "CONFIG", "VALUE", "READONLY", "DEFAULT", "SENSITIVE")
+		for _, v := range i {
+			tbl.AddRow(v.Topic, v.Config, v.Value, v.ReadOnly, v.Default, v.Sensitive)
 		}
 	}
 	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
@@ -58,40 +66,14 @@ func truncateString(str string, num int) string {
 	return s
 }
 
-func makeSeqStr(nums []int32) string {
-	seqMap := make(map[int][]int32)
-	sort.Slice(nums, func(i, j int) bool {
-		return nums[i] < nums[j]
-	})
-	var mapCount int
-	var done int
-	var switchInt int
-	seqMap[mapCount] = append(seqMap[mapCount], nums[done])
-	done++
-	switchInt = done
-	for done < len(nums) {
-		if nums[done] == ((seqMap[mapCount][(switchInt - 1)]) + 1) {
-			seqMap[mapCount] = append(seqMap[mapCount], nums[done])
-			switchInt++
-		} else {
-			mapCount++
-			seqMap[mapCount] = append(seqMap[mapCount], nums[done])
-			switchInt = 1
-		}
-		done++
-	}
-	var seqStr string
-	for k, v := range seqMap {
-		if k > 0 {
-			seqStr += ","
-		}
-		if len(v) > 1 {
-			seqStr += cast.ToString(v[0])
-			seqStr += "-"
-			seqStr += cast.ToString(v[len(v)-1])
-		} else {
-			seqStr += cast.ToString(v[0])
+func filterUnique(strSlice []string) []string {
+	keys := make(map[string]bool)
+	var list []string
+	for _, entry := range strSlice {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
 		}
 	}
-	return seqStr
+	return list
 }

@@ -45,3 +45,7 @@ func (kc *KClient) DeleteToOffset(topic string, partition int32, offset int64) e
 	partitionOffset[partition] = offset
 	return kc.Admin().DeleteRecords(topic, partitionOffset)
 }
+
+func (kc *KClient) RefreshMetadata(topics ...string) error {
+	return kc.cl.RefreshMetadata(topics...)
+}
