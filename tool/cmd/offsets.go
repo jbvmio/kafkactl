@@ -75,7 +75,7 @@ func getGroupTopicOffsets(group, topic string) ([]GroupTopicOffsetMeta, error) {
 					GroupCoordinator: grp.Coordinator,
 				}
 
-				fmt.Printf("tpmNIL: %+v gpmNIL: %+v\n", (tpm == nil), (gpm == nil))
+				//fmt.Printf("tpmNIL: %+v gpmNIL: %+v\n", (tpm == nil), (gpm == nil))
 
 				fmt.Printf("tpm:\n%+v\n", tpm)
 				fmt.Printf("gpm:\n%+v\n", gpm)

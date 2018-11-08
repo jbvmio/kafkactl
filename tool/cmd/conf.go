@@ -38,7 +38,7 @@ var confCmd = &cobra.Command{
 			setTopicConfig(targetTopic, targetConfName, targetConfValue)
 			return
 		}
-		printOutput(searchTopicConfig(targetTopic))
+		printOutput(searchTopicConfig(targetTopic, targetConfName))
 		return
 
 	},
@@ -48,6 +48,6 @@ func init() {
 	adminCmd.AddCommand(confCmd)
 	confCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 	confCmd.Flags().BoolVar(&setConf, "set", false, "Alter an Existing Topic Config")
-	confCmd.Flags().StringVar(&targetConfName, "key", "", "Config Option or Key to Set")
+	confCmd.Flags().StringVarP(&targetConfName, "key", "k", "", "Config Option or Key to Set")
 	confCmd.Flags().StringVar(&targetConfValue, "value", "", "Config Value to Set")
 }

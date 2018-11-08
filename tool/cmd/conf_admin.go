@@ -30,7 +30,7 @@ type TopicConfig struct {
 	Sensitive bool
 }
 
-func getTopicConfig(topics ...string) []TopicConfig {
+func getTopicConfig(topics, configNames []string) []TopicConfig {
 	client, err := kafkactl.NewClient(bootStrap)
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
@@ -45,7 +45,7 @@ func getTopicConfig(topics ...string) []TopicConfig {
 	}
 	var topicConfig []TopicConfig
 	for _, t := range topics {
-		c, err := client.GetTopicConfig(t)
+		c, err := client.GetTopicConfig(t, configNames...)
 		if err != nil {
 			log.Fatalf("Error getting config for topic %v: %v\n", t, err)
 		}
@@ -64,7 +64,7 @@ func getTopicConfig(topics ...string) []TopicConfig {
 	return topicConfig
 }
 
-func searchTopicConfig(topic string) []TopicConfig {
+func searchTopicConfig(topic string, configNames ...string) []TopicConfig {
 	var topics []string
 	ts := kafkactl.GetTopicSummary(searchTopicMeta(topic))
 	if len(ts) < 1 {
@@ -73,7 +73,7 @@ func searchTopicConfig(topic string) []TopicConfig {
 	for _, t := range ts {
 		topics = append(topics, t.Topic)
 	}
-	return getTopicConfig(topics...)
+	return getTopicConfig(topics, configNames)
 }
 
 func setTopicConfig(topic, configName, value string) error {
