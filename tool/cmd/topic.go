@@ -20,7 +20,8 @@ import (
 )
 
 var (
-	topicList []string
+	topicList   []string
+	refreshMeta bool
 )
 
 var topicCmd = &cobra.Command{
@@ -43,6 +44,10 @@ To see detailed metadata information, use the meta command or the -m flag here.
 			describeCmd.Run(cmd, desc)
 			return
 		}
+		if refreshMeta {
+			refreshMetadata(args...)
+			return
+		}
 		printOutput(kafkactl.GetTopicSummary(searchTopicMeta(args...)))
 	},
 }
@@ -51,4 +56,5 @@ func init() {
 	rootCmd.AddCommand(topicCmd)
 	topicCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 	topicCmd.Flags().BoolVarP(&meta, "meta", "m", false, "Show extra/metadata details")
+	topicCmd.Flags().BoolVarP(&refreshMeta, "refresh-metadata", "r", false, "Query the Cluster to Refresh the Available Metadata for the given Topic(s)")
 }

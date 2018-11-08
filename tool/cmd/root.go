@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 NAME HERE <jbonds@jbvm.io>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"runtime"
 	"strings"
 	"sync"
 
@@ -29,17 +28,17 @@ import (
 )
 
 var (
-	cfgFile     string
-	bootStrap   string
-	bsport      string
-	targetTopic string
-	targetGroup string
-	exact       bool
-	verbose     bool
-	useFast     bool
-	meta        bool
+	cfgFile   string
+	bootStrap string
+	bsport    string
+	exact     bool
+	verbose   bool
+	useFast   bool
+	meta      bool
 
-	numCPU = runtime.NumCPU()
+	targetTopic     string
+	targetGroup     string
+	targetPartition int32
 )
 
 var wg sync.WaitGroup

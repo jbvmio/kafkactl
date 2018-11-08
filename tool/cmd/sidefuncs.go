@@ -1,7 +1,22 @@
+// Copyright © 2018 NAME HERE <jbonds@jbvm.io>
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/fatih/color"
 	"github.com/jbvmio/kafkactl"
@@ -16,7 +31,7 @@ func printOutput(i interface{}) {
 	case []kafkactl.TopicSummary:
 		tbl = table.New("TOPIC", "PART", "RFactor", "ISRs", "OFFLINE", "LEADER")
 		for _, v := range i {
-			tbl.AddRow(v.Topic, v.Partitions, v.RFactor, v.ISRs, v.OfflineReplicas, v.Leader)
+			tbl.AddRow(v.Topic, v.Parts, v.RFactor, v.ISRs, v.OfflineReplicas, v.Leader)
 		}
 	case []kafkactl.TopicMeta:
 		tbl = table.New("TOPIC", "PART", "REPLICAS", "ISRs", "OFFLINE", "LEADER")
@@ -76,4 +91,24 @@ func filterUnique(strSlice []string) []string {
 		}
 	}
 	return list
+}
+
+func testFunc() {
+	client, err := kafkactl.NewClient(bootStrap)
+	if err != nil {
+		log.Fatalf("Error: %v\n", err)
+	}
+	defer func() {
+		if err := client.Close(); err != nil {
+			log.Fatalf("Error closing client: %v\n", err)
+		}
+	}()
+	if verbose {
+		client.Logger("")
+	}
+	offset, lag, err := client.OffSetAdmin().Group("jblap").Topic("testtopic").GetOffsetLag(0)
+	if err != nil {
+		log.Fatalf("Error: %v\n", err)
+	}
+	fmt.Println(offset, lag)
 }

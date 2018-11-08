@@ -32,6 +32,12 @@ var groupCmd = &cobra.Command{
 		if len(args) < 1 {
 			args = []string{""}
 		}
+		if targetTopic != "" {
+			desc := []string{"group"}
+			desc = append(desc, args...)
+			describeCmd.Run(cmd, desc)
+			return
+		}
 		if meta || showLag {
 			desc := []string{"group"}
 			desc = append(desc, args...)

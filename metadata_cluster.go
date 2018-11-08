@@ -69,3 +69,45 @@ func (kc *KClient) ReqMetadata() (*sarama.MetadataResponse, error) {
 	}
 	return res, err
 }
+
+/*
+func (kc *KClient) GetGroupMetaLite() ([]GroupMetaLite, error) {
+	var groupMetaLite []GroupMetaLite
+	gl, err := kc.ListGroups()
+	if err != nil {
+		return groupMetaLite, err
+	}
+	glm, err := kc.GetGroupListMeta()
+	if err != nil {
+		return groupMetaLite, err
+	}
+	request := sarama.DescribeGroupsRequest{
+		Groups: gl,
+	}
+	var groups []*sarama.GroupDescription
+	for _, broker := range kc.brokers {
+		desc, err := broker.DescribeGroups(&request)
+		if err != nil {
+			fmt.Println("ERROR on desc:", err)
+		}
+		for _, g := range desc.Groups {
+			code := int16(g.Err)
+			if code == 0 {
+				groups = append(groups, g)
+			}
+		}
+	}
+	for _, grp := range groups {
+		var topics []string
+		for _, v := range grp.Members {
+			assign, err := v.GetMemberAssignment()
+			for k := range assign.Topics {
+				topics = append(topics, k)
+			}
+		}
+		topics = filterUnique(topics)
+		groupMetaLite = append(groupMetaLite, group)
+	}
+	return groupMetaLite, nil
+}
+*/

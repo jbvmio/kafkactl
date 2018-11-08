@@ -3,16 +3,18 @@ package kafkactl
 import (
 	"sort"
 
+	"github.com/Shopify/sarama"
 	"github.com/spf13/cast"
 )
 
 type TopicSummary struct {
 	Topic           string
-	Partitions      string
+	Parts           string
 	RFactor         int
 	ISRs            int
 	OfflineReplicas int
 	Leader          int32
+	Partitions      []int32
 }
 
 type TopicMeta struct {
@@ -23,6 +25,20 @@ type TopicMeta struct {
 	ISRs            []int32
 	OfflineReplicas []int32
 }
+
+type TopicOffsetGet interface {
+	GetPartitionOffset(client KClient, topic string, partition int32)
+}
+
+/*
+func (tm *TopicMeta) GetPartitionOffset(client KClient, topic string, partition int32) {
+	off, err := client.GetOffsetNewest(topic, partition)
+	if err != nil {
+		off = -7777
+	}
+	tm.Offset = off
+}
+*/
 
 func GetTopicSummary(topicMeta []TopicMeta) []TopicSummary {
 	var topicSummary []TopicSummary
@@ -43,11 +59,12 @@ func GetTopicSummary(topicMeta []TopicMeta) []TopicSummary {
 			partitions := MakeSeqStr(parts[tm.Topic])
 			ts := TopicSummary{
 				Topic:           tm.Topic,
-				Partitions:      partitions,
+				Parts:           partitions,
 				Leader:          tm.Leader,
 				RFactor:         len(reps[tm.Topic]) / len(parts[tm.Topic]),
 				ISRs:            len(isrs[tm.Topic]),
 				OfflineReplicas: len(off[tm.Topic]),
+				Partitions:      parts[tm.Topic],
 			}
 			topicSummary = append(topicSummary, ts)
 		}
@@ -126,4 +143,8 @@ func MakeSeqStr(nums []int32) string {
 		}
 	}
 	return seqStr
+}
+
+func (kc *KClient) GetOffsetNewest(topic string, partition int32) (int64, error) {
+	return kc.cl.GetOffset(topic, partition, sarama.OffsetNewest)
 }

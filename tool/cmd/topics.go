@@ -35,12 +35,10 @@ func searchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 	if verbose {
 		client.Logger("")
 	}
-
 	tMeta, err := client.GetTopicMeta()
 	if err != nil {
 		log.Fatalf("Error getting topic metadata: %s\n", err)
 	}
-
 	var topicMeta []kafkactl.TopicMeta
 	if len(topics) >= 1 {
 		if topics[0] != "" {
@@ -57,10 +55,9 @@ func searchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 					}
 				}
 			}
+		} else {
+			topicMeta = tMeta
 		}
-	}
-	if len(topicMeta) < 1 {
-		topicMeta = tMeta
 	}
 	sort.Slice(topicMeta, func(i, j int) bool {
 		if topicMeta[i].Topic < topicMeta[j].Topic {
@@ -72,4 +69,44 @@ func searchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 		return topicMeta[i].Partition < topicMeta[j].Partition
 	})
 	return topicMeta
+}
+
+/* Add Partition Offsets to TopicMeta
+func goGetPartitionOffsets(tMeta []kafkactl.TopicMeta) {
+	client, err := kafkactl.NewClient(bootStrap)
+	if err != nil {
+		log.Fatalf("Error: %v\n", err)
+	}
+	defer func() {
+		if err := client.Close(); err != nil {
+			log.Fatalf("Error closing client: %v\n", err)
+		}
+	}()
+	if verbose {
+		client.Logger("")
+	}
+	for i := 0; i < len(tMeta); i++ {
+		tm := &tMeta[i]
+		tm.GetPartitionOffset(*client, tm.Topic, tm.Partition)
+	}
+}
+*/
+
+func refreshMetadata(topics ...string) {
+	client, err := kafkactl.NewClient(bootStrap)
+	if err != nil {
+		log.Fatalf("Error: %v\n", err)
+	}
+	defer func() {
+		if err := client.Close(); err != nil {
+			log.Fatalf("Error closing client: %v\n", err)
+		}
+	}()
+	if verbose {
+		client.Logger("")
+	}
+	err = client.RefreshMetadata(topics...)
+	if err != nil {
+		log.Fatalf("Error refreshing topic metadata: %v\n", err)
+	}
 }

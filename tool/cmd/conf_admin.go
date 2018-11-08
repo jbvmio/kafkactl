@@ -63,3 +63,39 @@ func getTopicConfig(topics ...string) []TopicConfig {
 	}
 	return topicConfig
 }
+
+func searchTopicConfig(topic string) []TopicConfig {
+	var topics []string
+	ts := kafkactl.GetTopicSummary(searchTopicMeta(topic))
+	if len(ts) < 1 {
+		log.Fatalf("unable to locate specified topic: %v\n", topic)
+	}
+	for _, t := range ts {
+		topics = append(topics, t.Topic)
+	}
+	return getTopicConfig(topics...)
+}
+
+func setTopicConfig(topic, configName, value string) error {
+	if configName == "" || value == "" {
+		log.Fatalf("Error: Missing Key and/or Value\n")
+	}
+	client, err := kafkactl.NewClient(bootStrap)
+	if err != nil {
+		log.Fatalf("Error: %v\n", err)
+	}
+	defer func() {
+		if err := client.Close(); err != nil {
+			log.Fatalf("Error closing client: %v\n", err)
+		}
+	}()
+	if verbose {
+		client.Logger("")
+	}
+	exact = true
+	ts := kafkactl.GetTopicSummary(searchTopicMeta(topic))
+	if len(ts) != 1 {
+		log.Fatalf("Error validating topic: %v\n", topic)
+	}
+	return client.SetTopicConfig(topic, configName, value)
+}

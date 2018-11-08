@@ -15,39 +15,22 @@
 package cmd
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
 
-var (
-	setConf         bool
-	targetConfName  string
-	targetConfValue string
-)
-
-var confCmd = &cobra.Command{
-	Use:   "conf",
+var adminCmd = &cobra.Command{
+	Use:   "admin",
 	Short: "Get and Set Available Kafka Related Configs (Topics Only for Now)",
 	Long:  `Example kafkactl config -t myTopic`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if targetTopic == "" {
-			log.Fatalf("specify a topic, eg. --topic")
-		}
-		if setConf {
-			setTopicConfig(targetTopic, targetConfName, targetConfValue)
-			return
-		}
-		printOutput(searchTopicConfig(targetTopic))
-		return
+		fmt.Println("ADMIN")
 
 	},
 }
 
 func init() {
-	adminCmd.AddCommand(confCmd)
-	confCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
-	confCmd.Flags().BoolVar(&setConf, "set", false, "Alter an Existing Topic Config")
-	confCmd.Flags().StringVar(&targetConfName, "key", "", "Config Option or Key to Set")
-	confCmd.Flags().StringVar(&targetConfValue, "value", "", "Config Value to Set")
+	rootCmd.AddCommand(adminCmd)
+	adminCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 }
