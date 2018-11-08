@@ -18,15 +18,18 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/jbvmio/kafkactl"
+
 	"github.com/spf13/cobra"
 )
 
 var (
-	targetOffset int64
-	performReset bool
-	allParts     bool
-	targetNewest bool
-	targetOldest bool
+	targetOffset   int64
+	targetReletive int64
+	performReset   bool
+	allParts       bool
+	targetNewest   bool
+	targetOldest   bool
 )
 
 var offsetCmd = &cobra.Command{
@@ -35,29 +38,62 @@ var offsetCmd = &cobra.Command{
 	Long:    `Example kafkactl admin offset -g myGroup -t myTopic -p 5 --reset-to 999`,
 	Aliases: []string{"offsets"},
 	Run: func(cmd *cobra.Command, args []string) {
-		if targetTopic == "" || targetGroup == "" {
+		if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("group") {
 			log.Fatalf("specify both group and topic")
 		}
-		gto, err := getGroupTopicOffsets(targetGroup, targetTopic)
-		if err != nil {
-			log.Fatalf("ERROR: %v\n", err)
-		}
-		fmt.Printf("%+v\n", gto)
-		/*
-			exact = true
-			showLag = true
-			desc := []string{"group"}
-			desc = append(desc, targetGroup)
-			describeCmd.Run(cmd, desc)
+		if performReset {
+			if cmd.Flags().Changed("newest") && cmd.Flags().Changed("oldest") {
+				log.Fatalf("cannot specify both newest and oldest, try again.")
+			}
+			if cmd.Flags().Changed("allparts") && cmd.Flags().Changed("partition") {
+				log.Fatalf("cannot specify both allParts and single partition, try again.")
+			}
+			if targetNewest || targetOldest {
+				if cmd.Flags().Changed("offset") || cmd.Flags().Changed("reletive") {
+					log.Fatalf("cannot specify specific offset using either newest/oldest, try again.")
+				}
+				if targetNewest {
+					if allParts {
+						resetAllPartitionsTo(targetGroup, targetTopic, kafkactl.OffsetNewest)
+						return
+					}
+					if !cmd.Flags().Changed("partition") {
+						log.Fatalf("need a valild partition, try again.")
+					}
+					resetPartitionOffsetToNewest(targetGroup, targetTopic, targetPartition)
+					return
+				}
+				if targetOldest {
+					if allParts {
+						resetAllPartitionsTo(targetGroup, targetTopic, kafkactl.OffsetOldest)
+						return
+					}
+					if !cmd.Flags().Changed("partition") {
+						log.Fatalf("need a valild partition, try again.")
+					}
+					resetPartitionOffsetToOldest(targetGroup, targetTopic, targetPartition)
+					return
+				}
+			}
+			if cmd.Flags().Changed("reletive") {
+				fmt.Println("RELETIVE WiP*")
+				return
+			}
+			resetPartitionOffsetTo(targetGroup, targetTopic, targetPartition, targetOffset)
 			return
-		*/
+		}
+		gto := getGroupTopicOffsets(targetGroup, targetTopic)
+		printOutput(gto)
+		return
 	},
 }
 
 func init() {
 	adminCmd.AddCommand(offsetCmd)
 	offsetCmd.Flags().Int32VarP(&targetPartition, "partition", "p", -2, "Partition to Target")
-	offsetCmd.Flags().Int64VarP(&targetOffset, "offset", "o", -2, "Offset to Target")
+	offsetCmd.Flags().Int64VarP(&targetOffset, "offset", "o", -2, "Desired Offset")
+	offsetCmd.Flags().Int64Var(&targetReletive, "reletive", 0, "Reletive offset from the Topic Offset (Must be Negative, eg. -5)")
+	offsetCmd.Flags().BoolVarP(&allParts, "allparts", "a", false, "Perform on All Available Partitions for Specified Group and Topic.")
 	offsetCmd.Flags().BoolVar(&performReset, "reset", false, "Initiate a ResetOffset Operation")
 	offsetCmd.Flags().BoolVar(&targetNewest, "newest", false, "Target the Next Msg that would be Produced to the Topic")
 	offsetCmd.Flags().BoolVar(&targetOldest, "oldest", false, "Target the Oldest Msg still available on the Topic")

@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/jbvmio/kafkactl"
@@ -28,7 +27,6 @@ type GroupTopicOffsetMeta struct {
 
 type GroupPartitionMeta struct {
 	Group            string
-	Partition        int32
 	GroupOffset      int64
 	Lag              int64
 	GroupCoordinator string
@@ -41,7 +39,7 @@ type TopicPartitionMeta struct {
 	TopicLeader int32
 }
 
-func getGroupTopicOffsets(group, topic string) ([]GroupTopicOffsetMeta, error) {
+func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {
 	client, err := kafkactl.NewClient(bootStrap)
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
@@ -58,10 +56,36 @@ func getGroupTopicOffsets(group, topic string) ([]GroupTopicOffsetMeta, error) {
 	var GTMeta []GroupTopicOffsetMeta
 	tSum := kafkactl.GetTopicSummary(searchTopicMeta(topic))
 	gList := searchGroupListMeta(group)
-
-	fmt.Printf("TOPIC:\n%+v\n", tSum)
-	fmt.Printf("GROUP:\n%+v\n", gList)
-
+	if len(gList) < 1 || len(tSum) < 1 {
+		if len(gList) < 1 && len(tSum) >= 1 {
+			for _, ts := range tSum {
+				for _, p := range ts.Partitions {
+					off, err := client.GetOffsetNewest(ts.Topic, p)
+					if err != nil {
+						off = -7777
+					}
+					tpm := TopicPartitionMeta{
+						Topic:       ts.Topic,
+						Partition:   p,
+						TopicOffset: off,
+						TopicLeader: ts.Leader,
+					}
+					gtMeta := GroupTopicOffsetMeta{
+						tpm,
+						GroupPartitionMeta{
+							Group:            group,
+							GroupOffset:      -1001,
+							GroupCoordinator: "GRP_UNACTIVE_FOR_TOPIC",
+						},
+					}
+					GTMeta = append(GTMeta, gtMeta)
+				}
+			}
+		} else {
+			log.Fatalf("Error retrieving details for specified group and/or topic: [%v > %v]\n", targetGroup, targetTopic)
+		}
+		return GTMeta
+	}
 	for _, ts := range tSum {
 		for _, p := range ts.Partitions {
 			for _, grp := range gList {
@@ -74,34 +98,20 @@ func getGroupTopicOffsets(group, topic string) ([]GroupTopicOffsetMeta, error) {
 					Group:            grp.Group,
 					GroupCoordinator: grp.Coordinator,
 				}
-
-				//fmt.Printf("tpmNIL: %+v gpmNIL: %+v\n", (tpm == nil), (gpm == nil))
-
-				fmt.Printf("tpm:\n%+v\n", tpm)
-				fmt.Printf("gpm:\n%+v\n", gpm)
-
 				offset, lag, err := client.OffSetAdmin().Group(grp.Group).Topic(ts.Topic).GetOffsetLag(p)
 				if err != nil {
 					log.Fatalf("Error: %v\n", err)
 				}
-
-				fmt.Printf("Offset: %+v Lag: %+v Error: %v\n", offset, lag, err)
-
 				tpm.TopicOffset = (offset + lag)
 				gpm.GroupOffset = offset
 				gpm.Lag = lag
-				gpm.Partition = p
-
 				gtMeta := GroupTopicOffsetMeta{
 					tpm,
 					gpm,
 				}
-
 				GTMeta = append(GTMeta, gtMeta)
-				fmt.Printf("GTMETA:\n%+v\n", gtMeta)
 			}
 		}
 	}
-
-	return GTMeta, err
+	return GTMeta
 }

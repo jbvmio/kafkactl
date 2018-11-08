@@ -6,6 +6,19 @@ import (
 	"github.com/Shopify/sarama"
 )
 
+const (
+	// OffsetNewest stands for the log head offset, i.e. the offset that will be
+	// assigned to the next message that will be produced to the partition. You
+	// can send this to a client's GetOffset method to get this offset, or when
+	// calling ConsumePartition to start consuming new messages.
+	OffsetNewest int64 = -1
+	// OffsetOldest stands for the oldest offset available on the broker for a
+	// partition. You can send this to a client's GetOffset method to get this
+	// offset, or when calling ConsumePartition to start consuming from the
+	// oldest offset that is still available on the broker.
+	OffsetOldest int64 = -2
+)
+
 type OffsetAdmin interface {
 	Group(group string) OffsetAdmin
 	Topic(topic string) OffsetAdmin

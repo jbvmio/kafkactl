@@ -21,11 +21,11 @@ import (
 )
 
 func resetPartitionOffsetToOldest(group, topic string, partition int32) {
-	resetPartitionOffsetTo(group, topic, partition, int64(-2))
+	resetPartitionOffsetTo(group, topic, partition, kafkactl.OffsetOldest)
 }
 
 func resetPartitionOffsetToNewest(group, topic string, partition int32) {
-	resetPartitionOffsetTo(group, topic, partition, int64(-1))
+	resetPartitionOffsetTo(group, topic, partition, kafkactl.OffsetNewest)
 }
 
 func resetPartitionOffsetTo(group, topic string, partition int32, toOffset int64) {
@@ -48,7 +48,7 @@ func resetPartitionOffsetTo(group, topic string, partition int32, toOffset int64
 	}
 }
 
-func resetAllPartitionsTo(group, topic string, partition int32, toOffset int64) {
+func resetAllPartitionsTo(group, topic string, toOffset int64) {
 	client, err := kafkactl.NewClient(bootStrap)
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
@@ -72,7 +72,7 @@ func resetAllPartitionsTo(group, topic string, partition int32, toOffset int64) 
 	}
 	var errParts []int32
 	for _, p := range parts {
-		err = client.OffSetAdmin().Group(group).Topic(topic).ResetOffset(partition, toOffset)
+		err = client.OffSetAdmin().Group(group).Topic(topic).ResetOffset(p, toOffset)
 		if err != nil {
 			log.Printf("Error reseting offset for partition %v: %v\n", p, err)
 			errParts = append(errParts, p)

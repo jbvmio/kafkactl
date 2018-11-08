@@ -43,6 +43,11 @@ func printOutput(i interface{}) {
 		for _, v := range i {
 			tbl.AddRow(v.Type, v.Group, v.Coordinator)
 		}
+	case []GroupTopicOffsetMeta:
+		tbl = table.New("GROUP", "PARTITION", "PART", "GrpOFFSET", "TopicOFFSET", "LAG", "GrpCoordinator")
+		for _, v := range i {
+			tbl.AddRow(v.Group, v.Topic, v.Partition, v.GroupOffset, v.TopicOffset, v.Lag, v.GroupCoordinator)
+		}
 	case []kafkactl.GroupMeta:
 		tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER")
 		for _, v := range i {

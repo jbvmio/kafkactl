@@ -26,6 +26,7 @@ type TopicMeta struct {
 	OfflineReplicas []int32
 }
 
+// TopicOffsetGet is WiP* for a TopicMeta struct to get its' the current, newest topic offset for its' partition.
 type TopicOffsetGet interface {
 	GetPartitionOffset(client KClient, topic string, partition int32)
 }
