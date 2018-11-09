@@ -113,15 +113,18 @@ func validateParts(parts []int32) {
 }
 
 func validateTailArgs(args []string) int64 {
+	var tailTarget int64
 	if len(args) > 1 {
 		log.Fatalf("Error: Too many tail arguments, try again.")
 	}
-	tailTarget := cast.ToInt64(args[0])
-	if tailTarget > 0 {
-		tailTarget = tailTarget - (tailTarget * 2)
-	}
-	if tailTarget == 0 {
+	if len(args) < 1 {
 		tailTarget = -1
+	}
+	if len(args) == 1 {
+		tailTarget = cast.ToInt64(args[0])
+		if tailTarget > 0 {
+			tailTarget = tailTarget - (tailTarget * 2)
+		}
 	}
 	return tailTarget
 }
