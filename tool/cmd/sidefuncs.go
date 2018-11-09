@@ -28,6 +28,13 @@ func printOutput(i interface{}) {
 	columnFmt := color.New(color.FgYellow).SprintfFunc()
 	var tbl table.Table
 	switch i := i.(type) {
+	case []kafkactl.TopicOffsetMap:
+		tbl = table.New("TOPIC", "PART", "OFFSET", "REPLICAS", "ISRs", "OFFLINE", "LEADER")
+		for _, v := range i {
+			for _, p := range v.TopicMeta {
+				tbl.AddRow(p.Topic, p.Partition, v.PartitionOffsets[p.Partition], p.Replicas, p.ISRs, p.OfflineReplicas, p.Leader)
+			}
+		}
 	case []kafkactl.TopicSummary:
 		tbl = table.New("TOPIC", "PART", "RFactor", "ISRs", "OFFLINE", "LEADER")
 		for _, v := range i {

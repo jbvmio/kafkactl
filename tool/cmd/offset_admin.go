@@ -62,7 +62,7 @@ func resetAllPartitionsTo(group, topic string, toOffset int64) {
 		client.Logger("")
 	}
 	exact = true
-	ts := kafkactl.GetTopicSummary(searchTopicMeta(targetTopic))
+	ts := kafkactl.GetTopicSummaries(searchTopicMeta(targetTopic))
 	if len(ts) != 1 {
 		log.Fatalf("Error validating topic: %v\n", targetTopic)
 	}

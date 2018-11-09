@@ -48,7 +48,7 @@ To see detailed metadata information, use the meta command or the -m flag here.
 			refreshMetadata(args...)
 			return
 		}
-		printOutput(kafkactl.GetTopicSummary(searchTopicMeta(args...)))
+		printOutput(kafkactl.GetTopicSummaries(searchTopicMeta(args...)))
 	},
 }
 

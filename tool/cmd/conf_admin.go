@@ -66,7 +66,7 @@ func getTopicConfig(topics, configNames []string) []TopicConfig {
 
 func searchTopicConfig(topic string, configNames ...string) []TopicConfig {
 	var topics []string
-	ts := kafkactl.GetTopicSummary(searchTopicMeta(topic))
+	ts := kafkactl.GetTopicSummaries(searchTopicMeta(topic))
 	if len(ts) < 1 {
 		log.Fatalf("unable to locate specified topic: %v\n", topic)
 	}
@@ -93,7 +93,7 @@ func setTopicConfig(topic, configName, value string) error {
 		client.Logger("")
 	}
 	exact = true
-	ts := kafkactl.GetTopicSummary(searchTopicMeta(topic))
+	ts := kafkactl.GetTopicSummaries(searchTopicMeta(topic))
 	if len(ts) != 1 {
 		log.Fatalf("Error validating topic: %v\n", topic)
 	}

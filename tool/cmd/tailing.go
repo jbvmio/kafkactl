@@ -21,6 +21,7 @@ import (
 	"os/signal"
 
 	"github.com/jbvmio/kafkactl"
+	"github.com/spf13/cast"
 )
 
 func getTopicMsg(topic string, partition int32, offset int64) {
@@ -60,7 +61,7 @@ func tailTopic(topic string, relativeOffset int64, partitions ...int32) {
 		client.Logger("")
 	}
 	exact = true
-	tSum := kafkactl.GetTopicSummary(searchTopicMeta(topic))
+	tSum := kafkactl.GetTopicSummaries(searchTopicMeta(topic))
 	if len(tSum) != 1 {
 		log.Fatalf("Error finding topic: %v\n", err)
 	}
@@ -109,4 +110,18 @@ func validateParts(parts []int32) {
 			pMap[p] = true
 		}
 	}
+}
+
+func validateTailArgs(args []string) int64 {
+	if len(args) > 1 {
+		log.Fatalf("Error: Too many tail arguments, try again.")
+	}
+	tailTarget := cast.ToInt64(args[0])
+	if tailTarget > 0 {
+		tailTarget = tailTarget - (tailTarget * 2)
+	}
+	if tailTarget == 0 {
+		tailTarget = -1
+	}
+	return tailTarget
 }

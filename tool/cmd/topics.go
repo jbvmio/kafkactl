@@ -71,8 +71,7 @@ func searchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 	return topicMeta
 }
 
-/* Add Partition Offsets to TopicMeta
-func goGetPartitionOffsets(tMeta []kafkactl.TopicMeta) {
+func getTopicOffsetMap(tm []kafkactl.TopicMeta) []kafkactl.TopicOffsetMap {
 	client, err := kafkactl.NewClient(bootStrap)
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
@@ -85,12 +84,50 @@ func goGetPartitionOffsets(tMeta []kafkactl.TopicMeta) {
 	if verbose {
 		client.Logger("")
 	}
-	for i := 0; i < len(tMeta); i++ {
-		tm := &tMeta[i]
-		tm.GetPartitionOffset(*client, tm.Topic, tm.Partition)
-	}
+	return client.MakeTopicOffsetMap(tm)
+
 }
-*/
+
+func chanGetTopicOffsetMap(t []kafkactl.TopicMeta) []kafkactl.TopicOffsetMap {
+	client, err := kafkactl.NewClient(bootStrap)
+	if err != nil {
+		log.Fatalf("Error: %v\n", err)
+	}
+	defer func() {
+		if err := client.Close(); err != nil {
+			log.Fatalf("Error closing client: %v\n", err)
+		}
+	}()
+	if verbose {
+		client.Logger("")
+	}
+	var TOM []kafkactl.TopicOffsetMap
+	var count int
+	tmMap := make(map[string][]kafkactl.TopicMeta)
+	for _, tm := range t {
+		tmMap[tm.Topic] = append(tmMap[tm.Topic], tm)
+	}
+	done := make(map[string]bool, len(tmMap))
+	tomChan := make(chan []kafkactl.TopicOffsetMap, 100)
+	for t, meta := range tmMap {
+		if !done[t] {
+			count++
+			done[t] = true
+		}
+		go chanMakeTOM(client, meta, tomChan)
+	}
+	for i := 0; i < count; i++ {
+		tom := <-tomChan
+		TOM = append(TOM, tom...)
+	}
+	return TOM
+}
+
+func chanMakeTOM(client *kafkactl.KClient, tMeta []kafkactl.TopicMeta, tomChan chan []kafkactl.TopicOffsetMap) {
+	tom := client.MakeTopicOffsetMap(tMeta)
+	tomChan <- tom
+	return
+}
 
 func refreshMetadata(topics ...string) {
 	client, err := kafkactl.NewClient(bootStrap)

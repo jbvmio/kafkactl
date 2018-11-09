@@ -54,7 +54,7 @@ func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {
 	}
 	exact = true
 	var GTMeta []GroupTopicOffsetMeta
-	tSum := kafkactl.GetTopicSummary(searchTopicMeta(topic))
+	tSum := kafkactl.GetTopicSummaries(searchTopicMeta(topic))
 	gList := searchGroupListMeta(group)
 	if len(gList) < 1 || len(tSum) < 1 {
 		if len(gList) < 1 && len(tSum) >= 1 {

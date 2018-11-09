@@ -30,11 +30,12 @@ var (
 var tailCmd = &cobra.Command{
 	Use:   "tail",
 	Short: "Tail a Topic",
-	Long:  `Example: kafkactl tail -t myTopic`,
+	Long:  `Example: kafkactl tail 5 -t myTopic (Default tail length: 1)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if targetTopic == "" {
 			log.Fatalf("specify a topic, eg. --topic")
 		}
+		tailTarget := validateTailArgs(args)
 		if strParts == "" {
 			tParts = []int32{}
 		} else {
@@ -44,7 +45,7 @@ var tailCmd = &cobra.Command{
 			}
 			validateParts(tParts)
 		}
-		tailTopic(targetTopic, targetRelative, tParts...)
+		tailTopic(targetTopic, tailTarget, tParts...)
 		return
 
 	},
@@ -52,10 +53,5 @@ var tailCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(tailCmd)
-	tailCmd.Flags().Int64Var(&targetRelative, "relative", -2, "Reletive offset from the Topic Offset")
 	tailCmd.Flags().StringVarP(&strParts, "partitions", "p", "", `Comma Separated (eg: "0,1,7,9") Partitions to Tail (Default: All)`)
-	//tailCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
-	//tailCmd.Flags().BoolVar(&setConf, "set", false, "Alter an Existing Topic Config")
-	//tailCmd.Flags().StringVar(&targetConfName, "key", "", "Config Option or Key to Set")
-	//tailCmd.Flags().StringVar(&targetConfValue, "value", "", "Config Value to Set")
 }

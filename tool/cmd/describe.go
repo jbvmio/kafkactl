@@ -20,11 +20,16 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jbvmio/kafkactl"
+
 	"github.com/spf13/cobra"
 )
 
 var (
-	showLag     bool
+	showLag bool
+)
+
+const (
 	targetMatch = true
 )
 
@@ -64,11 +69,16 @@ var describeCmd = &cobra.Command{
 			printOutput(grps)
 			return
 		case strings.Contains(target, "top"):
-			tm := searchTopicMeta(args...)
-			if len(tm) < 1 {
+			var tom []kafkactl.TopicOffsetMap
+			if useFast {
+				tom = chanGetTopicOffsetMap(searchTopicMeta(args...))
+			} else {
+				tom = getTopicOffsetMap(searchTopicMeta(args...))
+			}
+			if len(tom) < 1 {
 				log.Fatalf("no results for that group/topic combination\n")
 			}
-			printOutput(tm)
+			printOutput(tom)
 			return
 		default:
 			fmt.Println("no such resource to describe:", target)
