@@ -25,7 +25,7 @@ import (
 
 var (
 	targetOffset   int64
-	targetReletive int64
+	targetRelative int64
 	performReset   bool
 	allParts       bool
 	targetNewest   bool
@@ -92,7 +92,7 @@ func init() {
 	adminCmd.AddCommand(offsetCmd)
 	offsetCmd.Flags().Int32VarP(&targetPartition, "partition", "p", -2, "Partition to Target")
 	offsetCmd.Flags().Int64VarP(&targetOffset, "offset", "o", -2, "Desired Offset")
-	offsetCmd.Flags().Int64Var(&targetReletive, "reletive", 0, "Reletive offset from the Topic Offset (Must be Negative, eg. -5)")
+	offsetCmd.Flags().Int64Var(&targetRelative, "relative", 0, "Reletive offset from the Topic Offset (Must be Negative, eg. -5)")
 	offsetCmd.Flags().BoolVarP(&allParts, "allparts", "a", false, "Perform on All Available Partitions for Specified Group and Topic.")
 	offsetCmd.Flags().BoolVar(&performReset, "reset", false, "Initiate a ResetOffset Operation")
 	offsetCmd.Flags().BoolVar(&targetNewest, "newest", false, "Target the Next Msg that would be Produced to the Topic")
