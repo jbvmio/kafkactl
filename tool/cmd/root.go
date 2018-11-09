@@ -15,12 +15,10 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"net"
 	"os"
 	"strings"
-	"sync"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -40,9 +38,6 @@ var (
 	targetGroup     string
 	targetPartition int32
 )
-
-var wg sync.WaitGroup
-var ctx = context.Background()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
