@@ -54,7 +54,7 @@ func (kc *KClient) ConsumeOffsetMsg(topic string, partition int32, offset int64)
 func (kc *KClient) ChanPartitionConsume(topic string, partition int32, offset int64, msgChan chan *Message, stopChan chan bool) { //stopChan chan os.Signal) {
 	consumer, err := sarama.NewConsumerFromClient(kc.cl)
 	if err != nil {
-		errMsg := fmt.Sprintf("ERROR: %v")
+		errMsg := fmt.Sprintf("ERROR: %v", err)
 		msgChan <- &Message{
 			Value: []byte(errMsg),
 		}
@@ -62,7 +62,7 @@ func (kc *KClient) ChanPartitionConsume(topic string, partition int32, offset in
 	}
 	partitionConsumer, err := consumer.ConsumePartition(topic, partition, offset)
 	if err != nil {
-		errMsg := fmt.Sprintf("ERROR: %v")
+		errMsg := fmt.Sprintf("ERROR: %v", err)
 		msgChan <- &Message{
 			Value: []byte(errMsg),
 		}

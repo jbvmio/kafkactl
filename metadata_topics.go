@@ -26,22 +26,45 @@ type TopicMeta struct {
 	OfflineReplicas []int32
 }
 
+type TopicOffsetMap struct {
+	Topic            string
+	TopicMeta        []TopicMeta
+	PartitionOffsets map[int32]int64
+}
+
 // TopicOffsetGet is WiP* for a TopicMeta struct to get its' the current, newest topic offset for its' partition.
 type TopicOffsetGet interface {
 	GetPartitionOffset(client KClient, topic string, partition int32)
 }
 
-/*
-func (tm *TopicMeta) GetPartitionOffset(client KClient, topic string, partition int32) {
-	off, err := client.GetOffsetNewest(topic, partition)
-	if err != nil {
-		off = -7777
+func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
+	var TOM []TopicOffsetMap
+	parts := make(map[string][]int32)
+	tmMap := make(map[string][]TopicMeta)
+	for _, tm := range topicMeta {
+		parts[tm.Topic] = append(parts[tm.Topic], tm.Partition)
+		tmMap[tm.Topic] = append(tmMap[tm.Topic], tm)
 	}
-	tm.Offset = off
+	for topic := range tmMap {
+		poMap := make(map[int32]int64)
+		for _, p := range parts[topic] {
+			off, err := kc.GetOffsetNewest(topic, p)
+			if err != nil {
+				off = -7777
+			}
+			poMap[p] = off
+		}
+		tom := TopicOffsetMap{
+			Topic:            topic,
+			TopicMeta:        tmMap[topic],
+			PartitionOffsets: poMap,
+		}
+		TOM = append(TOM, tom)
+	}
+	return TOM
 }
-*/
 
-func GetTopicSummary(topicMeta []TopicMeta) []TopicSummary {
+func GetTopicSummaries(topicMeta []TopicMeta) []TopicSummary {
 	var topicSummary []TopicSummary
 	parts := make(map[string][]int32, len(topicMeta))
 	isrs := make(map[string][]int32, len(topicMeta))
