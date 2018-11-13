@@ -22,11 +22,14 @@ import (
 
 	"github.com/jbvmio/kafkactl"
 
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 )
 
 var (
-	showLag bool
+	showLag    bool
+	leaderList string
+	clientID   string
 )
 
 const (
@@ -39,7 +42,7 @@ var describeCmd = &cobra.Command{
 	Long: `Examples:
   kafkactl describe group myConsumerGroup
   kafkactl describe topic myTopic`,
-	Aliases: []string{"desc", "descr", "des"},
+	Aliases: []string{"desc", "descr", "des", "get"},
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			cmd.Help()
@@ -50,8 +53,11 @@ var describeCmd = &cobra.Command{
 		switch targetMatch {
 		case strings.Contains(target, "gro"):
 			grps := searchGroupMeta(args...)
-			if targetTopic != "" {
+			if cmd.Flags().Changed("topic") {
 				grps = groupMetaByTopic(targetTopic, grps)
+			}
+			if cmd.Flags().Changed("clientid") {
+				grps = groupMetaByMember(clientID, grps)
 			}
 			if len(grps) < 1 {
 				log.Fatalf("no results for that group/topic combination\n")
@@ -78,6 +84,17 @@ var describeCmd = &cobra.Command{
 			if len(tom) < 1 {
 				log.Fatalf("no results for that group/topic combination\n")
 			}
+			if cmd.Flags().Changed("leaders") {
+				var leaders []int32
+				ldrs := strings.Split(leaderList, ",")
+				for _, l := range ldrs {
+					leaders = append(leaders, cast.ToInt32(l))
+				}
+				validateLeaders(leaders)
+				tom = filterTOMByLeader(tom, leaders)
+				printOutput(tom)
+				return
+			}
 			printOutput(tom)
 			return
 		default:
@@ -91,5 +108,6 @@ func init() {
 	rootCmd.AddCommand(describeCmd)
 	describeCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 	describeCmd.Flags().BoolVarP(&showLag, "lag", "l", false, "Display Offset and Lag details")
-	//describeCmd.Flags().StringVarP(&clientID, "clientid", "i", "", "Find groups by ClientID")
+	describeCmd.Flags().StringVar(&leaderList, "leaders", "", `Only show specified Leaders. (eg "1,3,7")`)
+	describeCmd.Flags().StringVarP(&clientID, "clientid", "i", "", "Find groups by ClientID")
 }

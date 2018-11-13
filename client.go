@@ -108,6 +108,11 @@ func (kc *KClient) Logger(prefix string) {
 	sarama.Logger = log.New(os.Stdout, prefix, log.LstdFlags)
 }
 
+// SaramaConfig returns and allows modification of the underlying sarama client config
+func (kc *KClient) SaramaConfig() *sarama.Config {
+	return kc.config
+}
+
 func getConf() (*sarama.Config, error) {
 	conf := sarama.NewConfig()
 	conf.ClientID = "kafkactl"

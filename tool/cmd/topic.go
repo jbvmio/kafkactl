@@ -38,7 +38,7 @@ To see detailed metadata information, use the meta command or the -m flag here.
 		if len(args) < 1 {
 			args = []string{""}
 		}
-		if meta {
+		if meta || cmd.Flags().Changed("leaders") {
 			desc := []string{"topic"}
 			desc = append(desc, args...)
 			describeCmd.Run(cmd, desc)
@@ -56,5 +56,29 @@ func init() {
 	rootCmd.AddCommand(topicCmd)
 	topicCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 	topicCmd.Flags().BoolVarP(&meta, "meta", "m", false, "Show extra/metadata details")
+	topicCmd.Flags().StringVar(&leaderList, "leaders", "", `Only show specified Leaders. (eg "1,3,7"; auto passes to --meta)`)
 	topicCmd.Flags().BoolVarP(&refreshMeta, "refresh-metadata", "r", false, "Query the Cluster to Refresh the Available Metadata for the given Topic(s)")
 }
+
+/**	Try to add filter topics by partition leader **
+
+if cmd.Flags().Changed("leaders") {
+	var tsMatch []kafkactl.TopicSummary
+	var leaders []int32
+	ldrs := strings.Split(onlyLeaders, ",")
+	for _, l := range ldrs {
+		leaders = append(leaders, cast.ToInt32(l))
+	}
+	validateLeaders(leaders)
+	for _, l := range leaders {
+		for _, t := range ts {
+			if t.Leader == l {
+				tsMatch = append(tsMatch, t)
+			}
+		}
+	}
+	printOutput(tsMatch)
+	return
+}
+
+*/

@@ -30,7 +30,7 @@ var (
 var tailCmd = &cobra.Command{
 	Use:   "tail",
 	Short: "Tail a Topic",
-	Long:  `Example: kafkactl tail 5 -t myTopic (Default tail length: 1)`,
+	Long:  `Example: kafkactl tail 5 -t myTopic (Default tail start from newest: 1)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if targetTopic == "" {
 			log.Fatalf("specify a topic, eg. --topic")
@@ -47,7 +47,6 @@ var tailCmd = &cobra.Command{
 		}
 		tailTopic(targetTopic, tailTarget, tParts...)
 		return
-
 	},
 }
 

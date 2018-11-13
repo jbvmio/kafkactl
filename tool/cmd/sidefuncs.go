@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/fatih/color"
 	"github.com/jbvmio/kafkactl"
@@ -24,21 +25,22 @@ import (
 )
 
 func printOutput(i interface{}) {
+	var highlightColumn = true
 	headerFmt := color.New(color.FgGreen, color.Underline).SprintfFunc()
 	columnFmt := color.New(color.FgYellow).SprintfFunc()
 	var tbl table.Table
 	switch i := i.(type) {
 	case []kafkactl.TopicOffsetMap:
-		tbl = table.New("TOPIC", "PART", "OFFSET", "REPLICAS", "ISRs", "OFFLINE", "LEADER")
+		tbl = table.New("TOPIC", "PART", "OFFSET", "LEADER", "REPLICAS", "ISRs", "OFFLINE")
 		for _, v := range i {
 			for _, p := range v.TopicMeta {
-				tbl.AddRow(p.Topic, p.Partition, v.PartitionOffsets[p.Partition], p.Replicas, p.ISRs, p.OfflineReplicas, p.Leader)
+				tbl.AddRow(p.Topic, p.Partition, v.PartitionOffsets[p.Partition], p.Leader, p.Replicas, p.ISRs, p.OfflineReplicas)
 			}
 		}
 	case []kafkactl.TopicSummary:
-		tbl = table.New("TOPIC", "PART", "RFactor", "ISRs", "OFFLINE", "LEADER")
+		tbl = table.New("TOPIC", "PART", "RFactor", "ISRs", "OFFLINE")
 		for _, v := range i {
-			tbl.AddRow(v.Topic, v.Parts, v.RFactor, v.ISRs, v.OfflineReplicas, v.Leader)
+			tbl.AddRow(v.Topic, v.Parts, v.RFactor, v.ISRs, v.OfflineReplicas)
 		}
 	case []kafkactl.TopicMeta:
 		tbl = table.New("TOPIC", "PART", "REPLICAS", "ISRs", "OFFLINE", "LEADER")
@@ -76,8 +78,35 @@ func printOutput(i interface{}) {
 		for _, v := range i {
 			tbl.AddRow(v.Topic, v.Config, v.Value, v.ReadOnly, v.Default, v.Sensitive)
 		}
+	case *kafkactl.Message:
+		highlightColumn = false
+		if showMsgTimestamp {
+			if showMsgKey {
+				msgHeader := fmt.Sprintf("TOPIC:[%v] PARTITION:[%v] OFFSET:[%v] KEY:[%v] TIMESTAMP:[%v]", i.Topic, i.Partition, i.Offset, fmt.Sprintf("%s", i.Key), i.Timestamp)
+				tbl = table.New(msgHeader)
+				tbl.AddRow(fmt.Sprintf("%s", i.Value))
+			} else {
+				msgHeader := fmt.Sprintf("TOPIC:[%v] PARTITION:[%v] OFFSET:[%v] TIMESTAMP:[%v]", i.Topic, i.Partition, i.Offset, i.Timestamp)
+				tbl = table.New(msgHeader)
+				tbl.AddRow(fmt.Sprintf("%s", i.Value))
+			}
+		} else {
+			if showMsgKey {
+				msgHeader := fmt.Sprintf("TOPIC:[%v] PARTITION:[%v] OFFSET:[%v] KEY:[%v]", i.Topic, i.Partition, i.Offset, fmt.Sprintf("%s", i.Key))
+				tbl = table.New(msgHeader)
+				tbl.AddRow(fmt.Sprintf("%s", i.Value))
+			} else {
+				msgHeader := fmt.Sprintf("TOPIC:[%v] PARTITION:[%v] OFFSET:[%v]", i.Topic, i.Partition, i.Offset)
+				tbl = table.New(msgHeader)
+				tbl.AddRow(fmt.Sprintf("%s", i.Value))
+			}
+		}
 	}
-	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
+	if highlightColumn {
+		tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
+	} else {
+		tbl.WithHeaderFormatter(headerFmt)
+	}
 	tbl.Print()
 	fmt.Println()
 }
@@ -123,4 +152,10 @@ func testFunc() {
 		log.Fatalf("Error: %v\n", err)
 	}
 	fmt.Println(offset, lag)
+}
+
+// StdinAvailable here
+func stdinAvailable() bool {
+	stat, _ := os.Stdin.Stat()
+	return (stat.Mode() & os.ModeCharDevice) == 0
 }

@@ -20,27 +20,35 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	targetRFactor int16
-)
-
-var createCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create Topics",
-	Long:  `Example kafkactl admin create -t myTopic`,
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete Topics or Groups",
+	Long: `Examples:
+  kafkactl admin delete -t myTopic
+  kafkactl admin delete -g myGroup`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("partitions") || !cmd.Flags().Changed("rfactor") {
-			log.Fatalf("must specify --topic, --partitions and --rfactor")
+		if cmd.Flags().Changed("topic") && cmd.Flags().Changed("group") {
+			log.Fatalf("specify either group or topic, not both, try again.")
 		}
-		createTopic(targetTopic, targetPartition, targetRFactor)
+		if cmd.Flags().Changed("topic") {
+			deleteTopic(targetTopic)
+			return
+		}
+		if cmd.Flags().Changed("group") {
+			deleteGroup(targetGroup)
+			return
+		}
+
+		printOutput(searchTopicConfig(targetTopic))
 		return
+
 	},
 }
 
 func init() {
-	adminCmd.AddCommand(createCmd)
-	createCmd.Flags().Int32VarP(&targetPartition, "partitions", "p", -2, "Desired Partition Count")
-	createCmd.Flags().Int16VarP(&targetRFactor, "rfactor", "r", -2, "Desired Replication Factor")
+	adminCmd.AddCommand(deleteCmd)
 	//createCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
-
+	//createCmd.Flags().BoolVar(&setConf, "set", false, "Alter an Existing Topic Config")
+	//createCmd.Flags().StringVar(&targetConfName, "key", "", "Config Option or Key to Set")
+	//createCmd.Flags().StringVar(&targetConfValue, "value", "", "Config Value to Set")
 }

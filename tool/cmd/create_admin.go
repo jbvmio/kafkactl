@@ -15,19 +15,28 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
+	"fmt"
+	"log"
+
+	"github.com/jbvmio/kafkactl"
 )
 
-var adminCmd = &cobra.Command{
-	Use:   "admin",
-	Short: "Perform Various Kafka Administration Tasks",
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-		return
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(adminCmd)
-	adminCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
+func createTopic(name string, partitions int32, rFactor int16) {
+	client, err := kafkactl.NewClient(bootStrap)
+	if err != nil {
+		log.Fatalf("Error: %v\n", err)
+	}
+	defer func() {
+		if err := client.Close(); err != nil {
+			log.Fatalf("Error closing client: %v\n", err)
+		}
+	}()
+	if verbose {
+		client.Logger("")
+	}
+	err = client.AddTopic(name, partitions, rFactor)
+	if err != nil {
+		log.Fatalf("Error creating topic: %v\n", err)
+	}
+	fmt.Println("\nSuccessfully created topic", name, "\n")
 }

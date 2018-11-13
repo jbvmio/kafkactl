@@ -15,12 +15,13 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/spf13/cobra"
 )
 
 var (
 	groupList []string
-	clientID  string
 )
 
 var groupCmd = &cobra.Command{
@@ -38,13 +39,17 @@ var groupCmd = &cobra.Command{
 			describeCmd.Run(cmd, desc)
 			return
 		}
-		if meta || showLag {
+		if cmd.Flags().Changed("meta") || cmd.Flags().Changed("lag") || cmd.Flags().Changed("clientid") {
 			desc := []string{"group"}
 			desc = append(desc, args...)
 			describeCmd.Run(cmd, desc)
 			return
 		}
-		printOutput(searchGroupListMeta(args...))
+		grps := searchGroupListMeta(args...)
+		if len(grps) < 1 {
+			log.Fatalf("no results found.\n")
+		}
+		printOutput(grps)
 	},
 }
 
@@ -52,6 +57,6 @@ func init() {
 	rootCmd.AddCommand(groupCmd)
 	groupCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 	groupCmd.Flags().BoolVarP(&meta, "meta", "m", false, "Show extra/metadata details")
-	groupCmd.Flags().BoolVarP(&showLag, "lag", "l", false, "Display Offset and Lag details (only if passing to --meta)")
+	groupCmd.Flags().BoolVarP(&showLag, "lag", "l", false, "Display Offset and Lag details (auto passes to --meta)")
 	groupCmd.Flags().StringVarP(&clientID, "clientid", "i", "", "Find groups by ClientID")
 }

@@ -92,7 +92,7 @@ ConsumeLoop:
 		case msg := <-msgChan:
 			fmt.Printf("%s\n", msg.Value)
 		case <-sigChan:
-			fmt.Println("Stop Received ...")
+			fmt.Printf("signal: interrupt\n  Stopping kafkactl ...\n")
 			for i := 0; i < len(pMap); i++ {
 				stopChan <- true
 			}

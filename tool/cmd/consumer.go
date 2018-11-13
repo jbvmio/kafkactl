@@ -13,21 +13,3 @@
 // limitations under the License.
 
 package cmd
-
-import (
-	"github.com/spf13/cobra"
-)
-
-var adminCmd = &cobra.Command{
-	Use:   "admin",
-	Short: "Perform Various Kafka Administration Tasks",
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-		return
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(adminCmd)
-	adminCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
-}

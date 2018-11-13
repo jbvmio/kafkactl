@@ -70,7 +70,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVarP(&bootStrap, "broker", "b", "", "Bootstrap Kafka Broker")
+	rootCmd.PersistentFlags().StringVarP(&bootStrap, "broker", "b", "localhost", "Bootstrap Kafka Broker")
 	rootCmd.PersistentFlags().StringVarP(&targetTopic, "topic", "t", "", "Specify a Target Topic")
 	rootCmd.PersistentFlags().StringVarP(&targetGroup, "group", "g", "", "Specify a Target Group")
 	rootCmd.PersistentFlags().StringVar(&bsport, "port", "9092", "Port used for Bootstrap Kafka Broker")

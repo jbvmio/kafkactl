@@ -15,19 +15,26 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
+	"fmt"
+	"log"
+	"os"
+	"os/exec"
 )
 
-var adminCmd = &cobra.Command{
-	Use:   "admin",
-	Short: "Perform Various Kafka Administration Tasks",
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-		return
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(adminCmd)
-	adminCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
+func runScript(file string, args ...string) {
+	osShell := os.Getenv("SHELL")
+	fmt.Println(osShell)
+	//psCommand := `powershell.exe`
+	cmdString := []string{"-c", file}
+	cmdString = append(cmdString, args...)
+	cmd := exec.Command(osShell, cmdString...)
+	//cmd := exec.Command("powershell.exe", "-c", file)
+	//if err := cmd.Start(); err != nil {
+	//  log.Fatalf("Error1: %v", err)
+	//}
+	out, err := cmd.Output()
+	if err != nil {
+		log.Fatalf("Script Run Error: %v\n%s\n", err, out)
+	}
+	fmt.Printf("%s", out)
 }

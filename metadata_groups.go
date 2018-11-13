@@ -11,6 +11,7 @@ type GroupListMeta struct {
 	Group       string
 	Type        string
 	Coordinator string
+	State       string
 }
 
 type GroupMeta struct {
@@ -19,6 +20,13 @@ type GroupMeta struct {
 	Members           []string
 	TopicMemberMap    map[string][]string
 	MemberAssignments []MemberMeta
+}
+
+type QuickGroupMeta struct {
+	Group        string
+	State        string
+	ProtocolType string
+	Protocol     string
 }
 
 type MemberMeta struct {
@@ -61,6 +69,10 @@ func (kc *KClient) BrokerGroups(brokerID int32) ([]string, error) {
 
 func (kc *KClient) GetGroupListMeta() ([]GroupListMeta, error) {
 	var groups []GroupListMeta
+	qgMeta, err := kc.QuickGroupMeta()
+	if err != nil {
+		return groups, err
+	}
 	for _, broker := range kc.brokers {
 		grps, err := broker.ListGroups(&sarama.ListGroupsRequest{})
 		if err != nil {
@@ -72,6 +84,11 @@ func (kc *KClient) GetGroupListMeta() ([]GroupListMeta, error) {
 				Group:       k,
 				Type:        v,
 				Coordinator: coord,
+			}
+			for _, qg := range qgMeta {
+				if qg.Group == k {
+					grp.State = qg.State
+				}
 			}
 			groups = append(groups, grp)
 		}
@@ -138,6 +155,41 @@ func (kc *KClient) GetGroupMeta() ([]GroupMeta, error) {
 		groupMeta = append(groupMeta, group)
 	}
 	return groupMeta, nil
+}
+
+// QuickGroupMeta returns any additional information not present from a GetGroupMeta request.
+func (kc *KClient) QuickGroupMeta() ([]QuickGroupMeta, error) {
+	var qGroupMeta []QuickGroupMeta
+	gl, err := kc.ListGroups()
+	if err != nil {
+		return qGroupMeta, err
+	}
+	request := sarama.DescribeGroupsRequest{
+		Groups: gl,
+	}
+	var groups []*sarama.GroupDescription
+	for _, broker := range kc.brokers {
+		desc, err := broker.DescribeGroups(&request)
+		if err != nil {
+			fmt.Println("ERROR on desc:", err)
+		}
+		for _, g := range desc.Groups {
+			code := int16(g.Err)
+			if code == 0 {
+				groups = append(groups, g)
+			}
+		}
+	}
+	for _, grp := range groups {
+		qgm := QuickGroupMeta{
+			Group:        grp.GroupId,
+			State:        grp.State,
+			ProtocolType: grp.ProtocolType,
+			Protocol:     grp.Protocol,
+		}
+		qGroupMeta = append(qGroupMeta, qgm)
+	}
+	return qGroupMeta, nil
 }
 
 // FilterUnique here

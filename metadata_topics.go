@@ -13,7 +13,6 @@ type TopicSummary struct {
 	RFactor         int
 	ISRs            int
 	OfflineReplicas int
-	Leader          int32
 	Partitions      []int32
 }
 
@@ -30,6 +29,7 @@ type TopicOffsetMap struct {
 	Topic            string
 	TopicMeta        []TopicMeta
 	PartitionOffsets map[int32]int64
+	PartitionLeaders map[int32]int32
 }
 
 // TopicOffsetGet is WiP* for a TopicMeta struct to get its' the current, newest topic offset for its' partition.
@@ -54,10 +54,15 @@ func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
 			}
 			poMap[p] = off
 		}
+		pLdrMap := make(map[int32]int32, len(tmMap[topic]))
+		for _, tm := range tmMap[topic] {
+			pLdrMap[tm.Partition] = tm.Leader
+		}
 		tom := TopicOffsetMap{
 			Topic:            topic,
 			TopicMeta:        tmMap[topic],
 			PartitionOffsets: poMap,
+			PartitionLeaders: pLdrMap,
 		}
 		TOM = append(TOM, tom)
 	}
@@ -84,7 +89,6 @@ func GetTopicSummaries(topicMeta []TopicMeta) []TopicSummary {
 			ts := TopicSummary{
 				Topic:           tm.Topic,
 				Parts:           partitions,
-				Leader:          tm.Leader,
 				RFactor:         len(reps[tm.Topic]) / len(parts[tm.Topic]),
 				ISRs:            len(isrs[tm.Topic]),
 				OfflineReplicas: len(off[tm.Topic]),

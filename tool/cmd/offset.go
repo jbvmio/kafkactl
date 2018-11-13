@@ -33,9 +33,10 @@ var (
 )
 
 var offsetCmd = &cobra.Command{
-	Use:     "offset",
-	Short:   "Manage Offsets",
-	Long:    `Example kafkactl admin offset -g myGroup -t myTopic -p 5 --reset-to 999`,
+	Use:   "offset",
+	Short: "Manage Offsets",
+	Long: `Example: kafkactl admin offset -g myGroup -t myTopic -p 5 --reset-to 999
+  Default: (without using --reset flag) shows partition offset details for the specified group and topic.`,
 	Aliases: []string{"offsets"},
 	Run: func(cmd *cobra.Command, args []string) {
 		if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("group") {

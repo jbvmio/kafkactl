@@ -68,7 +68,6 @@ func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {
 						Topic:       ts.Topic,
 						Partition:   p,
 						TopicOffset: off,
-						TopicLeader: ts.Leader,
 					}
 					gtMeta := GroupTopicOffsetMeta{
 						tpm,
@@ -90,9 +89,8 @@ func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {
 		for _, p := range ts.Partitions {
 			for _, grp := range gList {
 				tpm := TopicPartitionMeta{
-					Topic:       ts.Topic,
-					Partition:   p,
-					TopicLeader: ts.Leader,
+					Topic:     ts.Topic,
+					Partition: p,
 				}
 				gpm := GroupPartitionMeta{
 					Group:            grp.Group,

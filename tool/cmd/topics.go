@@ -88,6 +88,40 @@ func getTopicOffsetMap(tm []kafkactl.TopicMeta) []kafkactl.TopicOffsetMap {
 
 }
 
+func filterTOMByLeader(tom []kafkactl.TopicOffsetMap, leaders []int32) []kafkactl.TopicOffsetMap {
+	var TOM []kafkactl.TopicOffsetMap
+
+	done := make(map[string]bool)
+	for _, t := range tom {
+		var topicMeta []kafkactl.TopicMeta
+		if !done[t.Topic] {
+			done[t.Topic] = true
+			for _, tm := range t.TopicMeta {
+				for _, leader := range leaders {
+					if t.PartitionLeaders[tm.Partition] == leader {
+						topicMeta = append(topicMeta, tm)
+					}
+				}
+			}
+		}
+		tom := kafkactl.TopicOffsetMap{
+			Topic:            t.Topic,
+			TopicMeta:        topicMeta,
+			PartitionOffsets: t.PartitionOffsets,
+			PartitionLeaders: t.PartitionLeaders,
+		}
+		TOM = append(TOM, tom)
+	}
+	/*
+		if useFast {
+			TOM = chanGetTopicOffsetMap(topicMeta)
+		} else {
+			TOM = getTopicOffsetMap(topicMeta)
+		}
+	*/
+	return TOM
+}
+
 func chanGetTopicOffsetMap(t []kafkactl.TopicMeta) []kafkactl.TopicOffsetMap {
 	client, err := kafkactl.NewClient(bootStrap)
 	if err != nil {
@@ -145,5 +179,16 @@ func refreshMetadata(topics ...string) {
 	err = client.RefreshMetadata(topics...)
 	if err != nil {
 		log.Fatalf("Error refreshing topic metadata: %v\n", err)
+	}
+}
+
+func validateLeaders(leaders []int32) {
+	pMap := make(map[int32]bool, len(leaders))
+	for _, p := range leaders {
+		if pMap[p] {
+			log.Fatalf("Error: invalid leader/brokerID entered or duplicate.")
+		} else {
+			pMap[p] = true
+		}
 	}
 }
