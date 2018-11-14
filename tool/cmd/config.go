@@ -15,20 +15,50 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/spf13/cobra"
+)
+
+var (
+	genSample           bool
+	showConfig          bool
+	showConfigFull      bool
+	changeCurrentTarget string
+	configLocation      = string(homeDir() + "/.2kafkactl.yaml")
 )
 
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Manage kafkactl Configuration",
 	Run: func(cmd *cobra.Command, args []string) {
+		if genSample {
+			generateSampleConfig(configLocation)
+			return
+		}
+		if showConfig {
+			printConfigSummary(configLocation)
+			return
+		}
+		if showConfigFull {
+			printConfig(configLocation)
+		}
+		if cmd.Flags().Changed("use") {
+			if changeCurrentTarget == "" {
+				log.Fatalf("Enter a config entry name to switch.\n")
+			}
+			changeCurrent(changeCurrentTarget, configLocation)
+			return
+		}
 		return
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(configCmd)
-	//configCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
-	//configCmd.Flags().BoolVarP(&meta, "meta", "m", false, "Show extra/metadata details")
+	configCmd.Flags().BoolVar(&genSample, "sample", false, "Generate a Sample Configuration at ~/.2kafkactl (will not overwrite existing if found)")
+	configCmd.Flags().BoolVar(&showConfig, "show", false, "Show available config targets")
+	configCmd.Flags().BoolVar(&showConfigFull, "show-full", false, "Print current config and exit")
+	configCmd.Flags().StringVar(&changeCurrentTarget, "use", "", "Switch Current Target in Config")
 	//configCmd.Flags().BoolVarP(&refreshMeta, "refresh-metadata", "r", false, "Query the Cluster to Refresh the Available Metadata for the given Topic(s)")
 }

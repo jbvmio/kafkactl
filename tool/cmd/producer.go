@@ -136,7 +136,6 @@ func launchConsoleProducer(topic, key string, partitions ...int32) {
 	if verbose {
 		client.Logger("")
 	}
-
 	client.SaramaConfig().Producer.RequiredAcks = sarama.WaitForAll
 	client.SaramaConfig().Producer.Return.Successes = true
 	client.SaramaConfig().Producer.Return.Errors = true

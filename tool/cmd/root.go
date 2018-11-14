@@ -16,17 +16,18 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"strings"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/jbvmio/kafkactl"
+
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
-	cfgFile   string
+	cfgFile   bool
 	bootStrap string
 	bsport    string
 	exact     bool
@@ -37,6 +38,9 @@ var (
 	targetTopic     string
 	targetGroup     string
 	targetPartition int32
+
+	kafkaBrokers []string
+	burrowEPs    []string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -44,15 +48,32 @@ var rootCmd = &cobra.Command{
 	Use:   "kafkactl",
 	Short: "kafkactl: Kafka Management Tool",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		/*
+		if configCmd.CalledAs() != "config" {
 			if bootStrap == "" {
-				if fileExists(configLocation) {
-					bootStrap = getCurrentTarget()
+
+				if cfgFile {
+					var err error
+					bootStrap, err = kafkactl.ReturnFirstValid(kafkaBrokers...)
+					if err != nil {
+						log.Fatalf("Error reading config: %v\n", err)
+					}
 				}
+
+				/*
+					if fileExists(configLocation) {
+						var err error
+						kafkaBrokers, burrowEPs = getEntries(configLocation)
+						bootStrap, err = kafkactl.ReturnFirstValid(kafkaBrokers...)
+						if err != nil {
+							log.Fatalf("Error reading config: %v\n", err)
+						}
+					}
+				*/
+
 			}
-		*/
-		if !strings.Contains(bootStrap, ":") {
-			bootStrap = net.JoinHostPort(bootStrap, bsport)
+			if !strings.Contains(bootStrap, ":") {
+				bootStrap = net.JoinHostPort(bootStrap, bsport)
+			}
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -70,7 +91,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVarP(&bootStrap, "broker", "b", "localhost", "Bootstrap Kafka Broker")
+	rootCmd.PersistentFlags().StringVarP(&bootStrap, "broker", "b", "", "Bootstrap Kafka Broker")
 	rootCmd.PersistentFlags().StringVarP(&targetTopic, "topic", "t", "", "Specify a Target Topic")
 	rootCmd.PersistentFlags().StringVarP(&targetGroup, "group", "g", "", "Specify a Target Group")
 	rootCmd.PersistentFlags().StringVar(&bsport, "port", "9092", "Port used for Bootstrap Kafka Broker")
@@ -78,6 +99,14 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&useFast, "fast", "F", true, "Use go routine methods when available for faster results")
 }
 
+func initConfig() {
+	if fileExists(configLocation) {
+		kafkaBrokers, burrowEPs = getEntries(configLocation)
+		cfgFile = true
+	}
+}
+
+/*
 func initConfig() {
 	if cfgFile != "" {
 		// Use config file from the flag.
@@ -102,3 +131,4 @@ func initConfig() {
 		//fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }
+*/

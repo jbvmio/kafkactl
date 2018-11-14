@@ -67,6 +67,20 @@ func (kc *KClient) Controller() (*sarama.Broker, error) {
 	return kc.cl.Controller()
 }
 
+func (kc *KClient) APIVersions() (*sarama.ApiVersionsResponse, error) {
+	var apiRes *sarama.ApiVersionsResponse
+	controller, err := kc.cl.Controller()
+	if err != nil {
+		return apiRes, err
+	}
+	apiReq := sarama.ApiVersionsRequest{}
+	apiRes, err = controller.ApiVersions(&apiReq)
+	if err != nil {
+		return apiRes, err
+	}
+	return apiRes, nil
+}
+
 func (kc *KClient) Connect() error {
 	for _, broker := range kc.brokers {
 		if ok, _ := broker.Connected(); !ok {
@@ -123,4 +137,17 @@ func getConf() (*sarama.Config, error) {
 
 func getClient(broker string, conf *sarama.Config) (sarama.Client, error) {
 	return sarama.NewClient([]string{broker}, conf)
+}
+
+// ReturnFirstValid returns the first available, connectable broker provided from a broker list
+func ReturnFirstValid(brokers ...string) (string, error) {
+	for _, b := range brokers {
+		broker := sarama.NewBroker(b)
+		broker.Open(nil)
+		ok, _ := broker.Connected()
+		if ok {
+			return b, nil
+		}
+	}
+	return "", fmt.Errorf("Error: No Connectivity to Provided Brokers.")
 }

@@ -26,7 +26,7 @@ var (
 
 var groupCmd = &cobra.Command{
 	Use:     "group",
-	Short:   "Search and Retrieve Group details",
+	Short:   "Search and Retrieve Group Info",
 	Long:    `Example kafkactl group group1 group2`,
 	Aliases: []string{"groups"},
 	Run: func(cmd *cobra.Command, args []string) {

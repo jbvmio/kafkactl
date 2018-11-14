@@ -40,11 +40,11 @@ var messageCmd = &cobra.Command{
 		}
 		if cmd.Flags().Changed("timestamp") {
 			msg := getMSGByTime(targetTopic, targetPartition, timeQuery)
-			printOutput(msg)
+			printSingleMsg(msg)
 			return
 		}
 		msg := getMSG(targetTopic, targetPartition, targetOffset)
-		printOutput(msg)
+		printSingleMsg(msg)
 		return
 	},
 }

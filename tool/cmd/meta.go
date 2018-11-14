@@ -51,6 +51,9 @@ var metaCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Error obtaining controller: %v\n", err)
 		}
+		if err != nil {
+			log.Fatalf("Error obtaining api versions: %v\n", err)
+		}
 		fmt.Println("\nBrokers: ", meta.BrokerCount())
 		fmt.Println(" Topics: ", meta.TopicCount())
 		fmt.Println(" Groups: ", meta.GroupCount())

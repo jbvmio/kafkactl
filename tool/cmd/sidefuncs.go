@@ -111,6 +111,27 @@ func printOutput(i interface{}) {
 	fmt.Println()
 }
 
+func printSingleMsg(i *kafkactl.Message) {
+	if showMsgTimestamp {
+		if showMsgKey {
+			msgHeader := color.YellowString("\nTOPIC:[%v] PARTITION:[%v] OFFSET:[%v] KEY:[%v] TIMESTAMP:[%v]", i.Topic, i.Partition, i.Offset, fmt.Sprintf("%s", i.Key), i.Timestamp)
+			fmt.Printf("%v\n%s\n", msgHeader, i.Value)
+		} else {
+			msgHeader := color.YellowString("\nTOPIC:[%v] PARTITION:[%v] OFFSET:[%v] TIMESTAMP:[%v]", i.Topic, i.Partition, i.Offset, i.Timestamp)
+			fmt.Printf("%v\n%s\n", msgHeader, i.Value)
+		}
+	} else {
+		if showMsgKey {
+			msgHeader := color.YellowString("\nTOPIC:[%v] PARTITION:[%v] OFFSET:[%v] KEY:[%v]", i.Topic, i.Partition, i.Offset, fmt.Sprintf("%s", i.Key))
+			fmt.Printf("%v\n%s\n", msgHeader, i.Value)
+		} else {
+			msgHeader := color.YellowString("\nTOPIC:[%v] PARTITION:[%v] OFFSET:[%v]", i.Topic, i.Partition, i.Offset)
+			fmt.Printf("%v\n%s\n", msgHeader, i.Value)
+		}
+	}
+	fmt.Println()
+}
+
 func truncateString(str string, num int) string {
 	s := str
 	if len(str) > num {
