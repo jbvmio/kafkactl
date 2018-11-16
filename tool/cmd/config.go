@@ -50,6 +50,13 @@ var configCmd = &cobra.Command{
 			changeCurrent(changeCurrentTarget, configLocation)
 			return
 		}
+		if cmd.Flags().Changed("delete") {
+			if changeCurrentTarget == "" {
+				log.Fatalf("Enter a config entry name to delete.\n")
+			}
+			writeConfig(configLocation, removeEntry(changeCurrentTarget, returnConfig(readConfig(configLocation))))
+			return
+		}
 		return
 	},
 }
@@ -60,5 +67,5 @@ func init() {
 	configCmd.Flags().BoolVar(&showConfig, "show", false, "Show available config targets")
 	configCmd.Flags().BoolVar(&showConfigFull, "show-full", false, "Print current config and exit")
 	configCmd.Flags().StringVar(&changeCurrentTarget, "use", "", "Switch Current Target in Config")
-	//configCmd.Flags().BoolVarP(&refreshMeta, "refresh-metadata", "r", false, "Query the Cluster to Refresh the Available Metadata for the given Topic(s)")
+	configCmd.Flags().StringVar(&changeCurrentTarget, "delete", "", "Delete an Entry in the Current Config")
 }

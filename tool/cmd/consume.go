@@ -13,3 +13,32 @@
 // limitations under the License.
 
 package cmd
+
+import (
+	"log"
+
+	"github.com/spf13/cobra"
+)
+
+var (
+	useGroupID string
+)
+
+var consumeCmd = &cobra.Command{
+	Use:     "consume",
+	Aliases: []string{"consumer"},
+	Short:   "Consume from Topics using Consumer Groups.",
+	Run: func(cmd *cobra.Command, args []string) {
+		if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("Group") {
+			log.Fatalf("specify both --group and --topic, try again.\n")
+		}
+		launchCG(useGroupID, verbose, targetTopic)
+		return
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(consumeCmd)
+	consumeCmd.Flags().StringVarP(&useGroupID, "Group", "G", "kafkactl", "Group ID")
+	//consumeCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
+}

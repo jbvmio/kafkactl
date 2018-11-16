@@ -80,6 +80,10 @@ var offsetCmd = &cobra.Command{
 				fmt.Println("RELETIVE WiP*")
 				return
 			}
+			if allParts {
+				resetAllPartitionsTo(targetGroup, targetTopic, targetOffset)
+				return
+			}
 			resetPartitionOffsetTo(targetGroup, targetTopic, targetPartition, targetOffset)
 			return
 		}

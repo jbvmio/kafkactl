@@ -176,3 +176,7 @@ func MakeSeqStr(nums []int32) string {
 func (kc *KClient) GetOffsetNewest(topic string, partition int32) (int64, error) {
 	return kc.cl.GetOffset(topic, partition, sarama.OffsetNewest)
 }
+
+func (kc *KClient) GetOffsetOldest(topic string, partition int32) (int64, error) {
+	return kc.cl.GetOffset(topic, partition, sarama.OffsetOldest)
+}

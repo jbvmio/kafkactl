@@ -18,13 +18,6 @@ type Message struct {
 	Timestamp  time.Time
 }
 
-/*
-type Header struct {
-	Key   []byte
-	Value []byte
-}
-*/
-
 func convertMsg(m *sarama.ConsumerMessage) (msg *Message) {
 	return &Message{
 		Key:       m.Key,

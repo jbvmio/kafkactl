@@ -122,6 +122,14 @@ func (kc *KClient) Logger(prefix string) {
 	sarama.Logger = log.New(os.Stdout, prefix, log.LstdFlags)
 }
 
+func (kc *KClient) Logf(format string, v ...interface{}) {
+	sarama.Logger.Printf(format, v...)
+}
+
+func (kc *KClient) Log(v ...interface{}) {
+	sarama.Logger.Println(v...)
+}
+
 // SaramaConfig returns and allows modification of the underlying sarama client config
 func (kc *KClient) SaramaConfig() *sarama.Config {
 	return kc.config

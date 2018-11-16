@@ -20,8 +20,29 @@ import (
 	"log"
 	"os"
 
+	"github.com/jbvmio/kafkactl"
 	yaml "gopkg.in/yaml.v2"
 )
+
+var (
+	cl   *kafkactl.KClient
+	errd error
+)
+
+func launchClient() {
+	cl, errd = kafkactl.NewClient(bootStrap)
+	if errd != nil {
+		log.Fatalf("Error: %v\n", errd)
+	}
+	defer func() {
+		if errd = cl.Close(); errd != nil {
+			log.Fatalf("Error closing client: %v\n", errd)
+		}
+	}()
+	if verbose {
+		cl.Logger("")
+	}
+}
 
 // Config contains a collection of cluster entries
 type Config struct {
@@ -109,6 +130,7 @@ func writeConfig(path string, config []byte) {
 	}
 }
 
+// alternate from below
 func removeFromConfig(name string, config *Config) {
 	for i := len(config.Entries) - 1; i >= 0; i-- {
 		if config.Entries[i].Name != name {
@@ -117,7 +139,7 @@ func removeFromConfig(name string, config *Config) {
 	}
 }
 
-func removeEntry(name string, config *Config) {
+func removeEntry(name string, config Config) []byte {
 	tmp := config.Entries[:0]
 	for _, c := range config.Entries {
 		if c.Name != name {
@@ -125,6 +147,11 @@ func removeEntry(name string, config *Config) {
 		}
 	}
 	config.Entries = tmp
+	y, err := yaml.Marshal(config)
+	if err != nil {
+		log.Fatalf("Error removing entry from config: %v\n", err)
+	}
+	return y
 }
 
 func homeDir() string {
