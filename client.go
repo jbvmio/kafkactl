@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Shopify/sarama"
+	"github.com/jbvmio/randstr"
 )
 
 type KClient struct {
@@ -136,8 +137,9 @@ func (kc *KClient) SaramaConfig() *sarama.Config {
 }
 
 func getConf() (*sarama.Config, error) {
+	random := randstr.Hex(3)
 	conf := sarama.NewConfig()
-	conf.ClientID = "kafkactl"
+	conf.ClientID = string("kafkactl" + "-" + random)
 	conf.Version = sarama.V1_1_0_0
 	err := conf.Validate()
 	return conf, err
