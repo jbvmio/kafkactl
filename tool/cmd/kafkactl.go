@@ -62,6 +62,15 @@ func getEntries(path string) (kafka, burrow []string) {
 	return entry.Kafka, entry.Burrow
 }
 
+func printCurrentEntry(path string) {
+	current := getCurrentEntry(path)
+	y, err := yaml.Marshal(current)
+	if err != nil {
+		log.Fatalf("Error marshaling current entry: %v\n", err)
+	}
+	fmt.Printf("\nCURRENT:\n%s\n", y)
+}
+
 func getCurrentEntry(path string) Entry {
 	return getCurrentFromConfig(returnConfig(readConfig(path)))
 }

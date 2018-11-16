@@ -25,7 +25,7 @@ var (
 	showConfig          bool
 	showConfigFull      bool
 	changeCurrentTarget string
-	configLocation      = string(homeDir() + "/.2kafkactl.yaml")
+	configLocation      = string(homeDir() + "/.kafkactl.yaml")
 )
 
 var configCmd = &cobra.Command{
@@ -57,7 +57,7 @@ var configCmd = &cobra.Command{
 			writeConfig(configLocation, removeEntry(changeCurrentTarget, returnConfig(readConfig(configLocation))))
 			return
 		}
-		return
+		printCurrentEntry(configLocation)
 	},
 }
 
