@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/signal"
 	"strings"
+	"time"
 
 	"github.com/Shopify/sarama"
 	"github.com/jbvmio/kafkactl"
@@ -113,31 +114,47 @@ func launchConsoleProducer(topic, key string, partitions ...int32) {
 		fmt.Printf("Started Console Producer ... Partitions: %v\n\n", partitions)
 	}
 	sigChan := make(chan os.Signal, 1)
+	stringChan := make(chan string)
 	signal.Notify(sigChan, os.Interrupt)
 	fmt.Printf("[kafkactl] # ")
-	scanner := bufio.NewScanner(os.Stdin)
+	go consoleScanner(stringChan, sigChan)
 
 ProducerLoop:
-	for scanner.Scan() {
+	for {
 		select {
 		case <-sigChan:
 			fmt.Printf("signal: interrupt\n  Stopping Console Producer ...\n")
+			sigChan <- os.Interrupt
 			break ProducerLoop
-		default:
-			line := scanner.Text()
+		case line := <-stringChan:
 			if strings.TrimSpace(line) != "" {
 				msgs := makeMessages(topic, key, line, partitions...)
 				errd = client.SendMessages(msgs)
 				if errd != nil {
 					log.Printf("Error sending messages: %v\n", errd)
 				}
-				if !verbose {
-					fmt.Printf("[kafkactl] # ")
-				}
+				time.Sleep(time.Millisecond * 200)
+				fmt.Printf("[kafkactl] # ")
 			} else {
 				fmt.Printf("[kafkactl] # ")
 			}
 		}
 	}
 	fmt.Println("Stopped Console Producer")
+}
+
+func consoleScanner(stringChan chan string, sigChan chan os.Signal) {
+	scanner := bufio.NewScanner(os.Stdin)
+ConsoleLoop:
+	for scanner.Scan() {
+		select {
+		case <-sigChan:
+			fmt.Printf("signal: interrupt\n")
+			break ConsoleLoop
+		default:
+			line := scanner.Text()
+			stringChan <- line
+		}
+	}
+	fmt.Println("STOPPED")
 }
