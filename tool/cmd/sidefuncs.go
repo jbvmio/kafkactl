@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/fatih/color"
@@ -153,26 +152,6 @@ func filterUnique(strSlice []string) []string {
 		}
 	}
 	return list
-}
-
-func testFunc() {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
-	offset, lag, err := client.OffSetAdmin().Group("jblap").Topic("testtopic").GetOffsetLag(0)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	fmt.Println(offset, lag)
 }
 
 // StdinAvailable here

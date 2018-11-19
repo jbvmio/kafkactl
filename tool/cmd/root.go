@@ -16,12 +16,7 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"net"
 	"os"
-	"strings"
-
-	"github.com/jbvmio/kafkactl"
 
 	"github.com/spf13/cobra"
 )
@@ -49,31 +44,13 @@ var rootCmd = &cobra.Command{
 	Short: "kafkactl: Kafka Management Tool",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if configCmd.CalledAs() != "config" {
-			if bootStrap == "" {
-
-				if cfgFile {
-					var err error
-					bootStrap, err = kafkactl.ReturnFirstValid(kafkaBrokers...)
-					if err != nil {
-						log.Fatalf("Error reading config: %v\n", err)
-					}
-				}
-
-				/*
-					if fileExists(configLocation) {
-						var err error
-						kafkaBrokers, burrowEPs = getEntries(configLocation)
-						bootStrap, err = kafkactl.ReturnFirstValid(kafkaBrokers...)
-						if err != nil {
-							log.Fatalf("Error reading config: %v\n", err)
-						}
-					}
-				*/
-
-			}
-			if !strings.Contains(bootStrap, ":") {
-				bootStrap = net.JoinHostPort(bootStrap, bsport)
-			}
+			validateBootStrap()
+			launchClient()
+		}
+	},
+	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		if configCmd.CalledAs() != "config" {
+			closeClient()
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {

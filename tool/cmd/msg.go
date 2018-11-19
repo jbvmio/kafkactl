@@ -23,18 +23,6 @@ import (
 )
 
 func getMSG(topic string, partition int32, offset int64) *kafkactl.Message {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	msg, err := client.ConsumeOffsetMsg(topic, partition, offset)
 	if err != nil {
 		log.Fatalf("Error retrieving message: %v\n", err)
@@ -43,18 +31,6 @@ func getMSG(topic string, partition int32, offset int64) *kafkactl.Message {
 }
 
 func getMSGByTime(topic string, partition int32, datetime string) *kafkactl.Message {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	msg, err := client.OffsetMsgByTime(topic, partition, datetime)
 	if err != nil {
 		if strings.Contains(err.Error(), "parsing time") && strings.Contains(err.Error(), "cannot parse") {

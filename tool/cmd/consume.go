@@ -40,5 +40,4 @@ var consumeCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(consumeCmd)
 	consumeCmd.Flags().StringVarP(&useGroupID, "Group", "G", "kafkactl", "Group ID")
-	//consumeCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 }

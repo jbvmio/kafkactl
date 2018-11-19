@@ -116,7 +116,7 @@ func (kc *KClient) Close() error {
 	return nil
 }
 
-func (kc *KClient) Logger(prefix string) {
+func Logger(prefix string) {
 	if prefix == "" {
 		prefix = "[kafkactl] "
 	}

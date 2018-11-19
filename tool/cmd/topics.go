@@ -23,18 +23,6 @@ import (
 )
 
 func searchTopicMeta(topics ...string) []kafkactl.TopicMeta {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	tMeta, err := client.GetTopicMeta()
 	if err != nil {
 		log.Fatalf("Error getting topic metadata: %s\n", err)
@@ -72,25 +60,11 @@ func searchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 }
 
 func getTopicOffsetMap(tm []kafkactl.TopicMeta) []kafkactl.TopicOffsetMap {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	return client.MakeTopicOffsetMap(tm)
-
 }
 
 func filterTOMByLeader(tom []kafkactl.TopicOffsetMap, leaders []int32) []kafkactl.TopicOffsetMap {
 	var TOM []kafkactl.TopicOffsetMap
-
 	done := make(map[string]bool)
 	for _, t := range tom {
 		var topicMeta []kafkactl.TopicMeta
@@ -112,29 +86,10 @@ func filterTOMByLeader(tom []kafkactl.TopicOffsetMap, leaders []int32) []kafkact
 		}
 		TOM = append(TOM, tom)
 	}
-	/*
-		if useFast {
-			TOM = chanGetTopicOffsetMap(topicMeta)
-		} else {
-			TOM = getTopicOffsetMap(topicMeta)
-		}
-	*/
 	return TOM
 }
 
 func chanGetTopicOffsetMap(t []kafkactl.TopicMeta) []kafkactl.TopicOffsetMap {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	var TOM []kafkactl.TopicOffsetMap
 	var count int
 	tmMap := make(map[string][]kafkactl.TopicMeta)
@@ -164,21 +119,9 @@ func chanMakeTOM(client *kafkactl.KClient, tMeta []kafkactl.TopicMeta, tomChan c
 }
 
 func refreshMetadata(topics ...string) {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
-	err = client.RefreshMetadata(topics...)
-	if err != nil {
-		log.Fatalf("Error refreshing topic metadata: %v\n", err)
+	errd = client.RefreshMetadata(topics...)
+	if errd != nil {
+		log.Fatalf("Error refreshing topic metadata: %v\n", errd)
 	}
 }
 

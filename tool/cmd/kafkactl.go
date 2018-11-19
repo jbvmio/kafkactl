@@ -18,29 +18,46 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"os"
+	"strings"
 
 	"github.com/jbvmio/kafkactl"
 	yaml "gopkg.in/yaml.v2"
 )
 
 var (
-	cl   *kafkactl.KClient
-	errd error
+	client *kafkactl.KClient
+	errd   error
 )
 
 func launchClient() {
-	cl, errd = kafkactl.NewClient(bootStrap)
+	if verbose {
+		kafkactl.Logger("")
+	}
+	client, errd = kafkactl.NewClient(bootStrap)
 	if errd != nil {
 		log.Fatalf("Error: %v\n", errd)
 	}
-	defer func() {
-		if errd = cl.Close(); errd != nil {
-			log.Fatalf("Error closing client: %v\n", errd)
+}
+
+func closeClient() {
+	if errd = client.Close(); errd != nil {
+		log.Fatalf("Error closing client: %v\n", errd)
+	}
+}
+
+func validateBootStrap() {
+	if bootStrap == "" {
+		if cfgFile {
+			bootStrap, errd = kafkactl.ReturnFirstValid(kafkaBrokers...)
+			if errd != nil {
+				log.Fatalf("Error reading config: %v\n", errd)
+			}
 		}
-	}()
-	if verbose {
-		cl.Logger("")
+	}
+	if !strings.Contains(bootStrap, ":") {
+		bootStrap = net.JoinHostPort(bootStrap, bsport)
 	}
 }
 

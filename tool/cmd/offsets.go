@@ -40,18 +40,6 @@ type TopicPartitionMeta struct {
 }
 
 func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	exact = true
 	var GTMeta []GroupTopicOffsetMeta
 	tSum := kafkactl.GetTopicSummaries(searchTopicMeta(topic))

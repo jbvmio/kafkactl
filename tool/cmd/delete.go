@@ -47,8 +47,4 @@ var deleteCmd = &cobra.Command{
 
 func init() {
 	adminCmd.AddCommand(deleteCmd)
-	//createCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
-	//createCmd.Flags().BoolVar(&setConf, "set", false, "Alter an Existing Topic Config")
-	//createCmd.Flags().StringVar(&targetConfName, "key", "", "Config Option or Key to Set")
-	//createCmd.Flags().StringVar(&targetConfValue, "value", "", "Config Value to Set")
 }

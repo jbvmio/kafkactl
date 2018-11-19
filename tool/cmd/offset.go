@@ -84,6 +84,9 @@ var offsetCmd = &cobra.Command{
 				resetAllPartitionsTo(targetGroup, targetTopic, targetOffset)
 				return
 			}
+			if !cmd.Flags().Changed("offset") || !cmd.Flags().Changed("partition") {
+				log.Fatalf("specify both --partition and --offset OR --allparts, try again.")
+			}
 			resetPartitionOffsetTo(targetGroup, targetTopic, targetPartition, targetOffset)
 			return
 		}
@@ -102,7 +105,4 @@ func init() {
 	offsetCmd.Flags().BoolVar(&performReset, "reset", false, "Initiate a ResetOffset Operation")
 	offsetCmd.Flags().BoolVar(&targetNewest, "newest", false, "Target the Next Msg that would be Produced to the Topic")
 	offsetCmd.Flags().BoolVar(&targetOldest, "oldest", false, "Target the Oldest Msg still available on the Topic")
-
-	//offsetCmd.MarkFlagRequired("partition")
-	//offsetCmd.MarkFlagRequired("offset")
 }

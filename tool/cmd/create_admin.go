@@ -17,26 +17,12 @@ package cmd
 import (
 	"fmt"
 	"log"
-
-	"github.com/jbvmio/kafkactl"
 )
 
 func createTopic(name string, partitions int32, rFactor int16) {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
-	err = client.AddTopic(name, partitions, rFactor)
-	if err != nil {
-		log.Fatalf("Error creating topic: %v\n", err)
+	errd = client.AddTopic(name, partitions, rFactor)
+	if errd != nil {
+		log.Fatalf("Error creating topic: %v\n", errd)
 	}
 	fmt.Println("\nSuccessfully created topic", name, "\n")
 }

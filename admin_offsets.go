@@ -133,8 +133,14 @@ func (oa *offsetAdmin) ResetOffset(partition int32, targetOffset int64) (err err
 	if err != nil {
 		return
 	}
-	oa.pom.ResetOffset(targetOffset, "reset_offset")
-	oa.om.Close()
-	oa.pom.Close()
+	oa.pom.ResetOffset(targetOffset, "")
+	err = oa.om.Close()
+	if err != nil {
+		return
+	}
+	err = oa.pom.Close()
+	if err != nil {
+		return
+	}
 	return
 }

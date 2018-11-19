@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/jbvmio/kafkactl"
 )
 
@@ -31,19 +29,6 @@ type PartitionLag struct {
 }
 
 func getPartitionLag(grpMeta []kafkactl.GroupMeta) []PartitionLag {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
-
 	var partitionLag []PartitionLag
 	for _, gm := range grpMeta {
 		for _, m := range gm.MemberAssignments {
@@ -70,19 +55,6 @@ func getPartitionLag(grpMeta []kafkactl.GroupMeta) []PartitionLag {
 }
 
 func chanGetPartitionLag(grpMeta []kafkactl.GroupMeta) []PartitionLag {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
-
 	var partitionLag []PartitionLag
 	for _, gm := range grpMeta {
 		for _, m := range gm.MemberAssignments {

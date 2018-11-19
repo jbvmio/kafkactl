@@ -41,6 +41,4 @@ func init() {
 	adminCmd.AddCommand(createCmd)
 	createCmd.Flags().Int32VarP(&targetPartition, "partitions", "p", -2, "Desired Partition Count")
 	createCmd.Flags().Int16VarP(&targetRFactor, "rfactor", "r", -2, "Desired Replication Factor")
-	//createCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
-
 }

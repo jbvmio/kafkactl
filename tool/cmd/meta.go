@@ -19,7 +19,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/jbvmio/kafkactl"
 	"github.com/spf13/cobra"
 )
 
@@ -28,18 +27,6 @@ var metaCmd = &cobra.Command{
 	Short:   "Return Metadata",
 	Aliases: []string{"metadata"},
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := kafkactl.NewClient(bootStrap)
-		if err != nil {
-			log.Fatalf("Error: %v\n", err)
-		}
-		defer func() {
-			if err := client.Close(); err != nil {
-				log.Fatalf("Error closing client: %v\n", err)
-			}
-		}()
-		if verbose {
-			client.Logger("")
-		}
 		meta, err := client.GetClusterMeta()
 		if err != nil {
 			log.Fatalf("Error getting cluster metadata: %v\n", err)

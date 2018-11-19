@@ -25,18 +25,6 @@ import (
 )
 
 func getTopicMsg(topic string, partition int32, offset int64) {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	msg, err := client.ConsumeOffsetMsg("testtopic", 0, 1955)
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
@@ -48,22 +36,10 @@ func tailTopic(topic string, relativeOffset int64, partitions ...int32) {
 	if relativeOffset > 0 {
 		log.Fatalf("reletive offset must be a negative number")
 	}
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	exact = true
 	tSum := kafkactl.GetTopicSummaries(searchTopicMeta(topic))
 	if len(tSum) != 1 {
-		log.Fatalf("Error finding topic: %v\n", err)
+		log.Fatalf("Error finding topic: %v\n", topic)
 	}
 	if len(partitions) == 0 {
 		partitions = tSum[0].Partitions

@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
 	"strings"
 
 	"github.com/Shopify/sarama"
@@ -73,18 +74,6 @@ func sendMsg(msg *kafkactl.Message) (part int32, off int64) {
 	if msg.Partition < -1 {
 		log.Fatalf("Error: Invalid Partition Specified - %v\n", msg.Partition)
 	}
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	client.SaramaConfig().Producer.RequiredAcks = sarama.WaitForAll
 	client.SaramaConfig().Producer.Return.Successes = true
 	client.SaramaConfig().Producer.Return.Errors = true
@@ -93,49 +82,25 @@ func sendMsg(msg *kafkactl.Message) (part int32, off int64) {
 	} else {
 		client.SaramaConfig().Producer.Partitioner = sarama.NewManualPartitioner
 	}
-	part, off, err = client.SendMSG(msg)
-	if err != nil {
-		log.Fatalf("Error sending message: %v\n", err)
+	part, off, errd = client.SendMSG(msg)
+	if errd != nil {
+		log.Fatalf("Error sending message: %v\n", errd)
 	}
 	return
 }
 
 func sendMsgToPartitions(msgs []*kafkactl.Message) {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	client.SaramaConfig().Producer.RequiredAcks = sarama.WaitForAll
 	client.SaramaConfig().Producer.Return.Successes = true
 	client.SaramaConfig().Producer.Return.Errors = true
 	client.SaramaConfig().Producer.Partitioner = sarama.NewManualPartitioner
-	err = client.SendMessages(msgs)
-	if err != nil {
-		log.Fatalf("Error sending messages: %v\n", err)
+	errd = client.SendMessages(msgs)
+	if errd != nil {
+		log.Fatalf("Error sending messages: %v\n", errd)
 	}
 }
 
 func launchConsoleProducer(topic, key string, partitions ...int32) {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	client.SaramaConfig().Producer.RequiredAcks = sarama.WaitForAll
 	client.SaramaConfig().Producer.Return.Successes = true
 	client.SaramaConfig().Producer.Return.Errors = true
@@ -147,20 +112,32 @@ func launchConsoleProducer(topic, key string, partitions ...int32) {
 		client.SaramaConfig().Producer.Partitioner = sarama.NewManualPartitioner
 		fmt.Printf("Started Console Producer ... Partitions: %v\n\n", partitions)
 	}
-	fmt.Printf("[kafkactl] ")
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt)
+	fmt.Printf("[kafkactl] # ")
 	scanner := bufio.NewScanner(os.Stdin)
+
+ProducerLoop:
 	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.TrimSpace(line) != "" {
-			msgs := makeMessages(topic, key, line, partitions...)
-			err = client.SendMessages(msgs)
-			if err != nil {
-				log.Printf("Error sending messages: %v\n", err)
+		select {
+		case <-sigChan:
+			fmt.Printf("signal: interrupt\n  Stopping Console Producer ...\n")
+			break ProducerLoop
+		default:
+			line := scanner.Text()
+			if strings.TrimSpace(line) != "" {
+				msgs := makeMessages(topic, key, line, partitions...)
+				errd = client.SendMessages(msgs)
+				if errd != nil {
+					log.Printf("Error sending messages: %v\n", errd)
+				}
+				if !verbose {
+					fmt.Printf("[kafkactl] # ")
+				}
+			} else {
+				fmt.Printf("[kafkactl] # ")
 			}
-			fmt.Printf("[kafkactl] ")
-		} else {
-			fmt.Printf("[kafkactl] ")
 		}
 	}
-	fmt.Println("Stopping Console Producer")
+	fmt.Println("Stopped Console Producer")
 }

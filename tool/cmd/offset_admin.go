@@ -30,49 +30,57 @@ func resetPartitionOffsetToNewest(group, topic string, partition int32) {
 
 func resetPartitionOffsetTo(group, topic string, partition int32, toOffset int64) {
 	validPartCheck()
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
-	if toOffset == kafkactl.OffsetNewest {
-		toOffset, err = client.GetOffsetNewest(topic, partition)
+
+	/*
+		client, err := kafkactl.NewClient(bootStrap)
 		if err != nil {
-			log.Fatalf("Error retrieving newest offset: %v\n", err)
+			log.Fatalf("Error: %v\n", err)
+		}
+		defer func() {
+			if err := client.Close(); err != nil {
+				log.Fatalf("Error closing client: %v\n", err)
+			}
+		}()
+		if verbose {
+			client.Logger("")
+		}
+	*/
+
+	if toOffset == kafkactl.OffsetNewest {
+		toOffset, errd = client.GetOffsetNewest(topic, partition)
+		if errd != nil {
+			log.Fatalf("Error retrieving newest offset: %v\n", errd)
 		}
 	}
 	if toOffset == kafkactl.OffsetOldest {
-		toOffset, err = client.GetOffsetOldest(topic, partition)
-		if err != nil {
-			log.Fatalf("Error retrieving oldest offset: %v\n", err)
+		toOffset, errd = client.GetOffsetOldest(topic, partition)
+		if errd != nil {
+			log.Fatalf("Error retrieving oldest offset: %v\n", errd)
 		}
 	}
-	err = client.OffSetAdmin().Group(group).Topic(topic).ResetOffset(partition, toOffset)
-	if err != nil {
-		log.Fatalf("Error reseting offset: %v\n", err)
+	errd = client.OffSetAdmin().Group(group).Topic(topic).ResetOffset(partition, toOffset)
+	if errd != nil {
+		log.Fatalf("Error reseting offset: %v\n", errd)
 	}
 }
 
 func resetAllPartitionsTo(group, topic string, toOffset int64) {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
+
+	/*
+		client, err := kafkactl.NewClient(bootStrap)
+		if err != nil {
+			log.Fatalf("Error: %v\n", err)
 		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
+		defer func() {
+			if err := client.Close(); err != nil {
+				log.Fatalf("Error closing client: %v\n", err)
+			}
+		}()
+		if verbose {
+			client.Logger("")
+		}
+	*/
+
 	exact = true
 	ts := kafkactl.GetTopicSummaries(searchTopicMeta(targetTopic))
 	if len(ts) != 1 {
@@ -85,20 +93,20 @@ func resetAllPartitionsTo(group, topic string, toOffset int64) {
 	var errParts []int32
 	for _, p := range parts {
 		if toOffset == kafkactl.OffsetNewest {
-			toOffset, err = client.GetOffsetNewest(topic, p)
-			if err != nil {
-				log.Fatalf("Error retrieving newest offset: %v\n", err)
+			toOffset, errd = client.GetOffsetNewest(topic, p)
+			if errd != nil {
+				log.Fatalf("Error retrieving newest offset: %v\n", errd)
 			}
 		}
 		if toOffset == kafkactl.OffsetOldest {
-			toOffset, err = client.GetOffsetOldest(topic, p)
-			if err != nil {
-				log.Fatalf("Error retrieving oldest offset: %v\n", err)
+			toOffset, errd = client.GetOffsetOldest(topic, p)
+			if errd != nil {
+				log.Fatalf("Error retrieving oldest offset: %v\n", errd)
 			}
 		}
-		err = client.OffSetAdmin().Group(group).Topic(topic).ResetOffset(p, toOffset)
-		if err != nil {
-			log.Printf("Error reseting offset for partition %v: %v\n", p, err)
+		errd = client.OffSetAdmin().Group(group).Topic(topic).ResetOffset(p, toOffset)
+		if errd != nil {
+			log.Printf("Error reseting offset for partition %v: %v\n", p, errd)
 			errParts = append(errParts, p)
 		}
 	}

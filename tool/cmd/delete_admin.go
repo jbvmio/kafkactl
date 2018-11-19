@@ -17,46 +17,20 @@ package cmd
 import (
 	"fmt"
 	"log"
-
-	"github.com/jbvmio/kafkactl"
 )
 
 func deleteTopic(topic string) {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
-	err = client.RemoveTopic(topic)
-	if err != nil {
-		log.Fatalf("Error deleting topic: %v\n", err)
+	errd = client.RemoveTopic(topic)
+	if errd != nil {
+		log.Fatalf("Error deleting topic: %v\n", errd)
 	}
 	fmt.Println("\nSuccessfully deleted topic", topic, "\n")
 }
 
 func deleteGroup(group string) {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
-	err = client.RemoveGroup(group)
-	if err != nil {
-		log.Fatalf("Error removing group: %v\n", err)
+	errd = client.RemoveGroup(group)
+	if errd != nil {
+		log.Fatalf("Error removing group: %v\n", errd)
 	}
 	fmt.Println("\nSuccessfully removed group", group, "\n")
 }

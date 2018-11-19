@@ -32,13 +32,13 @@ var (
 var scriptCmd = &cobra.Command{
 	Use:     "script",
 	Aliases: []string{"scripts"},
-	Short:   "script testing",
+	Short:   "script testing WiP*",
 	Long:    `WiP*`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		box = packr.NewBox("./scripts")
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Running Kafka Scripts is Currently WiP*")
+		log.Fatalln("Running Kafka Scripts is Currently WiP*")
 		timeFormat := "01/02/2006 15:04:05.000"
 		targetTime := "11/02/2018 8:01:00.0"
 		testTargetTime := strings.Split(targetTime, ".")

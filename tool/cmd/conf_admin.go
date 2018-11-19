@@ -31,18 +31,22 @@ type TopicConfig struct {
 }
 
 func getTopicConfig(topics, configNames []string) []TopicConfig {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
+
+	/*
+		client, err := kafkactl.NewClient(bootStrap)
+		if err != nil {
+			log.Fatalf("Error: %v\n", err)
 		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
+		defer func() {
+			if err := client.Close(); err != nil {
+				log.Fatalf("Error closing client: %v\n", err)
+			}
+		}()
+		if verbose {
+			client.Logger("")
+		}
+	*/
+
 	var topicConfig []TopicConfig
 	for _, t := range topics {
 		c, err := client.GetTopicConfig(t, configNames...)
@@ -79,18 +83,6 @@ func searchTopicConfig(topic string, configNames ...string) []TopicConfig {
 func setTopicConfig(topic, configName, value string) error {
 	if configName == "" || value == "" {
 		log.Fatalf("Error: Missing Key and/or Value\n")
-	}
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
 	}
 	exact = true
 	ts := kafkactl.GetTopicSummaries(searchTopicMeta(topic))

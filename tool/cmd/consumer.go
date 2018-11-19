@@ -25,18 +25,6 @@ import (
 )
 
 func launchCG(groupID string, debug bool, topics ...string) {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	consumer, err := client.NewConsumerGroup(groupID, debug, topics...)
 	if err != nil {
 		log.Fatalf("Error creating consumer group: %v\n", err)
@@ -100,7 +88,9 @@ ConsumeLoop:
 	if commitErr != nil {
 		fmt.Println("Warning > Offset Commit Error:", commitErr)
 	}
-	if err := consumer.Close(); err != nil {
-		log.Fatalf("Error closing Consumer: %v\n", err)
+	if debug {
+		if err := consumer.Close(); err != nil {
+			log.Fatalf("Error closing Consumer: %v\n", err)
+		}
 	}
 }

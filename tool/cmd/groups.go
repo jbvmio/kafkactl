@@ -23,18 +23,6 @@ import (
 )
 
 func searchGroupListMeta(groups ...string) []kafkactl.GroupListMeta {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	glMeta, err := client.GetGroupListMeta()
 	if err != nil {
 		log.Fatalf("Error getting grouplist metadata: %s\n", err)
@@ -60,18 +48,6 @@ func searchGroupListMeta(groups ...string) []kafkactl.GroupListMeta {
 }
 
 func searchGroupMeta(group ...string) []kafkactl.GroupMeta {
-	client, err := kafkactl.NewClient(bootStrap)
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-	defer func() {
-		if err := client.Close(); err != nil {
-			log.Fatalf("Error closing client: %v\n", err)
-		}
-	}()
-	if verbose {
-		client.Logger("")
-	}
 	grpMeta, err := client.GetGroupMeta()
 	if err != nil {
 		log.Fatalf("Error getting group metadata: %s\n", err)
