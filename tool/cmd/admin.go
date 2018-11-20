@@ -29,5 +29,5 @@ var adminCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(adminCmd)
-	adminCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
+	//adminCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 }
