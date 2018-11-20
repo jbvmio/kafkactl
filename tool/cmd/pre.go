@@ -15,7 +15,13 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/spf13/cobra"
+)
+
+var (
+	preAllTopics bool
 )
 
 var preCmd = &cobra.Command{
@@ -27,12 +33,19 @@ var preCmd = &cobra.Command{
 		zkCommandInvoked = true
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		performTopicPRE(targetTopic)
-		return
+		if cmd.Flags().Changed("topic") {
+			performTopicPRE(targetTopic)
+			return
+		}
+		if preAllTopics {
+			allTopicsPRE()
+			return
+		}
+		log.Fatalf("Error: Must specify either --topic OR --alltopics, try again.")
 	},
 }
 
 func init() {
 	adminCmd.AddCommand(preCmd)
-	preCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
+	preCmd.Flags().BoolVar(&preAllTopics, "alltopics", false, "Initiate Preferred Replica Election for All Topics")
 }

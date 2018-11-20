@@ -57,3 +57,30 @@ func performTopicPRE(topic string) {
 	fmt.Printf("%s", j)
 	zkCreatePRE("/admin/preferred_replica_election", j)
 }
+
+func allTopicsPRE() {
+	tom := chanGetTopicOffsetMap(searchTopicMeta(""))
+	if len(tom) < 1 {
+		log.Fatalf("Error: No Topics Available.\n")
+	}
+	var preParts []PREPartition
+	for _, to := range tom {
+		for k := range to.PartitionOffsets {
+			preP := PREPartition{
+				Topic:     to.Topic,
+				Partition: k,
+			}
+			preParts = append(preParts, preP)
+		}
+	}
+	preList := PREList{
+		Version:    1,
+		Partitions: preParts,
+	}
+	j, err := json.Marshal(preList)
+	if err != nil {
+		log.Fatalf("Error Marshaling Topic/Partition Data: %v\n", err)
+	}
+	fmt.Printf("%s", j)
+	zkCreatePRE("/admin/preferred_replica_election", j)
+}
