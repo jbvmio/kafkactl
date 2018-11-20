@@ -36,6 +36,7 @@ var (
 
 	kafkaBrokers []string
 	burrowEPs    []string
+	zkServers    []string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -49,7 +50,7 @@ var rootCmd = &cobra.Command{
 		}
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-		if configCmd.CalledAs() != "config" {
+		if configCmd.CalledAs() != "config" && !zkCommandInvoked {
 			closeClient()
 		}
 	},
@@ -78,7 +79,7 @@ func init() {
 
 func initConfig() {
 	if fileExists(configLocation) {
-		kafkaBrokers, burrowEPs = getEntries(configLocation)
+		kafkaBrokers, burrowEPs, zkServers = getEntries(configLocation)
 		cfgFile = true
 	}
 }

@@ -69,14 +69,15 @@ type Config struct {
 
 // Entry contains kafka and burrow node details for a cluster
 type Entry struct {
-	Name   string   `json:"name" yaml:"name"`
-	Kafka  []string `json:"kafka yaml:"kafka"`
-	Burrow []string `json:"burrow" yaml:"burrow"`
+	Name      string   `json:"name" yaml:"name"`
+	Kafka     []string `json:"kafka yaml:"kafka"`
+	Burrow    []string `json:"burrow" yaml:"burrow"`
+	Zookeeper []string `json:"zookeeper" yaml:"zookeeper"`
 }
 
-func getEntries(path string) (kafka, burrow []string) {
+func getEntries(path string) (kafka, burrow, zookeeper []string) {
 	entry := getCurrentEntry(path)
-	return entry.Kafka, entry.Burrow
+	return entry.Kafka, entry.Burrow, entry.Zookeeper
 }
 
 func printCurrentEntry(path string) {
@@ -216,6 +217,9 @@ entries:
   burrow:
   - http://burrow1:3000
   - http://burrow2:3000
+  zookeeper:
+  - http://zk1:2181
+  - http://zk2:2181
 - name: testCluster2
   kafka:
   - brokerHost1:9092
@@ -223,5 +227,8 @@ entries:
   burrow:
   - http://burrow1:3000
   - http://burrow2:3000
+  zookeeper:
+  - http://zk1:2181
+  - http://zk2:2181
 `
 }
