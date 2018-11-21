@@ -61,6 +61,26 @@ func validateBootStrap() {
 	}
 }
 
+func getKafkaVersion(apiKeys map[int16]int16) string {
+	match := true
+	//refKey := apiKeys[kafkactl.APIKeyFetch]
+	switch match {
+	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] == 1:
+		return "v2.0"
+	case apiKeys[kafkactl.APIKeyFetch] == 7:
+		return "v1.1"
+	case apiKeys[kafkactl.APIKeyFetch] == 6:
+		return "v1.0"
+	case apiKeys[kafkactl.APIKeyFetch] == 5:
+		return "v0.11.0"
+	case apiKeys[kafkactl.APIKeyUpdateMetadata] == 3:
+		return "v0.10.2.0"
+	case apiKeys[kafkactl.APIKeyFetch] == 3:
+		return "v0.10.1.0"
+	}
+	return "< v0.10.1.0"
+}
+
 // Config contains a collection of cluster entries
 type Config struct {
 	Current string  `json:"current" yaml:"current"`
