@@ -22,13 +22,14 @@ import (
 )
 
 var (
-	cfgFile   bool
-	bootStrap string
-	bsport    string
-	exact     bool
-	verbose   bool
-	useFast   bool
-	meta      bool
+	cfgFile    bool
+	bootStrap  string
+	bsport     string
+	exact      bool
+	verbose    bool
+	useFast    bool
+	meta       bool
+	nonMainCMD bool
 
 	targetTopic     string
 	targetGroup     string
@@ -50,7 +51,7 @@ var rootCmd = &cobra.Command{
 		}
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-		if configCmd.CalledAs() != "config" && !zkCommandInvoked {
+		if configCmd.CalledAs() != "config" && !nonMainCMD {
 			closeClient()
 		}
 	},

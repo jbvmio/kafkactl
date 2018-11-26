@@ -15,37 +15,37 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
 var (
-	preAllTopics bool
+	showClientID   bool
+	targetBurrowEP string
 )
 
-var preCmd = &cobra.Command{
-	Use:     "pre",
-	Short:   "Perform Various Kafka Administration Tasks",
-	Aliases: []string{"preferred-replica-election"},
-	PreRun: func(cmd *cobra.Command, args []string) {
-		launchZKClient()
+var burrowCmd = &cobra.Command{
+	Use:     "burrow",
+	Aliases: []string{"b", "bur"},
+	Short:   "Query Burrow",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		nonMainCMD = true
+		if cmd.Flags().Changed("ep") {
+			burrowEPs = []string{targetBurrowEP}
+		}
+		launchBurrowClient()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		if cmd.Flags().Changed("topic") {
-			performTopicPRE(targetTopic)
-			return
+		if len(args) < 1 {
+			args = []string{""}
 		}
-		if preAllTopics {
-			allTopicsPRE()
-			return
-		}
-		log.Fatalf("Error: Must specify either --topic OR --alltopics, try again.")
+		printOutput(searchBurrowConsumers(args...))
+		return
 	},
 }
 
 func init() {
-	adminCmd.AddCommand(preCmd)
-	preCmd.Flags().BoolVar(&preAllTopics, "alltopics", false, "Initiate Preferred Replica Election for All Topics")
+	rootCmd.AddCommand(burrowCmd)
+	burrowCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
+	burrowCmd.Flags().BoolVarP(&showClientID, "clientid", "i", false, "Toggle/Show ClientIDs instead of Group Names")
+	burrowCmd.Flags().StringVarP(&targetBurrowEP, "ep", "e", "", "Specify a targeted Burrow EndPoint (eg. http://localhost:8000)")
 }

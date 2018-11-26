@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/jbvmio/burrow"
+
 	"github.com/fatih/color"
 	"github.com/jbvmio/kafkactl"
 	"github.com/rodaine/table"
@@ -77,6 +79,19 @@ func printOutput(i interface{}) {
 		for _, v := range i {
 			tbl.AddRow(v.Topic, v.Config, v.Value, v.ReadOnly, v.Default, v.Sensitive)
 		}
+	case []burrow.Partition:
+		if showClientID {
+			tbl = table.New("BURROW", "MEMBER", "TOPIC", "PARTITION", "LAG", "TOPICLAG", "STATUS")
+			for _, v := range i {
+				tbl.AddRow(v.Cluster, v.ClientID, v.Topic, v.Partition, v.CurrentLag, v.TopicLag, v.CGStatus)
+			}
+		} else {
+			tbl = table.New("BURROW", "GROUP", "TOPIC", "PARTITION", "LAG", "TOPICLAG", "STATUS")
+			for _, v := range i {
+				tbl.AddRow(v.Cluster, v.Group, v.Topic, v.Partition, v.CurrentLag, v.TopicLag, v.CGStatus)
+			}
+		}
+
 	case *kafkactl.Message:
 		highlightColumn = false
 		if showMsgTimestamp {
