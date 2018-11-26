@@ -15,11 +15,14 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/spf13/cobra"
 )
 
 var (
 	showClientID   bool
+	beginMonitor   bool
 	targetBurrowEP string
 )
 
@@ -35,6 +38,20 @@ var burrowCmd = &cobra.Command{
 		launchBurrowClient()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		if beginMonitor {
+			if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("group") {
+				log.Fatalf("Error: Specify both --topic and --group for monitoring, try again.\n")
+			}
+			launchBurrowMonitor(targetGroup, targetTopic)
+			return
+		}
+		if cmd.Flags().Changed("topic") {
+			printOutput(searchBurrowTopics(targetTopic))
+			return
+		}
+		if cmd.Flags().Changed("group") {
+			args = append(args, targetGroup)
+		}
 		if len(args) < 1 {
 			args = []string{""}
 		}
@@ -47,5 +64,6 @@ func init() {
 	rootCmd.AddCommand(burrowCmd)
 	burrowCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 	burrowCmd.Flags().BoolVarP(&showClientID, "clientid", "i", false, "Toggle/Show ClientIDs instead of Group Names")
+	burrowCmd.Flags().BoolVarP(&beginMonitor, "monitor", "m", false, "Monitor Total/Partition Lag via Terminal Graph")
 	burrowCmd.Flags().StringVarP(&targetBurrowEP, "ep", "e", "", "Specify a targeted Burrow EndPoint (eg. http://localhost:8000)")
 }

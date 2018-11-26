@@ -58,3 +58,43 @@ func searchBurrowConsumers(consumers ...string) []burrow.Partition {
 	}
 	return conParts
 }
+
+func searchBurrowTopics(topics ...string) []burrow.Partition {
+	var topicCons []burrow.Partition
+	var burrowConsumers []string
+	var foundTopics []string
+	topicConsumers, err := burClient.GetTopicConsumersList()
+	if err != nil {
+		log.Fatalf("Error obtaining burrow topics: %v\n", err)
+	}
+	for _, topic := range topics {
+		for _, tc := range topicConsumers {
+			for t := range tc.TopicConsumerMap {
+				if exact {
+					if t == topic {
+						foundTopics = append(foundTopics, t)
+						burrowConsumers = append(burrowConsumers, tc.TopicConsumerMap[t]...)
+					}
+				} else {
+					if strings.Contains(t, topic) {
+						foundTopics = append(foundTopics, t)
+						burrowConsumers = append(burrowConsumers, tc.TopicConsumerMap[t]...)
+					}
+				}
+
+			}
+		}
+	}
+	conParts, err := burClient.GetConsumerPartitions(burrowConsumers...)
+	if err != nil {
+		log.Fatalf("Error obtaining consumer data: %v\n", err)
+	}
+	for _, top := range foundTopics {
+		for _, cp := range conParts {
+			if cp.Topic == top {
+				topicCons = append(topicCons, cp)
+			}
+		}
+	}
+	return topicCons
+}
