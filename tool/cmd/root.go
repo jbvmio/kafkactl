@@ -38,6 +38,9 @@ var (
 	kafkaBrokers []string
 	burrowEPs    []string
 	zkServers    []string
+
+	buildTime  string
+	commitHash string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -45,13 +48,11 @@ var rootCmd = &cobra.Command{
 	Use:   "kafkactl",
 	Short: "kafkactl: Kafka Management Tool",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if configCmd.CalledAs() != "config" {
-			validateBootStrap()
-			launchClient()
-		}
+		validateBootStrap()
+		launchClient()
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-		if configCmd.CalledAs() != "config" && !nonMainCMD {
+		if !nonMainCMD {
 			closeClient()
 		}
 	},

@@ -31,6 +31,9 @@ var (
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Manage kafkactl Configuration",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		nonMainCMD = true
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if genSample {
 			generateSampleConfig(configLocation)
