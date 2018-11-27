@@ -56,11 +56,48 @@ func main() {
 
 
 # Get Started
-Download the latest kafkactl tool and extract to a $PATH directory. Run "kafkactl config --sample" to generate a sample config at $HOME/.kafkactl.yaml, edit the config file and save. Alternatively, pass all arguments to the command when running.
+* Download the latest kafkactl tool and extract to a $PATH directory.
+* Run "kafkactl config --sample" to generate a sample config at $HOME/.kafkactl.yaml
+* Edit the config file and save.
+
+* Alternatively, pass all arguments to the command when running.
+```
+# kafkactl --broker brokerhost01:9092 admin create --topic newtopic01 --partitions 15 --rfactor 3
+
+```
+
+### example config commands
 ```
 kafkactl config --sample
 kafkactl config --show
 kafkactl config --use testcluster1
+```
+
+### example config file (~/.kafkactl.yaml)
+```
+current: testCluster1
+entries:
+- name: testCluster1
+  kafka:
+  - brokerHost1:9092
+  - brokerHost2:9092
+  burrow:
+  - http://burrow1:3000
+  - http://burrow2:3000
+  zookeeper:
+  - http://zk1:2181
+  - http://zk2:2181
+- name: testCluster2
+  kafka:
+  - brokerHost1:9092
+  - brokerHost2:9092
+  burrow:
+  - http://burrow1:3000
+  - http://burrow2:3000
+  zookeeper:
+  - http://zk1:2181
+  - http://zk2:2181
+
 ```
 
 # Usage
