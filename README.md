@@ -4,7 +4,12 @@ kafkactl - Package and Tool written in Go to manage Kafka clusters and related c
 # Features
 The package is mostly a wrapper around the excellent [sarama library](https://github.com/Shopify/sarama) created for common tasks and the kafkactl tool itself. The kafkactl tool utilizes a context style config similar to the kubernetes tool kubectl grouping a set of Kafka clusters to corresponding [Zookeeper](https://zookeeper.apache.org/) and [Burrow](https://github.com/linkedin/Burrow) instances.
 
-# package example usage:
+### package example usage:
+Get package:
+```
+go get -u github.com/jbvmio/kafkactl
+```
+List Topics:
 ```
 package main
 
@@ -118,6 +123,8 @@ Flags:
 
 
 # Example output:
+
+### kafka
 ```
 # kafkactl
 
@@ -166,6 +173,7 @@ mygroup05  mytopic05  13    mygroup05-77885078-77abc  97      0
 
 ```
 
+### zookeeper
 ```
 # kafkactl zk ls /cluster/id
 
@@ -204,6 +212,7 @@ VALUE: /testpath/testvalue
 
 ```
 
+### burrow
 ```
 kafkactl burrow mygroup07 -x
 
