@@ -51,7 +51,6 @@ func launchBurrowMonitor(cg, top string) {
 		log.Fatalf("Error launching monitor: %v\n", err)
 	}
 	defer termui.Close()
-
 	par0 := termui.NewPar(string(" [Group]" + cg + " > [Topic]" + top + " > Partition Lag "))
 	par0.Height = 1
 	par0.Border = false
