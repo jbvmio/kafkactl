@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/*
+This is WiP* and needs to be completely redone.
+Porting over from an existing version of a burrow cli project for now, modify with kafkactl/burrow package later
+*/
+
 package cmd
 
 import (
