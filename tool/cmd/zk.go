@@ -15,7 +15,9 @@
 package cmd
 
 import (
+	"io/ioutil"
 	"log"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -48,6 +50,14 @@ var zkCmd = &cobra.Command{
 				zkCreateValue(zkTargetPath, targetVal)
 				return
 			}
+			if stdinAvailable() {
+				targetVal, err := ioutil.ReadAll(os.Stdin)
+				if err != nil {
+					log.Fatalf("Failed to read from stdin: %v\n", err)
+				}
+				zkCreateValue(zkTargetPath, targetVal)
+				return
+			}
 			zkCreateValue(zkTargetPath, nil)
 			return
 		}
@@ -65,6 +75,6 @@ func init() {
 	zkCmd.Flags().StringVarP(&zkTargetServer, "server", "s", "", "Specify a targeted Zookeeper Server and Port (eg. localhost:2181")
 	zkCmd.Flags().StringVarP(&zkTargetPath, "create", "c", "", "Create a Zookeeper Path (Use with --value for setting a value)")
 	zkCmd.Flags().StringVarP(&zkDeletePath, "delete", "d", "", "Delete a Zookeeper Path/Value")
-	zkCmd.Flags().StringVar(&zkTargetValue, "value", "", "Create a Zookeeper Value (Use with --create to specify the path for the value)")
+	zkCmd.Flags().StringVar(&zkTargetValue, "value", "", "Create a Zookeeper Value (Use with --create to specify the path for the value) Wins over StdIn")
 	zkCmd.Flags().BoolVarP(&zkForceUpdate, "force", "f", false, "Force Operation")
 }
