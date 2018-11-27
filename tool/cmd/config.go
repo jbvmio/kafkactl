@@ -66,7 +66,7 @@ var configCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(configCmd)
-	configCmd.Flags().BoolVar(&genSample, "sample", false, "Generate a Sample Configuration at ~/.2kafkactl (will not overwrite existing if found)")
+	configCmd.Flags().BoolVar(&genSample, "sample", false, "Generate a Sample Configuration at ~/.kafkactl (will not overwrite existing if found)")
 	configCmd.Flags().BoolVar(&showConfig, "show", false, "Show available config targets")
 	configCmd.Flags().BoolVar(&showConfigFull, "show-full", false, "Print current config and exit")
 	configCmd.Flags().StringVar(&changeCurrentTarget, "use", "", "Switch Current Target in Config")
