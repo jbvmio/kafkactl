@@ -45,6 +45,7 @@ var configCmd = &cobra.Command{
 		}
 		if showConfigFull {
 			printConfig(configLocation)
+			return
 		}
 		if cmd.Flags().Changed("use") {
 			if changeCurrentTarget == "" {

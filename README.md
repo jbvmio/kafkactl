@@ -13,25 +13,30 @@ List Topics:
 ```
 package main
 
-import "github.com/jbvmio/kafkactl"
+import (
+	"fmt"
+	"log"
+
+	"github.com/jbvmio/kafkactl"
+)
 
 func main() {
 
 	client, err := kafkactl.NewClient("localhost:9092")
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
-    }
+	}
 
-    topics, err := client.GetTopicMeta()
+	topics, err := client.GetTopicMeta()
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
-    }
+	}
 
-    for _, t := range topics {
-        fmt.Printf("TOPIC> %v  PARTITION> %v  LEADER> %v\n", t.Topic, t.Partition, t.Leader)
-    }
+	for _, t := range topics {
+		fmt.Printf("TOPIC> %v  PARTITION> %v  LEADER> %v\n", t.Topic, t.Partition, t.Leader)
+	}
+
 }
-
 
 ```
 
