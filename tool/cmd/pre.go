@@ -26,7 +26,7 @@ var (
 
 var preCmd = &cobra.Command{
 	Use:     "pre",
-	Short:   "Perform Various Kafka Administration Tasks",
+	Short:   "Perform Preferred Replica Election Tasks",
 	Aliases: []string{"preferred-replica-election"},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		launchZKClient()
