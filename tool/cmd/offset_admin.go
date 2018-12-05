@@ -30,22 +30,6 @@ func resetPartitionOffsetToNewest(group, topic string, partition int32) {
 
 func resetPartitionOffsetTo(group, topic string, partition int32, toOffset int64) {
 	validPartCheck()
-
-	/*
-		client, err := kafkactl.NewClient(bootStrap)
-		if err != nil {
-			log.Fatalf("Error: %v\n", err)
-		}
-		defer func() {
-			if err := client.Close(); err != nil {
-				log.Fatalf("Error closing client: %v\n", err)
-			}
-		}()
-		if verbose {
-			client.Logger("")
-		}
-	*/
-
 	if toOffset == kafkactl.OffsetNewest {
 		toOffset, errd = client.GetOffsetNewest(topic, partition)
 		if errd != nil {
@@ -65,22 +49,6 @@ func resetPartitionOffsetTo(group, topic string, partition int32, toOffset int64
 }
 
 func resetAllPartitionsTo(group, topic string, toOffset int64) {
-
-	/*
-		client, err := kafkactl.NewClient(bootStrap)
-		if err != nil {
-			log.Fatalf("Error: %v\n", err)
-		}
-		defer func() {
-			if err := client.Close(); err != nil {
-				log.Fatalf("Error closing client: %v\n", err)
-			}
-		}()
-		if verbose {
-			client.Logger("")
-		}
-	*/
-
 	exact = true
 	ts := kafkactl.GetTopicSummaries(searchTopicMeta(targetTopic))
 	if len(ts) != 1 {

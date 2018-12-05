@@ -8,6 +8,7 @@ import (
 )
 
 type ClusterMeta struct {
+	BrokerIDs      []int32
 	Brokers        []string
 	Topics         []string
 	Groups         []string
@@ -43,6 +44,7 @@ func (kc *KClient) GetClusterMeta() (ClusterMeta, error) {
 		addr := b.Addr()
 		broker := string(addr + "/" + cast.ToString(id))
 		cm.Brokers = append(cm.Brokers, broker)
+		cm.BrokerIDs = append(cm.BrokerIDs, id)
 	}
 	for _, t := range res.Topics {
 		cm.Topics = append(cm.Topics, t.Name)
