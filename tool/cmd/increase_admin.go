@@ -15,8 +15,10 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"sort"
 )
 
 type RAPartList struct {
@@ -35,44 +37,197 @@ type BrokerReplicas struct {
 	ReplicaCount int32
 }
 
-func changeTopicRF(topic string, rFactor int16) {
+func performPartitionReAssignment(topic string, rFactor int) {
+	j := changeTopicRF(topic, rFactor)
+	fmt.Printf("%s", j)
+	zkCreateReassignPartitions("/admin/reassign_partitions", j)
+}
+
+func changeTopicRF(topic string, rFactor int) []byte {
+	if rFactor < 1 {
+		log.Fatalf("Invalid Replication Factor Value: %v\n", rFactor)
+	}
 	exact = true
 	tMeta := searchTopicMeta(topic)
-	if len(tMeta) > 1 {
+	if len(tMeta) < 1 {
 		log.Fatalf("No results found for topic: %v\n", topic)
 	}
 	brokers, err := client.GetClusterMeta()
 	if err != nil {
 		log.Fatalf("Error retrieving metadata: %v\n", err)
 	}
-	fmt.Println("BrokerIDs:", brokers.BrokerIDs)
-	for _, tm := range tMeta {
-		fmt.Println(tm.Topic)
-		fmt.Println(tm.Replicas)
+	if rFactor > len(brokers.BrokerIDs) {
+		log.Fatalf("Invalid Number of Brokers Available.\n")
 	}
-
 	var BR []BrokerReplicas
-	available := make(map[int32]bool)
+	var mostReplicas int32
 	for _, b := range brokers.BrokerIDs {
-		var used bool
 		br := BrokerReplicas{
 			BrokerID: b,
 		}
 		for _, tm := range tMeta {
 			for _, r := range tm.Replicas {
 				if r == b {
-					used = true
 					br.ReplicaCount++
 				}
 			}
 		}
-		if !used {
-			available[b] = true
-		} else {
-			BR = append(BR, br)
+		if br.ReplicaCount > mostReplicas {
+			mostReplicas = br.ReplicaCount
+		}
+		BR = append(BR, br)
+	}
+	if len(BR) < 2 {
+		log.Fatalf("Invalid Number of Brokers Available.\n")
+	}
+	sortBrokerByReps(BR)
+	var raparts []RAPartition
+	var previous int32 = -7
+	var history []int32
+	for t := 0; t < len(tMeta); t++ {
+		tm := tMeta[t]
+		rap := RAPartition{
+			Topic:     tm.Topic,
+			Partition: tm.Partition,
+		}
+		if len(tm.Replicas) != rFactor {
+			if len(tm.Replicas) < rFactor {
+				reps := tm.Replicas
+				delta := rFactor - len(tm.Replicas)
+				taken := make(map[int32]bool)
+				for i := 0; i < delta; i++ {
+					history = append(history, previous)
+					var candidates []BrokerReplicas
+					for x := 0; x < len(BR); x++ {
+						var used bool
+						for _, r := range tm.Replicas {
+							if r == BR[x].BrokerID {
+								used = true
+							}
+						}
+						if !used {
+							br := BrokerReplicas{
+								BrokerID:     BR[x].BrokerID,
+								ReplicaCount: BR[x].ReplicaCount,
+							}
+							candidates = append(candidates, br)
+						}
+					}
+					sortBrokerByReps(candidates)
+					var choices []int32
+					for _, c := range candidates {
+						choices = append(choices, c.BrokerID)
+					}
+					var bID int32
+					var match bool
+					var comparePart int
+					if t != len(tMeta)-1 {
+						comparePart = t + 1
+					}
+					maybe := make(map[int32]bool)
+					var best int32 = -7777
+					var toBeat int32
+					for _, next := range tMeta[comparePart].Replicas {
+						for _, c := range candidates {
+							if !taken[c.BrokerID] {
+								if c.BrokerID == next {
+									maybe[c.BrokerID] = false
+									if best == c.BrokerID {
+										best = -7777
+									}
+								} else {
+									maybe[c.BrokerID] = true
+									if c.ReplicaCount <= mostReplicas {
+										var inHist bool
+										if len(history) >= rFactor {
+											for _, h := range history[len(history)-rFactor:] {
+												if h == c.BrokerID {
+													inHist = true
+												}
+											}
+										} else {
+											for _, h := range history {
+												if h == c.BrokerID {
+													inHist = true
+												}
+											}
+										}
+										if !inHist {
+											if best != -7777 {
+												if c.ReplicaCount < toBeat {
+													best = c.BrokerID
+													toBeat = c.ReplicaCount
+												}
+											} else {
+												best = c.BrokerID
+												toBeat = c.ReplicaCount
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					if best != -7777 {
+						match = true
+						bID = best
+					} else {
+						for k := range maybe {
+							if maybe[k] {
+								match = true
+								if k != previous {
+									bID = k
+									break
+								}
+								bID = k
+							}
+						}
+					}
+					if !match {
+						for _, c := range candidates {
+							if !taken[c.BrokerID] {
+								if c.BrokerID != previous {
+									bID = c.BrokerID
+									break
+								}
+								bID = c.BrokerID
+							}
+						}
+					}
+					taken[bID] = true
+					reps = append(reps, bID)
+					for x := 0; x < len(BR); x++ {
+						if BR[x].BrokerID == bID {
+							BR[x].ReplicaCount++
+							break
+						}
+					}
+					sortBrokerByReps(BR)
+					previous = bID
+				}
+				rap.Replicas = reps
+				raparts = append(raparts, rap)
+				for _, br := range BR {
+					if br.ReplicaCount > mostReplicas {
+						mostReplicas = br.ReplicaCount
+					}
+				}
+			}
 		}
 	}
-	fmt.Println()
-	fmt.Printf("BRs: %+v\n", BR)
-	fmt.Println("Available:", available)
+	rapList := RAPartList{
+		Version:    1,
+		Partitions: raparts,
+	}
+	j, err := json.Marshal(rapList)
+	if err != nil {
+		log.Fatalf("Error on Marshal: %v\n", err)
+	}
+	return j
+}
+
+func sortBrokerByReps(sl []BrokerReplicas) {
+	sort.Slice(sl, func(i, j int) bool {
+		return sl[i].ReplicaCount < sl[j].ReplicaCount
+	})
 }

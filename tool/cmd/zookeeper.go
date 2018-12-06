@@ -123,3 +123,22 @@ func zkCreatePRE(path string, value []byte) {
 	fmt.Println("\n\n", "Successfully Created Preferred Replica Election.\n")
 	return
 }
+
+func zkCreateReassignPartitions(path string, value []byte) {
+	if path == "" {
+		log.Fatalf("Error: No Path Specified.\n")
+	}
+	check, err := zkClient.Exists(path)
+	if err != nil {
+		log.Fatalf("Error Validating Path: %v\n", err)
+	}
+	if check {
+		log.Fatalf("Error: Reassign Partitions Already in Progress.\n")
+	}
+	_, err = zkClient.Create(path, value, "", false)
+	if err != nil {
+		log.Fatalf("Error Creating Reassign Partitions: %v\n", err)
+	}
+	fmt.Println("\n\n", "Successfully Started Reassign Partition Process.\n")
+	return
+}

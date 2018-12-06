@@ -17,18 +17,25 @@ package cmd
 import (
 	"log"
 
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 )
 
 var increaseCmd = &cobra.Command{
-	Use:   "increase",
-	Short: "Increase Topic Partitions / Replication Factor",
+	Use:     "increase",
+	Short:   "Increase Topic Partitions / Replication Factor",
+	Aliases: []string{"incr"},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		launchZKClient()
+		nonMainCMD = true
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Changed("topic") {
 			if !cmd.Flags().Changed("replicas") {
 				log.Fatalf("Use --replicas to specify the total number of replicas desired for topic: %v\n", targetTopic)
 			}
-			changeTopicRF(targetTopic, targetRFactor)
+			rFactor := cast.ToInt(targetRFactor)
+			performPartitionReAssignment(targetTopic, rFactor)
 			return
 		}
 		return
