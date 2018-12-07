@@ -43,6 +43,13 @@ func performPartitionReAssignment(topic string, rFactor int) {
 	zkCreateReassignPartitions("/admin/reassign_partitions", j)
 }
 
+func changePartitionCount(topic string, count int32) {
+	err := client.AddPartitions(topic, count)
+	if err != nil {
+		log.Fatalf("Error changing partition count: %v\n", err)
+	}
+}
+
 func changeTopicRF(topic string, rFactor int) []byte {
 	if rFactor < 1 {
 		log.Fatalf("Invalid Replication Factor Value: %v\n", rFactor)
@@ -59,6 +66,8 @@ func changeTopicRF(topic string, rFactor int) []byte {
 	if rFactor > len(brokers.BrokerIDs) {
 		log.Fatalf("Invalid Number of Brokers Available.\n")
 	}
+
+	// Break Out Here Later func(topic, rFactor, tMeta, BR) //
 	var BR []BrokerReplicas
 	var mostReplicas int32
 	for _, b := range brokers.BrokerIDs {
@@ -214,6 +223,10 @@ func changeTopicRF(topic string, rFactor int) []byte {
 				}
 			}
 		}
+	}
+	if len(raparts) < 1 {
+		client.Close()
+		log.Fatalf("Nothing to Assign,\n")
 	}
 	rapList := RAPartList{
 		Version:    1,
