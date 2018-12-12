@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/spf13/cast"
@@ -35,7 +36,7 @@ var increaseCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Changed("topic") {
 			if cmd.Flags().Changed("replicas") && cmd.Flags().Changed("partitions") {
-				log.Fatalf("Cannot specify --partitions and --replicas at the same time, try again.\n")
+				log.Fatalf("Cannot specify --partitions and --replicas at the same time, try again.\n  *Increasing Partitions is currently WiP*\n")
 			}
 			if cmd.Flags().Changed("replicas") {
 				rFactor := cast.ToInt(targetRFactor)
@@ -43,11 +44,12 @@ var increaseCmd = &cobra.Command{
 				return
 			}
 			if cmd.Flags().Changed("partitions") {
-				changePartitionCount(targetTopic, targetPartition)
+				//changePartitionCount(targetTopic, targetPartition)
+				fmt.Println("  *ncreasing Partitions is currently WiP*")
 				return
 			}
-			client.Close()
-			log.Fatalf("Must specify either --partitions or --replicas to increase, try again.\n")
+			//log.Fatalf("Must specify either --partitions or --replicas to increase, try again.\n")
+			log.Fatalf("Must specify --replicas to increase, try again.\n")
 			return
 		}
 		log.Fatalf("Must specify --topic, try again.\n")

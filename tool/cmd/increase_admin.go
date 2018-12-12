@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"log"
 	"sort"
+
+	"github.com/spf13/cast"
 )
 
 type RAPartList struct {
@@ -43,8 +45,74 @@ func performPartitionReAssignment(topic string, rFactor int) {
 	zkCreateReassignPartitions("/admin/reassign_partitions", j)
 }
 
+// This is WiP*
 func changePartitionCount(topic string, count int32) {
-	err := client.AddPartitions(topic, count)
+	exact = true
+	tMeta := searchTopicMeta(topic)
+	if len(tMeta) < 1 {
+		log.Fatalf("No results found for topic: %v\n", topic)
+	}
+	existingPartCount := cast.ToInt32(len(tMeta))
+	if count <= existingPartCount {
+		log.Fatalf("Invalid Partitions Value: %v\n", count)
+	}
+	delta := count - existingPartCount
+	totalParts := make([][]int32, count)
+	partMap := make(map[int32]bool)
+	repMap := make(map[int32]bool)
+	var lowestReps int
+	var replicaChoices []int32
+	for _, tm := range tMeta {
+		totalParts[tm.Partition] = tm.Replicas
+		partMap[tm.Partition] = true
+		var rCount int
+		for _, r := range tm.Replicas {
+			if !repMap[r] {
+				replicaChoices = append(replicaChoices, r)
+			}
+			rCount++
+		}
+		if lowestReps != 0 {
+			lowestReps = rCount
+		}
+		if lowestReps < rCount {
+			lowestReps = rCount
+		}
+	}
+	var i int32
+	repUsed := make(map[int32]bool)
+	for i < delta {
+		var partNum int32
+		for x := 0; x < len(totalParts); x++ {
+			if !partMap[partNum] {
+				var ass []int32
+				var success bool
+				for _, rep := range replicaChoices {
+					if !repUsed[rep] {
+						ass = append(ass, rep)
+						repUsed[rep] = true
+						success = true
+						break
+					}
+				}
+				if !success {
+					repUsed = nil
+					for _, rep := range replicaChoices {
+						if !repUsed[rep] {
+							ass = append(ass, rep)
+							repUsed[rep] = true
+							success = true
+							break
+						}
+					}
+				}
+				totalParts[partNum] = ass
+			}
+			partNum++
+		}
+		i++
+	}
+	err := client.AddPartitions(topic, count, totalParts)
 	if err != nil {
 		log.Fatalf("Error changing partition count: %v\n", err)
 	}
