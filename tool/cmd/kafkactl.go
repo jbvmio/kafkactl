@@ -41,6 +41,13 @@ func launchClient() {
 	}
 }
 
+func closeFatal(format string, msg ...interface{}) {
+	if connected := client.IsConnected(); connected {
+		closeClient()
+	}
+	log.Fatalf(format, msg...)
+}
+
 func closeClient() {
 	if errd = client.Close(); errd != nil {
 		log.Fatalf("Error closing client: %v\n", errd)

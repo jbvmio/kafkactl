@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"log"
 	"strings"
 
 	"github.com/spf13/cast"
@@ -33,7 +32,7 @@ var tailCmd = &cobra.Command{
 	Long:  `Example: kafkactl tail 5 -t myTopic (Default tail start from newest: 1)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if targetTopic == "" {
-			log.Fatalf("specify a topic, eg. --topic")
+			closeFatal("specify a topic, eg. --topic")
 		}
 		tailTarget := validateTailArgs(args)
 		if strParts == "" {

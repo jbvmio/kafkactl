@@ -59,26 +59,3 @@ func init() {
 	topicCmd.Flags().StringVar(&leaderList, "leaders", "", `Only show specified Leaders. (eg "1,3,7"; auto passes to --meta)`)
 	topicCmd.Flags().BoolVarP(&refreshMeta, "refresh-metadata", "r", false, "Query the Cluster to Refresh the Available Metadata for the given Topic(s)")
 }
-
-/**	Try to add filter topics by partition leader **
-
-if cmd.Flags().Changed("leaders") {
-	var tsMatch []kafkactl.TopicSummary
-	var leaders []int32
-	ldrs := strings.Split(onlyLeaders, ",")
-	for _, l := range ldrs {
-		leaders = append(leaders, cast.ToInt32(l))
-	}
-	validateLeaders(leaders)
-	for _, l := range leaders {
-		for _, t := range ts {
-			if t.Leader == l {
-				tsMatch = append(tsMatch, t)
-			}
-		}
-	}
-	printOutput(tsMatch)
-	return
-}
-
-*/

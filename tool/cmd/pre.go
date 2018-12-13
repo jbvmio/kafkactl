@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +28,6 @@ var preCmd = &cobra.Command{
 	Aliases: []string{"preferred-replica-election"},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		launchZKClient()
-		nonMainCMD = true
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Changed("topic") {
@@ -41,7 +38,7 @@ var preCmd = &cobra.Command{
 			allTopicsPRE()
 			return
 		}
-		log.Fatalf("Error: Must specify either --topic OR --alltopics, try again.")
+		closeFatal("Error: Must specify either --topic OR --alltopics, try again.")
 	},
 }
 

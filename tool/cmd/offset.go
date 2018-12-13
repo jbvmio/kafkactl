@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/jbvmio/kafkactl"
 
@@ -40,18 +39,18 @@ var offsetCmd = &cobra.Command{
 	Aliases: []string{"offsets"},
 	Run: func(cmd *cobra.Command, args []string) {
 		if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("group") {
-			log.Fatalf("specify both group and topic")
+			closeFatal("specify both group and topic")
 		}
 		if performReset {
 			if cmd.Flags().Changed("newest") && cmd.Flags().Changed("oldest") {
-				log.Fatalf("cannot specify both newest and oldest, try again.")
+				closeFatal("cannot specify both newest and oldest, try again.")
 			}
 			if cmd.Flags().Changed("allparts") && cmd.Flags().Changed("partition") {
-				log.Fatalf("cannot specify both allParts and single partition, try again.")
+				closeFatal("cannot specify both allParts and single partition, try again.")
 			}
 			if targetNewest || targetOldest {
 				if cmd.Flags().Changed("offset") || cmd.Flags().Changed("reletive") {
-					log.Fatalf("cannot specify specific offset using either newest/oldest, try again.")
+					closeFatal("cannot specify specific offset using either newest/oldest, try again.")
 				}
 				if targetNewest {
 					if allParts {
@@ -59,7 +58,7 @@ var offsetCmd = &cobra.Command{
 						return
 					}
 					if !cmd.Flags().Changed("partition") {
-						log.Fatalf("need a valild partition, try again.")
+						closeFatal("need a valild partition, try again.")
 					}
 					resetPartitionOffsetToNewest(targetGroup, targetTopic, targetPartition)
 					return
@@ -70,7 +69,7 @@ var offsetCmd = &cobra.Command{
 						return
 					}
 					if !cmd.Flags().Changed("partition") {
-						log.Fatalf("need a valild partition, try again.")
+						closeFatal("need a valild partition, try again.")
 					}
 					resetPartitionOffsetToOldest(targetGroup, targetTopic, targetPartition)
 					return
@@ -85,7 +84,7 @@ var offsetCmd = &cobra.Command{
 				return
 			}
 			if !cmd.Flags().Changed("offset") || !cmd.Flags().Changed("partition") {
-				log.Fatalf("specify both --partition and --offset OR --allparts, try again.")
+				closeFatal("specify both --partition and --offset OR --allparts, try again.")
 			}
 			resetPartitionOffsetTo(targetGroup, targetTopic, targetPartition, targetOffset)
 			return

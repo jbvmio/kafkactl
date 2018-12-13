@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/jbvmio/kafkactl"
@@ -25,7 +24,7 @@ import (
 func getMSG(topic string, partition int32, offset int64) *kafkactl.Message {
 	msg, err := client.ConsumeOffsetMsg(topic, partition, offset)
 	if err != nil {
-		log.Fatalf("Error retrieving message: %v\n", err)
+		closeFatal("Error retrieving message: %v\n", err)
 	}
 	return msg
 }
@@ -35,9 +34,9 @@ func getMSGByTime(topic string, partition int32, datetime string) *kafkactl.Mess
 	if err != nil {
 		if strings.Contains(err.Error(), "parsing time") && strings.Contains(err.Error(), "cannot parse") {
 			errMsg := fmt.Sprintf(`datetime parse error: format should be in the form "mm/dd/YYYY HH:MM:SS.000".`)
-			log.Fatalf("Error retrieving message:\n  %v", errMsg)
+			closeFatal("Error retrieving message:\n  %v", errMsg)
 		}
-		log.Fatalf("Error retrieving message: %v\n", err)
+		closeFatal("Error retrieving message: %v\n", err)
 	}
 	return msg
 }

@@ -93,6 +93,15 @@ func (kc *KClient) Connect() error {
 	return nil
 }
 
+func (kc *KClient) IsConnected() bool {
+	for _, broker := range kc.brokers {
+		if ok, _ := broker.Connected(); ok {
+			return true
+		}
+	}
+	return false
+}
+
 func (kc *KClient) Close() error {
 	errString := fmt.Sprintf("ERROR:\n")
 	var errFound bool

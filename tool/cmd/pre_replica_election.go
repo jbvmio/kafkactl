@@ -17,7 +17,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 )
 
 type PREList struct {
@@ -34,7 +33,7 @@ func performTopicPRE(topic string) {
 	exact = true
 	tom := chanGetTopicOffsetMap(searchTopicMeta(topic))
 	if len(tom) < 1 {
-		log.Fatalf("Error: Cannot find topic: %v\n", topic)
+		closeFatal("Error: Cannot find topic: %v\n", topic)
 	}
 	var preParts []PREPartition
 	for _, to := range tom {
@@ -52,7 +51,7 @@ func performTopicPRE(topic string) {
 	}
 	j, err := json.Marshal(preList)
 	if err != nil {
-		log.Fatalf("Error Marshaling Topic/Partition Data: %v\n", err)
+		closeFatal("Error Marshaling Topic/Partition Data: %v\n", err)
 	}
 	fmt.Printf("%s", j)
 	zkCreatePRE("/admin/preferred_replica_election", j)
@@ -61,7 +60,7 @@ func performTopicPRE(topic string) {
 func allTopicsPRE() {
 	tom := chanGetTopicOffsetMap(searchTopicMeta(""))
 	if len(tom) < 1 {
-		log.Fatalf("Error: No Topics Available.\n")
+		closeFatal("Error: No Topics Available.\n")
 	}
 	var preParts []PREPartition
 	for _, to := range tom {
@@ -79,7 +78,7 @@ func allTopicsPRE() {
 	}
 	j, err := json.Marshal(preList)
 	if err != nil {
-		log.Fatalf("Error Marshaling Topic/Partition Data: %v\n", err)
+		closeFatal("Error Marshaling Topic/Partition Data: %v\n", err)
 	}
 	fmt.Printf("%s", j)
 	zkCreatePRE("/admin/preferred_replica_election", j)

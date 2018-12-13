@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"log"
 	"sort"
 	"strings"
 
@@ -25,7 +24,7 @@ import (
 func searchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 	tMeta, err := client.GetTopicMeta()
 	if err != nil {
-		log.Fatalf("Error getting topic metadata: %s\n", err)
+		closeFatal("Error getting topic metadata: %s\n", err)
 	}
 	var topicMeta []kafkactl.TopicMeta
 	if len(topics) >= 1 {
@@ -121,7 +120,7 @@ func chanMakeTOM(client *kafkactl.KClient, tMeta []kafkactl.TopicMeta, tomChan c
 func refreshMetadata(topics ...string) {
 	errd = client.RefreshMetadata(topics...)
 	if errd != nil {
-		log.Fatalf("Error refreshing topic metadata: %v\n", errd)
+		closeFatal("Error refreshing topic metadata: %v\n", errd)
 	}
 }
 
@@ -129,7 +128,7 @@ func validateLeaders(leaders []int32) {
 	pMap := make(map[int32]bool, len(leaders))
 	for _, p := range leaders {
 		if pMap[p] {
-			log.Fatalf("Error: invalid leader/brokerID entered or duplicate.")
+			closeFatal("Error: invalid leader/brokerID entered or duplicate.")
 		} else {
 			pMap[p] = true
 		}

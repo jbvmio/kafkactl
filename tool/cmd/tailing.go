@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 
@@ -27,19 +26,19 @@ import (
 func getTopicMsg(topic string, partition int32, offset int64) {
 	msg, err := client.ConsumeOffsetMsg("testtopic", 0, 1955)
 	if err != nil {
-		log.Fatalf("Error: %v\n", err)
+		closeFatal("Error: %v\n", err)
 	}
 	fmt.Printf("%s", msg.Value)
 }
 
 func tailTopic(topic string, relativeOffset int64, partitions ...int32) {
 	if relativeOffset > 0 {
-		log.Fatalf("reletive offset must be a negative number")
+		closeFatal("reletive offset must be a negative number")
 	}
 	exact = true
 	tSum := kafkactl.GetTopicSummaries(searchTopicMeta(topic))
 	if len(tSum) != 1 {
-		log.Fatalf("Error finding topic: %v\n", topic)
+		closeFatal("Error finding topic: %v\n", topic)
 	}
 	if len(partitions) == 0 {
 		partitions = tSum[0].Partitions
@@ -49,7 +48,7 @@ func tailTopic(topic string, relativeOffset int64, partitions ...int32) {
 		for _, p := range partitions {
 			off, err := client.GetOffsetNewest(ts.Topic, p)
 			if err != nil {
-				log.Fatalf("Error validating Partition: %v for topic: %v\n", p, err)
+				closeFatal("Error validating Partition: %v for topic: %v\n", p, err)
 			}
 			pMap[p] = off
 		}
@@ -81,7 +80,7 @@ func validateParts(parts []int32) {
 	pMap := make(map[int32]bool, len(parts))
 	for _, p := range parts {
 		if pMap[p] {
-			log.Fatalf("Error: invalid partition entered or duplicate.")
+			closeFatal("Error: invalid partition entered or duplicate.")
 		} else {
 			pMap[p] = true
 		}
@@ -91,7 +90,7 @@ func validateParts(parts []int32) {
 func validateTailArgs(args []string) int64 {
 	var tailTarget int64
 	if len(args) > 1 {
-		log.Fatalf("Error: Too many tail arguments, try again.")
+		closeFatal("Error: Too many tail arguments, try again.")
 	}
 	if len(args) < 1 {
 		tailTarget = -1

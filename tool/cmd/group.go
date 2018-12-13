@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
@@ -47,7 +45,7 @@ var groupCmd = &cobra.Command{
 		}
 		grps := searchGroupListMeta(args...)
 		if len(grps) < 1 {
-			log.Fatalf("no results found.\n")
+			closeFatal("no results found.\n")
 		}
 		printOutput(grps)
 	},

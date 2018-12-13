@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
@@ -31,8 +29,8 @@ var confCmd = &cobra.Command{
 	Short: "Get and Set Available Kafka Related Configs (Topics Only for Now)",
 	Long:  `Example kafkactl config -t myTopic`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if targetTopic == "" {
-			log.Fatalf("specify a topic, eg. --topic")
+		if !cmd.Flags().Changed("topic") {
+			closeFatal("specify a topic, eg. --topic")
 		}
 		if setConf {
 			setTopicConfig(targetTopic, targetConfName, targetConfValue)

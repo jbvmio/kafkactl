@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
@@ -33,10 +31,10 @@ var messageCmd = &cobra.Command{
 	Long:    `Example: kafkactl message -t myTopic -p 5 -o 6723`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("partition") {
-			log.Fatalf("must specify 1 --topic, --partition and --offset OR --timestamp")
+			closeFatal("must specify 1 --topic, --partition and --offset OR --timestamp")
 		}
 		if cmd.Flags().Changed("offset") && cmd.Flags().Changed("timestamp") {
-			log.Fatalf("must specify 3 --offset OR --timestamp, not both. Try again.")
+			closeFatal("must specify 3 --offset OR --timestamp, not both. Try again.")
 		}
 		if cmd.Flags().Changed("timestamp") {
 			msg := getMSGByTime(targetTopic, targetPartition, timeQuery)

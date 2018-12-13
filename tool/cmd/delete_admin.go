@@ -16,13 +16,12 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 )
 
 func deleteTopic(topic string) {
 	errd = client.RemoveTopic(topic)
 	if errd != nil {
-		log.Fatalf("Error deleting topic: %v\n", errd)
+		closeFatal("Error deleting topic: %v\n", errd)
 	}
 	fmt.Println("\nSuccessfully deleted topic", topic, "\n")
 }
@@ -30,7 +29,7 @@ func deleteTopic(topic string) {
 func deleteGroup(group string) {
 	errd = client.RemoveGroup(group)
 	if errd != nil {
-		log.Fatalf("Error removing group: %v\n", errd)
+		closeFatal("Error removing group: %v\n", errd)
 	}
 	fmt.Println("\nSuccessfully removed group", group, "\n")
 }

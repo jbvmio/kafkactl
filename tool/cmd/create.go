@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +28,7 @@ var createCmd = &cobra.Command{
 	Long:  `Example kafkactl admin create -t myTopic`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("partitions") || !cmd.Flags().Changed("rfactor") {
-			log.Fatalf("must specify --topic, --partitions and --rfactor")
+			closeFatal("must specify --topic, --partitions and --rfactor")
 		}
 		createTopic(targetTopic, targetPartition, targetRFactor)
 		return

@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"log"
 	"sort"
 	"strings"
 
@@ -25,7 +24,7 @@ import (
 func searchGroupListMeta(groups ...string) []kafkactl.GroupListMeta {
 	glMeta, err := client.GetGroupListMeta()
 	if err != nil {
-		log.Fatalf("Error getting grouplist metadata: %s\n", err)
+		closeFatal("Error getting grouplist metadata: %s\n", err)
 	}
 	var groupListMeta []kafkactl.GroupListMeta
 	for _, g := range groups {
@@ -50,7 +49,7 @@ func searchGroupListMeta(groups ...string) []kafkactl.GroupListMeta {
 func searchGroupMeta(group ...string) []kafkactl.GroupMeta {
 	grpMeta, err := client.GetGroupMeta()
 	if err != nil {
-		log.Fatalf("Error getting group metadata: %s\n", err)
+		closeFatal("Error getting group metadata: %s\n", err)
 	}
 	if len(group) >= 1 {
 		if group[0] != "" {

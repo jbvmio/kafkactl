@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -29,17 +28,11 @@ var metaCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		meta, err := client.GetClusterMeta()
 		if err != nil {
-			log.Fatalf("Error getting cluster metadata: %v\n", err)
-		}
-		if err != nil {
-			log.Fatalf("Error getting group metadata: %v\n", err)
+			closeFatal("Error getting cluster metadata: %v\n", err)
 		}
 		c, err := client.Controller()
 		if err != nil {
-			log.Fatalf("Error obtaining controller: %v\n", err)
-		}
-		if err != nil {
-			log.Fatalf("Error obtaining api versions: %v\n", err)
+			closeFatal("Error obtaining controller: %v\n", err)
 		}
 		fmt.Println("\nBrokers: ", meta.BrokerCount())
 		fmt.Println(" Topics: ", meta.TopicCount())

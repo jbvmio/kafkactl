@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +26,7 @@ var deleteCmd = &cobra.Command{
   kafkactl admin delete -g myGroup`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Changed("topic") && cmd.Flags().Changed("group") {
-			log.Fatalf("specify either group or topic, not both, try again.")
+			closeFatal("specify either group or topic, not both, try again.")
 		}
 		if cmd.Flags().Changed("topic") {
 			deleteTopic(targetTopic)
@@ -38,10 +36,7 @@ var deleteCmd = &cobra.Command{
 			deleteGroup(targetGroup)
 			return
 		}
-
-		printOutput(searchTopicConfig(targetTopic))
-		return
-
+		closeFatal("specify either --group or --topic, try again.")
 	},
 }
 

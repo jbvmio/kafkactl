@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -60,7 +59,7 @@ var describeCmd = &cobra.Command{
 				grps = groupMetaByMember(clientID, grps)
 			}
 			if len(grps) < 1 {
-				log.Fatalf("no results for that group/topic combination\n")
+				closeFatal("no results for that group/topic combination\n")
 			}
 			if showLag {
 				var partitionLag []PartitionLag
@@ -82,7 +81,7 @@ var describeCmd = &cobra.Command{
 				tom = getTopicOffsetMap(searchTopicMeta(args...))
 			}
 			if len(tom) < 1 {
-				log.Fatalf("no results for that group/topic combination\n")
+				closeFatal("no results for that group/topic combination\n")
 			}
 			if cmd.Flags().Changed("leaders") {
 				var leaders []int32

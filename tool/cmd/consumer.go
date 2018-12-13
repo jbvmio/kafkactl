@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"strings"
@@ -27,7 +26,7 @@ import (
 func launchCG(groupID string, debug bool, topics ...string) {
 	consumer, err := client.NewConsumerGroup(groupID, debug, topics...)
 	if err != nil {
-		log.Fatalf("Error creating consumer group: %v\n", err)
+		closeFatal("Error creating consumer group: %v\n", err)
 	}
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt)
@@ -90,7 +89,7 @@ ConsumeLoop:
 	}
 	if debug {
 		if err := consumer.Close(); err != nil {
-			log.Fatalf("Error closing Consumer: %v\n", err)
+			closeFatal("Error closing Consumer: %v\n", err)
 		}
 	}
 }

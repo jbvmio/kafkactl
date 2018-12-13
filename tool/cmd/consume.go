@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +28,7 @@ var consumeCmd = &cobra.Command{
 	Short:   "Consume from Topics using Consumer Groups.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("Group") {
-			log.Fatalf("specify both --group and --topic, try again.\n")
+			closeFatal("specify both --Group and --topic, try again.\n")
 		}
 		launchCG(useGroupID, verbose, targetTopic)
 		return

@@ -15,9 +15,6 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 )
@@ -29,14 +26,13 @@ var increaseCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Changed("replicas") {
 			validateBootStrap()
-			launchClient()
 			launchZKClient()
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Changed("topic") {
 			if cmd.Flags().Changed("replicas") && cmd.Flags().Changed("partitions") {
-				log.Fatalf("Cannot specify --partitions and --replicas at the same time, try again.\n  *Increasing Partitions is currently WiP*\n")
+				closeFatal("Cannot specify --partitions and --replicas at the same time, try again.\n")
 			}
 			if cmd.Flags().Changed("replicas") {
 				rFactor := cast.ToInt(targetRFactor)
@@ -44,15 +40,13 @@ var increaseCmd = &cobra.Command{
 				return
 			}
 			if cmd.Flags().Changed("partitions") {
-				//changePartitionCount(targetTopic, targetPartition)
-				fmt.Println("  *ncreasing Partitions is currently WiP*")
+				changePartitionCount(targetTopic, targetPartition)
 				return
 			}
-			//log.Fatalf("Must specify either --partitions or --replicas to increase, try again.\n")
-			log.Fatalf("Must specify --replicas to increase, try again.\n")
+			closeFatal("Must specify either --partitions or --replicas to increase, try again.\n")
 			return
 		}
-		log.Fatalf("Must specify --topic, try again.\n")
+		closeFatal("Must specify --topic, try again.\n")
 		return
 	},
 }

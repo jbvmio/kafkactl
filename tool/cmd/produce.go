@@ -17,7 +17,6 @@ package cmd
 import (
 	"bytes"
 	"io/ioutil"
-	"log"
 	"os"
 	"strings"
 
@@ -42,17 +41,17 @@ var produceCmd = &cobra.Command{
     Console Producer (launched with no arguments or stdin.)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !cmd.Flags().Changed("topic") {
-			log.Fatalf("must specify --topic")
+			closeFatal("must specify --topic")
 		}
 		if cmd.Flags().Changed("partitions") || cmd.Flags().Changed("allparts") {
 			if cmd.Flags().Changed("partitions") && cmd.Flags().Changed("allparts") {
-				log.Fatalf("Error: Choose either --partitions or --allparts, but not both. Try again.")
+				closeFatal("Error: Choose either --partitions or --allparts, but not both. Try again.")
 			}
 			if allParts {
 				exact = true
 				t := kafkactl.GetTopicSummaries(searchTopicMeta(targetTopic))
 				if len(t) != 1 {
-					log.Fatalf("Error: Could not isolate specified topic, %v\n", targetTopic)
+					closeFatal("Error: Could not isolate specified topic, %v\n", targetTopic)
 				}
 				tParts = t[0].Partitions
 			}
@@ -70,7 +69,7 @@ var produceCmd = &cobra.Command{
 			if stdinAvailable() {
 				b, err := ioutil.ReadAll(os.Stdin)
 				if err != nil {
-					log.Fatalf("Failed to read from stdin: %v\n", err)
+					closeFatal("Failed to read from stdin: %v\n", err)
 				}
 				targetMsg = string(bytes.TrimSpace(b))
 				createMsgSendParts(targetTopic, targetKey, targetMsg, tParts...)
@@ -86,7 +85,7 @@ var produceCmd = &cobra.Command{
 		if stdinAvailable() {
 			b, err := ioutil.ReadAll(os.Stdin)
 			if err != nil {
-				log.Fatalf("Failed to read from stdin: %v\n", err)
+				closeFatal("Failed to read from stdin: %v\n", err)
 			}
 			targetMsg = string(bytes.TrimSpace(b))
 			createMsgSend(targetTopic, targetKey, targetMsg, -1)

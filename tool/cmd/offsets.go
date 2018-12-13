@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/jbvmio/kafkactl"
 )
 
@@ -69,7 +67,7 @@ func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {
 				}
 			}
 		} else {
-			log.Fatalf("Error retrieving details for specified group and/or topic: [%v > %v]\n", targetGroup, targetTopic)
+			closeFatal("Error retrieving details for specified group and/or topic: [%v > %v]\n", targetGroup, targetTopic)
 		}
 		return GTMeta
 	}
@@ -86,7 +84,7 @@ func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {
 				}
 				offset, lag, err := client.OffSetAdmin().Group(grp.Group).Topic(ts.Topic).GetOffsetLag(p)
 				if err != nil {
-					log.Fatalf("Error: %v\n", err)
+					closeFatal("Error: %v\n", err)
 				}
 				tpm.TopicOffset = (offset + lag)
 				gpm.GroupOffset = offset

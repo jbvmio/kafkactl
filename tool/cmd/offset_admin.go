@@ -33,18 +33,18 @@ func resetPartitionOffsetTo(group, topic string, partition int32, toOffset int64
 	if toOffset == kafkactl.OffsetNewest {
 		toOffset, errd = client.GetOffsetNewest(topic, partition)
 		if errd != nil {
-			log.Fatalf("Error retrieving newest offset: %v\n", errd)
+			closeFatal("Error retrieving newest offset: %v\n", errd)
 		}
 	}
 	if toOffset == kafkactl.OffsetOldest {
 		toOffset, errd = client.GetOffsetOldest(topic, partition)
 		if errd != nil {
-			log.Fatalf("Error retrieving oldest offset: %v\n", errd)
+			closeFatal("Error retrieving oldest offset: %v\n", errd)
 		}
 	}
 	errd = client.OffSetAdmin().Group(group).Topic(topic).ResetOffset(partition, toOffset)
 	if errd != nil {
-		log.Fatalf("Error reseting offset: %v\n", errd)
+		closeFatal("Error reseting offset: %v\n", errd)
 	}
 }
 
@@ -52,24 +52,24 @@ func resetAllPartitionsTo(group, topic string, toOffset int64) {
 	exact = true
 	ts := kafkactl.GetTopicSummaries(searchTopicMeta(targetTopic))
 	if len(ts) != 1 {
-		log.Fatalf("Error validating topic: %v\n", targetTopic)
+		closeFatal("Error validating topic: %v\n", targetTopic)
 	}
 	parts := ts[0].Partitions
 	if len(parts) < 1 {
-		log.Fatalf("No Partitions found for this topic: %v\n", targetTopic)
+		closeFatal("No Partitions found for this topic: %v\n", targetTopic)
 	}
 	var errParts []int32
 	for _, p := range parts {
 		if toOffset == kafkactl.OffsetNewest {
 			toOffset, errd = client.GetOffsetNewest(topic, p)
 			if errd != nil {
-				log.Fatalf("Error retrieving newest offset: %v\n", errd)
+				closeFatal("Error retrieving newest offset: %v\n", errd)
 			}
 		}
 		if toOffset == kafkactl.OffsetOldest {
 			toOffset, errd = client.GetOffsetOldest(topic, p)
 			if errd != nil {
-				log.Fatalf("Error retrieving oldest offset: %v\n", errd)
+				closeFatal("Error retrieving oldest offset: %v\n", errd)
 			}
 		}
 		errd = client.OffSetAdmin().Group(group).Topic(topic).ResetOffset(p, toOffset)
@@ -79,12 +79,12 @@ func resetAllPartitionsTo(group, topic string, toOffset int64) {
 		}
 	}
 	if len(errParts) > 1 {
-		log.Fatalf("Error reseting offset for the following partitions: %v\n", errParts)
+		closeFatal("Error reseting offset for the following partitions: %v\n", errParts)
 	}
 }
 
 func validPartCheck() {
 	if targetPartition == -2 {
-		log.Fatalf("Error: Specify a valid partition number\n")
+		closeFatal("Error: Specify a valid partition number\n")
 	}
 }

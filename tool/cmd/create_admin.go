@@ -16,13 +16,12 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 )
 
 func createTopic(name string, partitions int32, rFactor int16) {
 	errd = client.AddTopic(name, partitions, rFactor)
 	if errd != nil {
-		log.Fatalf("Error creating topic: %v\n", errd)
+		closeFatal("Error creating topic: %v\n", errd)
 	}
 	fmt.Println("\nSuccessfully created topic", name, "\n")
 }

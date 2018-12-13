@@ -17,8 +17,8 @@ func (kc *KClient) RemoveTopic(name string) error {
 }
 
 // AddPartitions is WiP*
-func (kc *KClient) AddPartitions(name string, count int32, assignment [][]int32) error {
-	return kc.Admin().CreatePartitions(name, count, assignment, false)
+func (kc *KClient) AddPartitions(name string, count int32) error {
+	return kc.Admin().CreatePartitions(name, count, nil, false)
 }
 
 func (kc *KClient) GetTopicConfig(topic string, configName ...string) ([]sarama.ConfigEntry, error) {

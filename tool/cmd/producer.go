@@ -73,7 +73,7 @@ func makeMessages(topic, key, value string, partitions ...int32) []*kafkactl.Mes
 
 func sendMsg(msg *kafkactl.Message) (part int32, off int64) {
 	if msg.Partition < -1 {
-		log.Fatalf("Error: Invalid Partition Specified - %v\n", msg.Partition)
+		closeFatal("Error: Invalid Partition Specified - %v\n", msg.Partition)
 	}
 	client.SaramaConfig().Producer.RequiredAcks = sarama.WaitForAll
 	client.SaramaConfig().Producer.Return.Successes = true
@@ -85,7 +85,7 @@ func sendMsg(msg *kafkactl.Message) (part int32, off int64) {
 	}
 	part, off, errd = client.SendMSG(msg)
 	if errd != nil {
-		log.Fatalf("Error sending message: %v\n", errd)
+		closeFatal("Error sending message: %v\n", errd)
 	}
 	return
 }
@@ -97,7 +97,7 @@ func sendMsgToPartitions(msgs []*kafkactl.Message) {
 	client.SaramaConfig().Producer.Partitioner = sarama.NewManualPartitioner
 	errd = client.SendMessages(msgs)
 	if errd != nil {
-		log.Fatalf("Error sending messages: %v\n", errd)
+		closeFatal("Error sending messages: %v\n", errd)
 	}
 }
 
