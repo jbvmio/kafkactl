@@ -72,7 +72,7 @@ var zkCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(zkCmd)
-	zkCmd.Flags().StringVarP(&zkTargetServer, "server", "s", "", "Specify a targeted Zookeeper Server and Port (eg. localhost:2181")
+	zkCmd.Flags().StringVarP(&zkTargetServer, "zookeeper", "z", "", "Specify a targeted Zookeeper Server and Port (eg. localhost:2181")
 	zkCmd.Flags().StringVarP(&zkTargetPath, "create", "c", "", "Create a Zookeeper Path (Use with --value for setting a value)")
 	zkCmd.Flags().StringVarP(&zkDeletePath, "delete", "d", "", "Delete a Zookeeper Path/Value")
 	zkCmd.Flags().StringVar(&zkTargetValue, "value", "", "Create a Zookeeper Value (Use with --create to specify the path for the value) Wins over StdIn")

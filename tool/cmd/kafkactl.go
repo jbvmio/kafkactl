@@ -107,6 +107,11 @@ func getEntries(path string) (kafka, burrow, zookeeper []string) {
 	return entry.Kafka, entry.Burrow, entry.Zookeeper
 }
 
+func tryByBroker(broker, path string) (kafka, burrow, zookeeper []string) {
+	entry := getEntriesByBroker(broker, path)
+	return entry.Kafka, entry.Burrow, entry.Zookeeper
+}
+
 func printCurrentEntry(path string) {
 	current := getCurrentEntry(path)
 	y, err := yaml.Marshal(current)
@@ -120,6 +125,10 @@ func getCurrentEntry(path string) Entry {
 	return getCurrentFromConfig(returnConfig(readConfig(path)))
 }
 
+func getEntriesByBroker(broker, path string) Entry {
+	return findEntriesByBroker(broker, returnConfig(readConfig(path)))
+}
+
 func getCurrentFromConfig(config Config) Entry {
 	current := config.Current
 	for _, e := range config.Entries {
@@ -128,6 +137,21 @@ func getCurrentFromConfig(config Config) Entry {
 		}
 	}
 	log.Fatalf("Error reading current entry: Not Found")
+	return Entry{}
+}
+
+// Ensure broker validation happens before running this
+func findEntriesByBroker(broker string, config Config) Entry {
+	if strings.Contains(broker, ":") {
+		broker = strings.Split(broker, ":")[0]
+	}
+	for _, e := range config.Entries {
+		for _, k := range e.Kafka {
+			if strings.Contains(k, broker) {
+				return e
+			}
+		}
+	}
 	return Entry{}
 }
 
