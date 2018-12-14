@@ -27,6 +27,18 @@ var preCmd = &cobra.Command{
 	Short:   "Perform Preferred Replica Election Tasks",
 	Aliases: []string{"preferred-replica-election"},
 	PreRun: func(cmd *cobra.Command, args []string) {
+		if cmd.Flags().Changed("broker") {
+			if cmd.Flags().Changed("zookeeper") {
+				zkServers = []string{zkTargetServer}
+			} else {
+				if fileExists(configLocation) {
+					_, _, zkServers = tryByBroker(bootStrap, configLocation)
+				}
+				if len(zkServers) < 1 {
+					closeFatal("Error: Preferred Replica Election requires access to the corresponding Zookeeper cluster\n  Use --zookeeper zkhost:2181 or configure your ~/.kafkactl config.")
+				}
+			}
+		}
 		launchZKClient()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -45,4 +57,5 @@ var preCmd = &cobra.Command{
 func init() {
 	adminCmd.AddCommand(preCmd)
 	preCmd.Flags().BoolVar(&preAllTopics, "alltopics", false, "Initiate Preferred Replica Election for All Topics")
+	preCmd.Flags().StringVarP(&zkTargetServer, "zookeeper", "z", "", "Specify a targeted Zookeeper Server and Port (eg. localhost:2181")
 }

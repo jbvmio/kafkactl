@@ -30,21 +30,19 @@ var moveCmd = &cobra.Command{
 	Short:   "Move Topic Partitions",
 	Aliases: []string{"incr"},
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if cmd.Flags().Changed("partitions") {
-			if cmd.Flags().Changed("broker") {
-				if cmd.Flags().Changed("zookeeper") {
-					zkServers = []string{zkTargetServer}
-				} else {
-					if fileExists(configLocation) {
-						_, _, zkServers = tryByBroker(bootStrap, configLocation)
-					}
-					if len(zkServers) < 1 {
-						closeFatal("Error: Increasing Replicas requires access to the corresponding Zookeeper cluster\n  Use --zookeeper zkhost:2181 or configure your ~/.kafkactl config.")
-					}
+		if cmd.Flags().Changed("broker") {
+			if cmd.Flags().Changed("zookeeper") {
+				zkServers = []string{zkTargetServer}
+			} else {
+				if fileExists(configLocation) {
+					_, _, zkServers = tryByBroker(bootStrap, configLocation)
+				}
+				if len(zkServers) < 1 {
+					closeFatal("Error: Increasing Replicas requires access to the corresponding Zookeeper cluster\n  Use --zookeeper zkhost:2181 or configure your ~/.kafkactl config.")
 				}
 			}
-			launchZKClient()
 		}
+		launchZKClient()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Changed("topic") {
@@ -71,10 +69,7 @@ var moveCmd = &cobra.Command{
 
 func init() {
 	adminCmd.AddCommand(moveCmd)
-	//moveCmd.Flags().Int16VarP(&targetRFactor, "replicas", "r", -2, "Desired, Total Number of Replicas")
 	moveCmd.Flags().StringVarP(&strParts, "partitions", "p", "", `Comma Separated (eg: "0,1,7,9") Partitions to Move`)
 	moveCmd.Flags().StringVar(&targetKey, "brokers", "", `Comma Separated (eg: "1,2,3") brokers to assign replicas / move to`)
 	moveCmd.Flags().StringVarP(&zkTargetServer, "zookeeper", "z", "", "Specify a targeted Zookeeper Server and Port (eg. localhost:2181")
-	//moveCmd.Flags().Int32VarP(&targetPartition, "partitions", "p", -2, "Desired, Total Number of Partitions")
-	//moveCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 }

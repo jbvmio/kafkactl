@@ -30,5 +30,5 @@ var lsCmd = &cobra.Command{
 func init() {
 	zkCmd.AddCommand(lsCmd)
 	lsCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
-	lsCmd.Flags().StringVarP(&zkTargetServer, "server", "s", "", "Specify a targeted Zookeeper Server")
+	lsCmd.Flags().StringVarP(&zkTargetServer, "zookeeper", "z", "", "Specify a targeted Zookeeper Server and Port (eg. localhost:2181)")
 }

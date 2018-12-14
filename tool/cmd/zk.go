@@ -35,8 +35,17 @@ var zkCmd = &cobra.Command{
 	Short: "Perform Various Zookeeper Administration Tasks",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		nonMainCMD = true
-		if cmd.Flags().Changed("server") {
-			zkServers = []string{zkTargetServer}
+		if cmd.Flags().Changed("broker") {
+			if cmd.Flags().Changed("zookeeper") {
+				zkServers = []string{zkTargetServer}
+			} else {
+				if fileExists(configLocation) {
+					_, _, zkServers = tryByBroker(bootStrap, configLocation)
+				}
+				if len(zkServers) < 1 {
+					closeFatal("Error: Increasing Replicas requires access to the corresponding Zookeeper cluster\n  Use --zookeeper zkhost:2181 or configure your ~/.kafkactl config.")
+				}
+			}
 		}
 		launchZKClient()
 	},
