@@ -32,7 +32,7 @@ type TopicOffsetMap struct {
 	PartitionLeaders map[int32]int32
 }
 
-// TopicOffsetGet is WiP* for a TopicMeta struct to get its' the current, newest topic offset for its' partition.
+// TopicOffsetGet is WiP* for a TopicMeta struct to get the current, newest topic offset for its' partition.
 type TopicOffsetGet interface {
 	GetPartitionOffset(client KClient, topic string, partition int32)
 }

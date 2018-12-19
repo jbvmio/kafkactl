@@ -1,8 +1,35 @@
 # kafkactl
-kafkactl - Package and Tool written in Go to manage Kafka clusters and related components.
+kafkactl - Package and CLI Tool (written in Go) for management of Kafka cluster and related components.
+**[wiki](https://github.com/jbvmio/kafkactl/wiki)**
+
+### The kafkactl tool currently features the following:
+
+* Search and Manage Groups and Topics
+* Show Topic Partition Details - Offsets, Replicas, Leaders, etc.
+* Show Group Details - Lag, Offsets, Members, etc.
+* Display / Modify Topic Configs
+* Create / Delete Topics
+* Delete Consumer Groups
+* Reset Partition Offsets for a Group
+* Tail a Topic in realtime
+* Launch a Consumer Group for a Topic
+* Produce to a Specific Topic Partition or all Partitions at once
+* Perform a Preferred Replica Election for a target topic or for all topics
+* Increase / Decrease Replicas
+* Perform Topic Partition Migrations between Brokers
+* Query burrow details
+* Monitor burrow lag via Terminal Graph
+* Explore Zookeeper Paths
+* Create and Delete Zookeeper Values
+* Pass stdin to create Kafka messages or Zookeeper Values
+
+### ToDo:
+* Add Security Features
+
+kafkactl is actively developed with new features being added and tested. Thus, ongoing optimization and re-factoring will occur so ensure you are aware of the [latest releases](https://github.com/jbvmio/kafkactl/releases).
 
 # Features
-The package is mostly a wrapper around the excellent [sarama library](https://github.com/Shopify/sarama) created for common tasks and the kafkactl tool itself. The kafkactl tool utilizes a context style config similar to the kubernetes tool kubectl grouping a set of Kafka clusters to corresponding [Zookeeper](https://zookeeper.apache.org/) and [Burrow](https://github.com/linkedin/Burrow) instances.
+The package is mostly a wrapper around the excellent [sarama library](https://github.com/Shopify/sarama) and for the kafkactl tool itself. The kafkactl tool utilizes a context style config, similar to the kubernetes tool - kubectl, grouping a set of Kafka clusters to corresponding [Zookeeper](https://zookeeper.apache.org/) and [Burrow](https://github.com/linkedin/Burrow) instances.
 
 ### package example usage:
 Get package:
@@ -40,28 +67,8 @@ func main() {
 
 ```
 
-### The kafkactl tool currently features the following:
-
-* Search and Manage Groups and Topics
-* Show Topic Partition Details - Offsets, Replicas, Leaders, etc.
-* Show Group Details - Lag, Offsets, Members, etc.
-* Display / Modify Topic Configs
-* Create / Delete Topics
-* Delete Consumer Groups
-* Reset Partition Offsets for a Group
-* Tail a Topic in realtime
-* Launch a Consumer Group for a Topic
-* Produce to a Specific Topic Partition or all Partitions at once
-* Perform a Preferred Replica Election for a target topic or for all topics
-* Query burrow details
-* Monitor burrow lag via Terminal Graph
-* Explore Zookeeper Paths
-* Create and Delete Zookeeper Values
-* Pass stdin to create Kafka messages or Zookeeper Values
-
-
 # Get Started
-* Download the latest kafkactl tool and extract to a $PATH directory.
+* Download the [latest](https://github.com/jbvmio/kafkactl/releases) kafkactl tool and extract to a $PATH directory.
 * Run "kafkactl config --sample" to generate a sample config at $HOME/.kafkactl.yaml
 * Edit the config file and save.
 
