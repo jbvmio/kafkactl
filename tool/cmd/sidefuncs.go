@@ -17,8 +17,10 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"sort"
 
 	"github.com/jbvmio/burrow"
+	"github.com/spf13/cast"
 
 	"github.com/fatih/color"
 	"github.com/jbvmio/kafkactl"
@@ -65,7 +67,7 @@ func printOutput(i interface{}) {
 			for _, m := range v.MemberAssignments {
 				cID := m.ClientID
 				for t, p := range m.TopicPartitions {
-					tbl.AddRow(grpName, t, kafkactl.MakeSeqStr(p), cID)
+					tbl.AddRow(grpName, t, makeSeqStr(p), cID)
 				}
 			}
 		}
@@ -173,4 +175,42 @@ func filterUnique(strSlice []string) []string {
 func stdinAvailable() bool {
 	stat, _ := os.Stdin.Stat()
 	return (stat.Mode() & os.ModeCharDevice) == 0
+}
+
+func makeSeqStr(nums []int32) string {
+	seqMap := make(map[int][]int32)
+	sort.Slice(nums, func(i, j int) bool {
+		return nums[i] < nums[j]
+	})
+	var mapCount int
+	var done int
+	var switchInt int
+	seqMap[mapCount] = append(seqMap[mapCount], nums[done])
+	done++
+	switchInt = done
+	for done < len(nums) {
+		if nums[done] == ((seqMap[mapCount][(switchInt - 1)]) + 1) {
+			seqMap[mapCount] = append(seqMap[mapCount], nums[done])
+			switchInt++
+		} else {
+			mapCount++
+			seqMap[mapCount] = append(seqMap[mapCount], nums[done])
+			switchInt = 1
+		}
+		done++
+	}
+	var seqStr string
+	for k, v := range seqMap {
+		if k > 0 {
+			seqStr += ","
+		}
+		if len(v) > 1 {
+			seqStr += cast.ToString(v[0])
+			seqStr += "-"
+			seqStr += cast.ToString(v[len(v)-1])
+		} else {
+			seqStr += cast.ToString(v[0])
+		}
+	}
+	return seqStr
 }

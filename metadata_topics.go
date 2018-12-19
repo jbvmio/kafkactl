@@ -85,7 +85,7 @@ func GetTopicSummaries(topicMeta []TopicMeta) []TopicSummary {
 	for _, tm := range topicMeta {
 		if !done[tm.Topic] {
 			done[tm.Topic] = true
-			partitions := MakeSeqStr(parts[tm.Topic])
+			partitions := makeSeqStr(parts[tm.Topic])
 			ts := TopicSummary{
 				Topic:           tm.Topic,
 				Parts:           partitions,
@@ -135,7 +135,7 @@ func (kc *KClient) ListTopics() ([]string, error) {
 	return topics, nil
 }
 
-func MakeSeqStr(nums []int32) string {
+func makeSeqStr(nums []int32) string {
 	seqMap := make(map[int][]int32)
 	sort.Slice(nums, func(i, j int) bool {
 		return nums[i] < nums[j]

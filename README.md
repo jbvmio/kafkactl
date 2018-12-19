@@ -1,5 +1,5 @@
-# kafkactl
-kafkactl - Package and CLI Tool (written in Go) for management of Kafka cluster and related components.
+# kafkactl - Kafka Management Tool
+kafkactl - Package and CLI Tool (written in Go) for mgmt of Kafka cluster and related components.
 
 **[wiki](https://github.com/jbvmio/kafkactl/wiki)**
 
