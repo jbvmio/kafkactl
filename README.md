@@ -23,8 +23,8 @@ kafkactl - Package and CLI Tool (written in Go) for mgmt of Apache Kafka and rel
 * Pass stdin to create Kafka messages or Zookeeper Values
 
 ### ToDo:
-* Add Security Features
-* Add Metrics Testing
+- Add Security Features
+- Add Metrics Testing
 
 kafkactl is actively developed with new features being added and tested. Thus, ongoing optimization and re-factoring will occur so ensure you are aware of the [latest releases](https://github.com/jbvmio/kafkactl/releases).
 
