@@ -81,7 +81,7 @@ func main() {
 ```
 
 ### **Using Docker**
-* **Run with Docker using cmdline args:**
+**Run with Docker using cmdline args:**
 ```
 docker run --rm jbvmio/kafkactl -b brokerAddress:9092
 docker run --rm jbvmio/kafkactl -b brokerAddress:9092 topics
@@ -91,7 +91,7 @@ docker run --rm jbvmio/kafkactl -b brokerAddress:9092 groups mygroup --lag
 docker run --rm jbvmio/kafkactl -b brokerAddress:9092 admin create --topic mytopic2 --partitions 5 --rfactor 3
 
 ```
-* **Using a config file with Docker:**
+**Using a config file with Docker:**
 - Generate a sample config:
 ```
 docker run --rm -v ${PWD}:/home/kafkactl jbvmio/kafkactl config --sample
