@@ -1,7 +1,5 @@
-# kafkactl - Kafka Management Tool
-kafkactl - Package and CLI Tool (written in Go) for mgmt of Kafka cluster and related components.
-
-**[wiki](https://github.com/jbvmio/kafkactl/wiki)**
+# kafkactl - Kafka Management Tool - **[wiki](https://github.com/jbvmio/kafkactl/wiki)**
+kafkactl - Package and CLI Tool (written in Go) for mgmt of Apache Kafka and related components.
 
 ### The kafkactl tool currently features the following:
 
@@ -26,10 +24,11 @@ kafkactl - Package and CLI Tool (written in Go) for mgmt of Kafka cluster and re
 
 ### ToDo:
 * Add Security Features
+* Add Metrics Testing
 
 kafkactl is actively developed with new features being added and tested. Thus, ongoing optimization and re-factoring will occur so ensure you are aware of the [latest releases](https://github.com/jbvmio/kafkactl/releases).
 
-# Features
+# Package
 The package is mostly a wrapper around the excellent [sarama library](https://github.com/Shopify/sarama) and for the kafkactl tool itself. The kafkactl tool utilizes a context style config, similar to the kubernetes tool - kubectl, grouping a set of Kafka clusters to corresponding [Zookeeper](https://zookeeper.apache.org/) and [Burrow](https://github.com/linkedin/Burrow) instances.
 
 ### package example usage:
@@ -68,7 +67,7 @@ func main() {
 
 ```
 
-# Get Started
+# kafkactl tool - Get Started
 * Download the [latest](https://github.com/jbvmio/kafkactl/releases) kafkactl tool and extract to a $PATH directory.
 * Run "kafkactl config --sample" to generate a sample config at $HOME/.kafkactl.yaml
 * Edit the config file and save.
