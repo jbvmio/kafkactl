@@ -68,6 +68,8 @@ func main() {
 ```
 
 # kafkactl tool - Get Started
+
+**Manual Download**
 * Download the [latest](https://github.com/jbvmio/kafkactl/releases) kafkactl tool and extract to a $PATH directory.
 * Run "kafkactl config --sample" to generate a sample config at $HOME/.kafkactl.yaml
 * Edit the config file and save.
@@ -77,6 +79,42 @@ func main() {
 # kafkactl --broker brokerhost01:9092 admin create --topic newtopic01 --partitions 15 --rfactor 3
 
 ```
+
+**Using Docker**
+* **Running in Docker using cmdline args:**
+```
+docker run --rm jbvmio/kafkactl -b brokerAddress:9092
+docker run --rm jbvmio/kafkactl -b brokerAddress:9092 topics
+docker run --rm jbvmio/kafkactl -b brokerAddress:9092 topics mytopic -x -m
+docker run --rm jbvmio/kafkactl -b brokerAddress:9092 groups
+docker run --rm jbvmio/kafkactl -b brokerAddress:9092 groups mygroup --lag
+docker run --rm jbvmio/kafkactl -b brokerAddress:9092 admin create --topic mytopic2 --partitions 5 --rfactor 3
+
+```
+* **Using a config file with Docker:**
+- Generate a sample config:
+```
+docker run --rm -v ${PWD}:/home/kafkactl jbvmio/kafkactl config --sample
+
+```
+- This will generate a sample config named .kafkactl.yaml, edit this file with your values.
+- At minimum, specify at least one entry containing a Kafka broker.
+```
+# Minimum Config:
+current: Cluster1
+entries:
+- name: Cluster1
+  kafka:
+  - broker01:9092
+```
+- Now mount your .kafkactl.yaml file whenever running the Docker image:
+```
+docker run --rm -v ${PWD}/.kafkactl.yaml:/home/kafkactl/.kafkactl.yaml jbvmio/kafkactl
+docker run --rm -v ${PWD}/.kafkactl.yaml:/home/kafkactl/.kafkactl.yaml jbvmio/kafkactl topics
+docker run --rm -v ${PWD}/.kafkactl.yaml:/home/kafkactl/.kafkactl.yaml jbvmio/kafkactl groups
+
+```
+
 
 ### example config commands
 ```
