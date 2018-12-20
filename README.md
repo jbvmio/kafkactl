@@ -69,10 +69,10 @@ func main() {
 
 # kafkactl tool - Get Started
 
-**Manual Download**
-* Download the [latest](https://github.com/jbvmio/kafkactl/releases) kafkactl tool and extract to a $PATH directory.
-* Run "kafkactl config --sample" to generate a sample config at $HOME/.kafkactl.yaml
-* Edit the config file and save.
+### **Manual Download**
+- Download the [latest](https://github.com/jbvmio/kafkactl/releases) kafkactl tool and extract to a $PATH directory.
+- Run "kafkactl config --sample" to generate a sample config at $HOME/.kafkactl.yaml
+- Edit the config file and save.
 
 * Alternatively, pass all arguments to the command when running.
 ```
@@ -80,8 +80,8 @@ func main() {
 
 ```
 
-**Using Docker**
-* **Running in Docker using cmdline args:**
+### **Using Docker**
+* **Run with Docker using cmdline args:**
 ```
 docker run --rm jbvmio/kafkactl -b brokerAddress:9092
 docker run --rm jbvmio/kafkactl -b brokerAddress:9092 topics
@@ -115,7 +115,7 @@ docker run --rm -v ${PWD}/.kafkactl.yaml:/home/kafkactl/.kafkactl.yaml jbvmio/ka
 
 ```
 
-
+# kafkactl tool - Example Commands
 ### example config commands
 ```
 kafkactl config --sample
