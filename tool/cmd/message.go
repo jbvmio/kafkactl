@@ -31,10 +31,10 @@ var messageCmd = &cobra.Command{
 	Long:    `Example: kafkactl message -t myTopic -p 5 -o 6723`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("partition") {
-			closeFatal("must specify 1 --topic, --partition and --offset OR --timestamp")
+			closeFatal("must specify --topic and --partition")
 		}
 		if cmd.Flags().Changed("offset") && cmd.Flags().Changed("timestamp") {
-			closeFatal("must specify 3 --offset OR --timestamp, not both. Try again.")
+			closeFatal("must specify either --offset OR --timestamp, not both. Try again.")
 		}
 		if cmd.Flags().Changed("timestamp") {
 			msg := getMSGByTime(targetTopic, targetPartition, timeQuery)
@@ -50,7 +50,7 @@ var messageCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(messageCmd)
 	messageCmd.Flags().Int32VarP(&targetPartition, "partition", "p", 0, "Target Partition to Retrieve Message")
-	messageCmd.Flags().Int64VarP(&targetOffset, "offset", "o", 0, "Target Offset to Retrieve Message")
+	messageCmd.Flags().Int64VarP(&targetOffset, "offset", "o", -1, "Target Offset to Retrieve Message")
 	messageCmd.Flags().StringVarP(&timeQuery, "timestamp", "q", "", `Retrieve by Timestamp (Ex: "11/10/2018 15:30:000")`)
 	messageCmd.Flags().BoolVarP(&showMsgKey, "key", "k", false, "Show Msg Key Values")
 	messageCmd.Flags().BoolVar(&showMsgTimestamp, "show-time", false, "Show Msg Timestamps")

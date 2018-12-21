@@ -32,12 +32,8 @@ type TopicOffsetMap struct {
 	PartitionLeaders map[int32]int32
 }
 
-// TopicOffsetGet is WiP* for a TopicMeta struct to get the current, newest topic offset for its' partition.
-type TopicOffsetGet interface {
-	GetPartitionOffset(client KClient, topic string, partition int32)
-}
-
-func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
+// MakeTopicOffsetMapOrig is orginal method. Saving while testing newer func.
+func (kc *KClient) MakeTopicOffsetMapOrig(topicMeta []TopicMeta) []TopicOffsetMap {
 	var TOM []TopicOffsetMap
 	parts := make(map[string][]int32)
 	tmMap := make(map[string][]TopicMeta)
@@ -48,11 +44,13 @@ func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
 	for topic := range tmMap {
 		poMap := make(map[int32]int64)
 		for _, p := range parts[topic] {
+
 			off, err := kc.GetOffsetNewest(topic, p)
 			if err != nil {
 				off = -7777
 			}
 			poMap[p] = off
+
 		}
 		pLdrMap := make(map[int32]int32, len(tmMap[topic]))
 		for _, tm := range tmMap[topic] {
@@ -64,6 +62,47 @@ func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
 			PartitionOffsets: poMap,
 			PartitionLeaders: pLdrMap,
 		}
+		TOM = append(TOM, tom)
+	}
+	return TOM
+}
+
+func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
+	var TOM []TopicOffsetMap
+	parts := make(map[string][]int32)
+	tmMap := make(map[string][]TopicMeta)
+	for _, tm := range topicMeta {
+		parts[tm.Topic] = append(parts[tm.Topic], tm.Partition)
+		tmMap[tm.Topic] = append(tmMap[tm.Topic], tm)
+	}
+	tomChan := make(chan TopicOffsetMap, len(tmMap))
+	for topic := range tmMap {
+		tm := tmMap[topic]
+		pars := parts[topic]
+		go func(topic string, tMeta []TopicMeta, parts []int32) {
+			poMap := make(map[int32]int64)
+			for _, p := range parts {
+				off, err := kc.GetOffsetNewest(topic, p)
+				if err != nil {
+					off = -7777
+				}
+				poMap[p] = off
+			}
+			pLdrMap := make(map[int32]int32, len(parts))
+			for _, tm := range tMeta {
+				pLdrMap[tm.Partition] = tm.Leader
+			}
+			tom := TopicOffsetMap{
+				Topic:            topic,
+				TopicMeta:        tmMap[topic],
+				PartitionOffsets: poMap,
+				PartitionLeaders: pLdrMap,
+			}
+			tomChan <- tom
+		}(topic, tm, pars)
+	}
+	for i := 0; i < len(tmMap); i++ {
+		tom := <-tomChan
 		TOM = append(TOM, tom)
 	}
 	return TOM

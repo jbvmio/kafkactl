@@ -28,6 +28,21 @@ func (cm ClusterMeta) GroupCount() int {
 	return len(cm.Groups)
 }
 
+func (kc *KClient) BrokerList() ([]string, error) {
+	var brokerlist []string
+	res, err := kc.ReqMetadata()
+	if err != nil {
+		return brokerlist, err
+	}
+	for _, b := range res.Brokers {
+		id := b.ID()
+		addr := b.Addr()
+		broker := string(addr + "/" + cast.ToString(id))
+		brokerlist = append(brokerlist, broker)
+	}
+	return brokerlist, nil
+}
+
 func (kc *KClient) GetClusterMeta() (ClusterMeta, error) {
 	cm := ClusterMeta{}
 	res, err := kc.ReqMetadata()
