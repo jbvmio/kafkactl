@@ -27,15 +27,15 @@ var preCmd = &cobra.Command{
 	Short:   "Perform Preferred Replica Election Tasks",
 	Aliases: []string{"preferred-replica-election"},
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if cmd.Flags().Changed("broker") {
-			if cmd.Flags().Changed("zookeeper") {
-				zkServers = []string{zkTargetServer}
-			} else {
+		if cmd.Flags().Changed("zookeeper") {
+			zkServers = []string{zkTargetServer}
+		} else {
+			if cmd.Flags().Changed("broker") {
 				if fileExists(configLocation) {
 					_, _, zkServers = tryByBroker(bootStrap, configLocation)
 				}
 				if len(zkServers) < 1 {
-					closeFatal("Error: Preferred Replica Election requires access to the corresponding Zookeeper cluster\n  Use --zookeeper zkhost:2181 or configure your ~/.kafkactl config.")
+					closeFatal("Error: Increasing Replicas requires access to the corresponding Zookeeper cluster\n  Use --zookeeper zkhost:2181 or configure your ~/.kafkactl config.")
 				}
 			}
 		}

@@ -72,6 +72,8 @@ func getKafkaVersion(apiKeys map[int16]int16) string {
 	match := true
 	//refKey := apiKeys[kafkactl.APIKeyFetch]
 	switch match {
+	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] == 2:
+		return "v2.1"
 	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] == 1:
 		return "v2.0"
 	case apiKeys[kafkactl.APIKeyFetch] == 7:
@@ -85,7 +87,7 @@ func getKafkaVersion(apiKeys map[int16]int16) string {
 	case apiKeys[kafkactl.APIKeyFetch] == 3:
 		return "v0.10.1.0"
 	}
-	return "< v0.10.1.0"
+	return "UnknownVersion"
 }
 
 // Config contains a collection of cluster entries

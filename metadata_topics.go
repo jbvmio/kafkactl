@@ -32,41 +32,6 @@ type TopicOffsetMap struct {
 	PartitionLeaders map[int32]int32
 }
 
-// MakeTopicOffsetMapOrig is orginal method. Saving while testing newer func.
-func (kc *KClient) MakeTopicOffsetMapOrig(topicMeta []TopicMeta) []TopicOffsetMap {
-	var TOM []TopicOffsetMap
-	parts := make(map[string][]int32)
-	tmMap := make(map[string][]TopicMeta)
-	for _, tm := range topicMeta {
-		parts[tm.Topic] = append(parts[tm.Topic], tm.Partition)
-		tmMap[tm.Topic] = append(tmMap[tm.Topic], tm)
-	}
-	for topic := range tmMap {
-		poMap := make(map[int32]int64)
-		for _, p := range parts[topic] {
-
-			off, err := kc.GetOffsetNewest(topic, p)
-			if err != nil {
-				off = -7777
-			}
-			poMap[p] = off
-
-		}
-		pLdrMap := make(map[int32]int32, len(tmMap[topic]))
-		for _, tm := range tmMap[topic] {
-			pLdrMap[tm.Partition] = tm.Leader
-		}
-		tom := TopicOffsetMap{
-			Topic:            topic,
-			TopicMeta:        tmMap[topic],
-			PartitionOffsets: poMap,
-			PartitionLeaders: pLdrMap,
-		}
-		TOM = append(TOM, tom)
-	}
-	return TOM
-}
-
 func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
 	var TOM []TopicOffsetMap
 	parts := make(map[string][]int32)

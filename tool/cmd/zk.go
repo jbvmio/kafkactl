@@ -35,10 +35,10 @@ var zkCmd = &cobra.Command{
 	Short: "Perform Various Zookeeper Administration Tasks",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		nonMainCMD = true
-		if cmd.Flags().Changed("broker") {
-			if cmd.Flags().Changed("zookeeper") {
-				zkServers = []string{zkTargetServer}
-			} else {
+		if cmd.Flags().Changed("zookeeper") {
+			zkServers = []string{zkTargetServer}
+		} else {
+			if cmd.Flags().Changed("broker") {
 				if fileExists(configLocation) {
 					_, _, zkServers = tryByBroker(bootStrap, configLocation)
 				}

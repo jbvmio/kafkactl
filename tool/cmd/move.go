@@ -30,10 +30,10 @@ var moveCmd = &cobra.Command{
 	Short:   "Move Topic Partitions",
 	Aliases: []string{"incr"},
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if cmd.Flags().Changed("broker") {
-			if cmd.Flags().Changed("zookeeper") {
-				zkServers = []string{zkTargetServer}
-			} else {
+		if cmd.Flags().Changed("zookeeper") {
+			zkServers = []string{zkTargetServer}
+		} else {
+			if cmd.Flags().Changed("broker") {
 				if fileExists(configLocation) {
 					_, _, zkServers = tryByBroker(bootStrap, configLocation)
 				}
