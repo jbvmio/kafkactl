@@ -41,6 +41,17 @@ var increaseCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		if preAllTopics {
+			if cmd.Flags().Changed("topic") {
+				closeFatal("Cannot use --topic with --alltopics, try again.\n")
+			}
+			if !cmd.Flags().Changed("replicas") {
+				closeFatal("Must specify --replicas desired for all topics, try again.\n")
+			}
+			rFactor := cast.ToInt(targetRFactor)
+			allPartitionReAssignment(rFactor)
+			return
+		}
 		if cmd.Flags().Changed("topic") {
 			if cmd.Flags().Changed("replicas") && cmd.Flags().Changed("partitions") {
 				closeFatal("Cannot specify --partitions and --replicas at the same time, try again.\n")
@@ -64,6 +75,7 @@ var increaseCmd = &cobra.Command{
 
 func init() {
 	adminCmd.AddCommand(increaseCmd)
+	increaseCmd.Flags().BoolVar(&preAllTopics, "alltopics", false, "Increase Replicas for All Topics")
 	increaseCmd.Flags().Int16VarP(&targetRFactor, "replicas", "r", -2, "Desired, Total Number of Replicas")
 	increaseCmd.Flags().Int32VarP(&targetPartition, "partitions", "p", -2, "Desired, Total Number of Partitions")
 	increaseCmd.Flags().StringVarP(&zkTargetServer, "zookeeper", "z", "", "Specify a targeted Zookeeper Server and Port (eg. localhost:2181")

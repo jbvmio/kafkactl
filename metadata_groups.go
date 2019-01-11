@@ -2,6 +2,8 @@ package kafkactl
 
 import (
 	"fmt"
+	"sync"
+	"time"
 
 	"github.com/Shopify/sarama"
 	"github.com/spf13/cast"
@@ -36,24 +38,63 @@ type MemberMeta struct {
 	TopicPartitions map[string][]int32
 }
 
-func (kc *KClient) ListGroups() ([]string, error) {
-	var groups []string
-	var errd error
+func (kc *KClient) ListGroups2() (groups []string, errors []string) {
+	var wg sync.WaitGroup
 	for _, broker := range kc.brokers {
-		grps, err := broker.ListGroups(&sarama.ListGroupsRequest{})
-
-		if err != nil {
-			//return groups, err
-			errd = err
-
-		} else {
-			for k := range grps.Groups {
-				groups = append(groups, k)
+		wg.Add(1)
+		go func(broker *sarama.Broker) {
+			grps, err := broker.ListGroups(&sarama.ListGroupsRequest{})
+			if err != nil {
+				errors = append(errors, err.Error())
+			} else {
+				for k := range grps.Groups {
+					groups = append(groups, k)
+				}
 			}
-		}
-
+			wg.Done()
+		}(broker)
 	}
-	return groups, errd
+	wg.Wait()
+	return
+}
+
+func (kc *KClient) ListGroups() (groups []string, errors []string) {
+	grpChan := make(chan []string, 100)
+	timerChan := make(chan string, len(kc.brokers))
+	var toCount uint8
+	for _, broker := range kc.brokers {
+		go func(broker *sarama.Broker) {
+			var tmpGrps []string
+			grps, err := broker.ListGroups(&sarama.ListGroupsRequest{})
+			if err != nil {
+				errors = append(errors, err.Error())
+			} else {
+				for k := range grps.Groups {
+					tmpGrps = append(tmpGrps, k)
+				}
+			}
+			grpChan <- tmpGrps
+		}(broker)
+		go func(br *sarama.Broker) {
+			time.Sleep(time.Second * 10)
+			timerChan <- br.Addr()
+			br.Close()
+		}(broker)
+	}
+	for i := 0; i < len(kc.brokers); i++ {
+		select {
+		case grps := <-grpChan:
+			if len(grps) > 0 {
+				groups = append(groups, grps...)
+			}
+		case br := <-timerChan:
+			errors = append(errors, fmt.Sprintf("%v timed out retrieving metadata.", br))
+		}
+	}
+	if toCount > 0 {
+		errors = append(errors, fmt.Sprintf("%v brokers timed out.", toCount))
+	}
+	return
 }
 
 func (kc *KClient) BrokerGroups(brokerID int32) ([]string, error) {
@@ -104,10 +145,17 @@ func (kc *KClient) GetGroupListMeta() ([]GroupListMeta, error) {
 
 func (kc *KClient) GetGroupMeta() ([]GroupMeta, error) {
 	var groupMeta []GroupMeta
-	gl, err := kc.ListGroups()
-	if err != nil {
-		return groupMeta, err
+	gl, errs := kc.ListGroups()
+	if len(errs) > 0 {
+		if len(gl) < 1 {
+			return groupMeta, fmt.Errorf("%v", errs[len(errs)-1])
+		}
 	}
+	/*
+		if err != nil {
+			return groupMeta, err
+		}
+	*/
 	request := sarama.DescribeGroupsRequest{
 		Groups: gl,
 	}
@@ -166,10 +214,15 @@ func (kc *KClient) GetGroupMeta() ([]GroupMeta, error) {
 // QuickGroupMeta returns any additional information not present from a GetGroupMeta request.
 func (kc *KClient) QuickGroupMeta() ([]QuickGroupMeta, error) {
 	var qGroupMeta []QuickGroupMeta
-	gl, err := kc.ListGroups()
-	if err != nil {
-		return qGroupMeta, err
+	gl, errs := kc.ListGroups()
+	if len(errs) > 0 {
+		return qGroupMeta, fmt.Errorf("%v", errs[len(errs)-1])
 	}
+	/*
+		if err != nil {
+			return qGroupMeta, err
+		}
+	*/
 	request := sarama.DescribeGroupsRequest{
 		Groups: gl,
 	}

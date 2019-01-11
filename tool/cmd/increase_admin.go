@@ -18,6 +18,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+
+	"github.com/jbvmio/kafkactl"
 )
 
 type RAPartList struct {
@@ -36,9 +38,45 @@ type BrokerReplicas struct {
 	ReplicaCount int32
 }
 
+func allPartitionReAssignment(rFactor int) {
+	var allRAParts []RAPartition
+	topicDone := make(map[string]bool)
+	brokers, err := client.GetClusterMeta()
+	if err != nil {
+		closeFatal("Error retrieving metadata: %v\n", err)
+	}
+	tops := searchTopicMeta("")
+	if len(tops) < 1 {
+		closeFatal("Error: No Topics Available.\n")
+	}
+	for _, t := range tops {
+		if !topicDone[t.Topic] {
+			topicDone[t.Topic] = true
+			var tmpMeta []kafkactl.TopicMeta
+			for _, tm := range tops {
+				if tm.Topic == t.Topic {
+					tmpMeta = append(tmpMeta, tm)
+				}
+			}
+			raparts := getRAParts(t.Topic, rFactor, tmpMeta, brokers)
+			if len(raparts) > 0 {
+				allRAParts = append(allRAParts, raparts...)
+			}
+		}
+	}
+	rapList := RAPartList{
+		Version:    1,
+		Partitions: allRAParts,
+	}
+	j, err := json.Marshal(rapList)
+	if err != nil {
+		closeFatal("Error on Marshal: %v\n", err)
+	}
+	zkCreateReassignPartitions("/admin/reassign_partitions", j)
+}
+
 func performPartitionReAssignment(topic string, rFactor int) {
 	j := changeTopicRF(topic, rFactor)
-	fmt.Printf("%s", j)
 	zkCreateReassignPartitions("/admin/reassign_partitions", j)
 }
 
@@ -67,8 +105,22 @@ func changeTopicRF(topic string, rFactor int) []byte {
 	if rFactor > len(brokers.BrokerIDs) {
 		closeFatal("Invalid Number of Brokers Available.\n")
 	}
+	raparts := getRAParts(topic, rFactor, tMeta, brokers)
+	if len(raparts) < 1 {
+		closeFatal("Nothing to Assign,\n")
+	}
+	rapList := RAPartList{
+		Version:    1,
+		Partitions: raparts,
+	}
+	j, err := json.Marshal(rapList)
+	if err != nil {
+		closeFatal("Error on Marshal: %v\n", err)
+	}
+	return j
+}
 
-	// Break Out Here Later func(topic, rFactor, tMeta, BR) //
+func getRAParts(topic string, rFactor int, tMeta []kafkactl.TopicMeta, brokers kafkactl.ClusterMeta) []RAPartition {
 	var BR []BrokerReplicas
 	var mostReplicas int32
 	for _, b := range brokers.BrokerIDs {
@@ -225,18 +277,7 @@ func changeTopicRF(topic string, rFactor int) []byte {
 			}
 		}
 	}
-	if len(raparts) < 1 {
-		closeFatal("Nothing to Assign,\n")
-	}
-	rapList := RAPartList{
-		Version:    1,
-		Partitions: raparts,
-	}
-	j, err := json.Marshal(rapList)
-	if err != nil {
-		closeFatal("Error on Marshal: %v\n", err)
-	}
-	return j
+	return raparts
 }
 
 func sortBrokerByReps(sl []BrokerReplicas) {

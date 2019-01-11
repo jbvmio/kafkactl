@@ -20,6 +20,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/jbvmio/kafkactl"
@@ -30,6 +31,13 @@ var (
 	client *kafkactl.KClient
 	errd   error
 )
+
+type apiVersion struct {
+	key         int16
+	minVer      int16
+	maxVer      int16
+	description string
+}
 
 func launchClient() {
 	if verbose {
@@ -104,6 +112,27 @@ func getKafkaVersion(apiKeys map[int16]int16) string {
 		return "v0.10.1.0"
 	}
 	return "UnknownVersion"
+}
+
+func getAPIVersions() []apiVersion {
+	var apis []apiVersion
+	max, min, err := client.GetAPIVersions()
+	if err != nil {
+		closeFatal("Unable to Retrieve API Versions.")
+	}
+	for k := range max {
+		api := apiVersion{
+			key:         k,
+			minVer:      min[k],
+			maxVer:      max[k],
+			description: kafkactl.APIDescriptions[k],
+		}
+		apis = append(apis, api)
+	}
+	sort.Slice(apis, func(i, j int) bool {
+		return apis[i].key < apis[j].key
+	})
+	return apis
 }
 
 // Config contains a collection of cluster entries

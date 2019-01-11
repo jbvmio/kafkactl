@@ -93,7 +93,6 @@ func printOutput(i interface{}) {
 				tbl.AddRow(v.Cluster, v.Group, v.Topic, v.Partition, v.CurrentLag, v.TopicLag, v.CGStatus)
 			}
 		}
-
 	case *kafkactl.Message:
 		highlightColumn = false
 		if showMsgTimestamp {
@@ -116,6 +115,11 @@ func printOutput(i interface{}) {
 				tbl = table.New(msgHeader)
 				tbl.AddRow(fmt.Sprintf("%s", i.Value))
 			}
+		}
+	case []apiVersion:
+		tbl = table.New("DESCRIPTION", "KEY", "MIN", "MAX")
+		for _, v := range i {
+			tbl.AddRow(v.description, v.key, v.minVer, v.maxVer)
 		}
 	}
 	if highlightColumn {

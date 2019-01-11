@@ -27,7 +27,8 @@ var (
 	bsport     string
 	exact      bool
 	verbose    bool
-	useFast    bool
+	useFast    = true
+	showAPIs   bool
 	meta       bool
 	nonMainCMD bool
 
@@ -57,6 +58,10 @@ var rootCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		if showAPIs {
+			printOutput(getAPIVersions())
+			return
+		}
 		cmd.Run(metaCmd, args)
 	},
 }
@@ -76,7 +81,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&targetGroup, "group", "g", "", "Specify a Target Group")
 	rootCmd.PersistentFlags().StringVar(&bsport, "port", "9092", "Port used for Bootstrap Kafka Broker")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Display any additional info and error output.")
-	rootCmd.PersistentFlags().BoolVarP(&useFast, "fast", "F", true, "Use go routine methods when available for faster results")
+	rootCmd.Flags().BoolVarP(&showAPIs, "api", "a", false, "Show available API Versions.")
+
 }
 
 func initConfig() {

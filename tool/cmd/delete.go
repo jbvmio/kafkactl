@@ -25,25 +25,35 @@ var deleteCmd = &cobra.Command{
   kafkactl admin delete -t myTopic
   kafkactl admin delete -g myGroup`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if cmd.Flags().Changed("topic") && !(cmd.Flags().Changed("group") || cmd.Flags().Changed("partition")) {
-			closeFatal("specify either group, topic or partition to delete, try again.")
-		}
-		if cmd.Flags().Changed("topic") {
-			if cmd.Flags().Changed("partition") {
-				if !cmd.Flags().Changed("offset") {
-					closeFatal("must specify the offset to delete to.")
-				}
-				deleteToOffset(targetTopic, targetPartition, targetOffset)
-				return
+		if cmd.Flags().Changed("topic") || cmd.Flags().Changed("offset") || cmd.Flags().Changed("partition") {
+			if cmd.Flags().Changed("group") {
+				closeFatal("can't use --group in combination here.")
 			}
-			deleteTopic(targetTopic)
-			return
+			if cmd.Flags().Changed("topic") || cmd.Flags().Changed("partition") {
+				if cmd.Flags().Changed("partition") {
+					if !cmd.Flags().Changed("offset") {
+						closeFatal("must specify the offset to delete to.")
+					}
+					if !cmd.Flags().Changed("topic") {
+						closeFatal("must specify a topic.")
+					}
+					deleteToOffset(targetTopic, targetPartition, targetOffset)
+					return
+				}
+				if cmd.Flags().Changed("topic") {
+					if cmd.Flags().Changed("offset") {
+						closeFatal("must specify the partition.")
+					}
+					deleteTopic(targetTopic)
+					return
+				}
+			}
 		}
 		if cmd.Flags().Changed("group") {
 			deleteGroup(targetGroup)
 			return
 		}
-		closeFatal("specify either --group or --topic, try again.")
+		closeFatal("specify either --group, --topic or (--topic and --partition --offset). try again.")
 	},
 }
 

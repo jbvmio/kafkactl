@@ -80,6 +80,6 @@ func allTopicsPRE() {
 	if err != nil {
 		closeFatal("Error Marshaling Topic/Partition Data: %v\n", err)
 	}
-	fmt.Printf("%s", j)
+	//fmt.Printf("%s", j)
 	zkCreatePRE("/admin/preferred_replica_election", j)
 }
