@@ -38,16 +38,22 @@ type MemberMeta struct {
 
 func (kc *KClient) ListGroups() ([]string, error) {
 	var groups []string
+	var errd error
 	for _, broker := range kc.brokers {
 		grps, err := broker.ListGroups(&sarama.ListGroupsRequest{})
+
 		if err != nil {
-			return groups, err
+			//return groups, err
+			errd = err
+
+		} else {
+			for k := range grps.Groups {
+				groups = append(groups, k)
+			}
 		}
-		for k := range grps.Groups {
-			groups = append(groups, k)
-		}
+
 	}
-	return groups, nil
+	return groups, errd
 }
 
 func (kc *KClient) BrokerGroups(brokerID int32) ([]string, error) {

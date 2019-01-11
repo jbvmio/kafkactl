@@ -20,7 +20,7 @@ type KClient struct {
 }
 
 func NewClient(bootStrap string) (*KClient, error) {
-	conf, err := getConf()
+	conf, err := GetConf()
 	if err != nil {
 		return nil, err
 	}
@@ -61,6 +61,7 @@ func NewCustomClient(bootStrap string, conf *sarama.Config) (*KClient, error) {
 		config:    conf,
 		brokers:   client.Brokers(),
 	}
+	kc.Connect()
 	return &kc, nil
 }
 
@@ -145,7 +146,7 @@ func (kc *KClient) SaramaConfig() *sarama.Config {
 	return kc.config
 }
 
-func getConf() (*sarama.Config, error) {
+func GetConf() (*sarama.Config, error) {
 	random := randstr.Hex(3)
 	conf := sarama.NewConfig()
 	conf.ClientID = string("kafkactl" + "-" + random)

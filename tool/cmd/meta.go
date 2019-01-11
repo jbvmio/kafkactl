@@ -34,6 +34,12 @@ var metaCmd = &cobra.Command{
 		if err != nil {
 			closeFatal("Error obtaining controller: %v\n", err)
 		}
+		if len(meta.Errors) > 0 {
+			fmt.Println("ERRORs:")
+			for _, e := range meta.Errors {
+				fmt.Printf(" %v\n", e)
+			}
+		}
 		fmt.Println("\nBrokers: ", meta.BrokerCount())
 		fmt.Println(" Topics: ", meta.TopicCount())
 		fmt.Println(" Groups: ", meta.GroupCount())

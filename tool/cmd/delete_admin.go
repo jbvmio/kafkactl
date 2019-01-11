@@ -33,3 +33,11 @@ func deleteGroup(group string) {
 	}
 	fmt.Println("\nSuccessfully removed group", group, "\n")
 }
+
+func deleteToOffset(topic string, partition int32, offset int64) {
+	errd = client.DeleteToOffset(topic, partition, offset)
+	if errd != nil {
+		closeFatal("Error deleting to offset: %v\n", errd)
+	}
+	fmt.Println("\nSuccessfully deleted to offset", offset, "\n")
+}

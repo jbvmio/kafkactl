@@ -2,6 +2,7 @@ package kafkactl
 
 import (
 	"sort"
+	"strings"
 
 	"github.com/Shopify/sarama"
 	"github.com/spf13/cast"
@@ -14,6 +15,7 @@ type ClusterMeta struct {
 	Groups         []string
 	Controller     int32
 	APIMaxVersions map[int16]int16
+	Errors         []string
 }
 
 func (cm ClusterMeta) BrokerCount() int {
@@ -51,7 +53,12 @@ func (kc *KClient) GetClusterMeta() (ClusterMeta, error) {
 	}
 	grps, err := kc.ListGroups()
 	if err != nil {
-		return cm, err
+		if len(grps) < 1 {
+			return cm, err
+		}
+		if strings.Contains(err.Error(), `i/o timeout`) || strings.Contains(err.Error(), `connection refused`) {
+			cm.Errors = append(cm.Errors, err.Error())
+		}
 	}
 	cm.Controller = res.ControllerID
 	for _, b := range res.Brokers {

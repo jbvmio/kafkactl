@@ -35,6 +35,22 @@ func launchClient() {
 	if verbose {
 		kafkactl.Logger("")
 	}
+	conf, err := kafkactl.GetConf()
+	if errd != nil {
+		log.Fatalf("Error: %v\n", err)
+	}
+	conf.Metadata.Retry.Max = 1
+	//client, errd = kafkactl.NewClient(bootStrap)
+	client, errd = kafkactl.NewCustomClient(bootStrap, conf)
+	if errd != nil {
+		log.Fatalf("Error: %v\n", errd)
+	}
+}
+
+func launchClient2() {
+	if verbose {
+		kafkactl.Logger("")
+	}
 	client, errd = kafkactl.NewClient(bootStrap)
 	if errd != nil {
 		log.Fatalf("Error: %v\n", errd)
