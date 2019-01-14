@@ -22,14 +22,16 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/jbvmio/kafkactl"
 	yaml "gopkg.in/yaml.v2"
 )
 
 var (
-	client *kafkactl.KClient
-	errd   error
+	client        *kafkactl.KClient
+	errd          error
+	clientTimeout = (time.Second * 5)
 )
 
 type apiVersion struct {
@@ -47,9 +49,11 @@ func launchClient() {
 	if errd != nil {
 		log.Fatalf("Error: %v\n", err)
 	}
+	conf.Net.DialTimeout = clientTimeout
+	conf.Net.ReadTimeout = clientTimeout
+	conf.Net.WriteTimeout = clientTimeout
 	conf.Metadata.Retry.Max = 1
-	//client, errd = kafkactl.NewClient(bootStrap)
-	client, errd = kafkactl.NewCustomClient(bootStrap, conf)
+	client, errd = kafkactl.NewCustomClient(conf, kafkaBrokers...)
 	if errd != nil {
 		log.Fatalf("Error: %v\n", errd)
 	}
@@ -86,11 +90,34 @@ func validateBootStrap() {
 				log.Fatalf("Error reading config: %v\n", errd)
 			}
 		}
+		if !strings.Contains(bootStrap, ":") {
+			bootStrap = net.JoinHostPort(bootStrap, bsport)
+		}
+		return
+	}
+	if !strings.Contains(bootStrap, ":") {
+		bootStrap = net.JoinHostPort(bootStrap, bsport)
+	}
+	if bootStrap != "" {
+		kafkaBrokers = []string{bootStrap}
+	}
+}
+
+/*
+func validateBootStrap() {
+	if bootStrap == "" {
+		if cfgFile {
+			bootStrap, errd = kafkactl.ReturnFirstValid(kafkaBrokers...)
+			if errd != nil {
+				log.Fatalf("Error reading config: %v\n", errd)
+			}
+		}
 	}
 	if !strings.Contains(bootStrap, ":") {
 		bootStrap = net.JoinHostPort(bootStrap, bsport)
 	}
 }
+*/
 
 func getKafkaVersion(apiKeys map[int16]int16) string {
 	match := true

@@ -15,9 +15,11 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"sort"
+	"strings"
 
 	"github.com/jbvmio/burrow"
 	"github.com/spf13/cast"
@@ -179,6 +181,31 @@ func filterUnique(strSlice []string) []string {
 func stdinAvailable() bool {
 	stat, _ := os.Stdin.Stat()
 	return (stat.Mode() & os.ModeCharDevice) == 0
+}
+
+func parseStdin(b []byte) (string, []string) {
+	bits := bytes.TrimSpace(b)
+	lines := string(bits)
+
+	var args []string
+	a := strings.Split(lines, "\n")
+	kindIn := strings.Fields(strings.TrimSpace(a[0]))[0]
+
+	for _, b := range a[1:] {
+		b := strings.TrimSpace(b)
+		c := cutField(b, 1)
+		args = append(args, c)
+	}
+	return kindIn, args
+}
+
+func cutField(s string, f int) string {
+	d := f - 1
+	fields := strings.Fields(s)
+	if len(fields) < f {
+		d = len(fields) - 1
+	}
+	return fields[d]
 }
 
 func makeSeqStr(nums []int32) string {

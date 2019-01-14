@@ -19,16 +19,20 @@ type KClient struct {
 	logger *log.Logger
 }
 
-func NewClient(bootStrap string) (*KClient, error) {
+func NewClient(brokerList ...string) (*KClient, error) {
 	conf, err := GetConf()
 	if err != nil {
 		return nil, err
 	}
-	client, err := getClient(bootStrap, conf)
+	client, err := getClient(conf, brokerList...)
 	if err != nil {
 		return nil, err
 	}
 	_, err = client.Controller() // Connectivity check
+	if err != nil {
+		return nil, err
+	}
+	bootStrap, err := ReturnFirstValid(brokerList...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,21 +46,21 @@ func NewClient(bootStrap string) (*KClient, error) {
 	return &kc, nil
 }
 
-func NewCustomClient(bootStrap string, conf *sarama.Config) (*KClient, error) {
+func NewCustomClient(conf *sarama.Config, brokerList ...string) (*KClient, error) {
 	err := conf.Validate()
 	if err != nil {
 		return nil, err
 	}
-	client, err := getClient(bootStrap, conf)
+	client, err := getClient(conf, brokerList...)
 	if err != nil {
 		return nil, err
 	}
-	_, err = client.Controller() // Connectivity check
+	C, err := client.Controller() // Connectivity check
 	if err != nil {
 		return nil, err
 	}
 	kc := KClient{
-		bootStrap: bootStrap,
+		bootStrap: C.Addr(),
 		cl:        client,
 		config:    conf,
 		brokers:   client.Brokers(),
@@ -155,8 +159,8 @@ func GetConf() (*sarama.Config, error) {
 	return conf, err
 }
 
-func getClient(broker string, conf *sarama.Config) (sarama.Client, error) {
-	return sarama.NewClient([]string{broker}, conf)
+func getClient(conf *sarama.Config, brokers ...string) (sarama.Client, error) {
+	return sarama.NewClient(brokers, conf)
 }
 
 // ReturnFirstValid returns the first available, connectable broker provided from a broker list

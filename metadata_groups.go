@@ -38,7 +38,7 @@ type MemberMeta struct {
 	TopicPartitions map[string][]int32
 }
 
-func (kc *KClient) ListGroups2() (groups []string, errors []string) {
+func (kc *KClient) ListGroups() (groups []string, errors []string) {
 	var wg sync.WaitGroup
 	for _, broker := range kc.brokers {
 		wg.Add(1)
@@ -58,7 +58,7 @@ func (kc *KClient) ListGroups2() (groups []string, errors []string) {
 	return
 }
 
-func (kc *KClient) ListGroups() (groups []string, errors []string) {
+func (kc *KClient) ListGroups2() (groups []string, errors []string) {
 	grpChan := make(chan []string, 100)
 	timerChan := make(chan string, len(kc.brokers))
 	var toCount uint8

@@ -15,6 +15,8 @@
 package cmd
 
 import (
+	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/spf13/cast"
@@ -62,6 +64,24 @@ var moveCmd = &cobra.Command{
 			movePartitions(tpMeta, tBrokers)
 			return
 		}
+		if stdinAvailable() {
+			b, err := ioutil.ReadAll(os.Stdin)
+			if err != nil {
+				closeFatal("Failed to read from stdin: %v\n", err)
+			}
+			header, mData := parseMoveStdin(b)
+			if header != "TOPIC" {
+				closeFatal("Best to pass stdin through kafkactl itself.\n")
+			}
+
+			brokes := strings.Split(targetKey, ",")
+			for _, b := range brokes {
+				tBrokers = append(tBrokers, cast.ToInt32(b))
+			}
+			validateBrokers(tBrokers)
+			movePartitionsStdin(mData, tBrokers)
+			return
+		}
 		closeFatal("Must specify --topic, try again.\n")
 		return
 	},
@@ -69,6 +89,7 @@ var moveCmd = &cobra.Command{
 
 func init() {
 	adminCmd.AddCommand(moveCmd)
+	moveCmd.Flags().BoolVar(&preAllTopics, "alltopics", false, "Perform Move Operation on All Topics")
 	moveCmd.Flags().StringVarP(&strParts, "partitions", "p", "", `Comma Separated (eg: "0,1,7,9") Partitions to Move`)
 	moveCmd.Flags().StringVar(&targetKey, "brokers", "", `Comma Separated (eg: "1,2,3") brokers to assign replicas / move to`)
 	moveCmd.Flags().StringVarP(&zkTargetServer, "zookeeper", "z", "", "Specify a targeted Zookeeper Server and Port (eg. localhost:2181")
