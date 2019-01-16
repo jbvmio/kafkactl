@@ -34,6 +34,8 @@ var (
 
 	targetTopic     string
 	targetGroup     string
+	clientVer       string
+	kafkaVer        string
 	targetPartition int32
 
 	kafkaBrokers []string
@@ -76,12 +78,14 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	rootCmd.PersistentFlags().StringVarP(&clientVer, "clientversion", "c", "query", "Client Version to Use")
 	rootCmd.PersistentFlags().StringVarP(&bootStrap, "broker", "b", "", "Bootstrap Kafka Broker")
 	rootCmd.PersistentFlags().StringVarP(&targetTopic, "topic", "t", "", "Specify a Target Topic")
 	rootCmd.PersistentFlags().StringVarP(&targetGroup, "group", "g", "", "Specify a Target Group")
 	rootCmd.PersistentFlags().StringVar(&bsport, "port", "9092", "Port used for Bootstrap Kafka Broker")
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Display any additional info and error output.")
-	rootCmd.Flags().BoolVarP(&showAPIs, "api", "a", false, "Show available API Versions.")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Display additional info or errors")
+	rootCmd.Flags().BoolVarP(&showAPIs, "api", "a", false, "Show available API Versions")
+	rootCmd.Flags().BoolVar(&showLag, "pc", false, "Show Partition Counts by Broker")
 
 }
 

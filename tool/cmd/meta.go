@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jbvmio/kafkactl"
+
 	"github.com/spf13/cobra"
 )
 
@@ -30,20 +32,24 @@ var metaCmd = &cobra.Command{
 		if err != nil {
 			closeFatal("Error getting cluster metadata: %v\n", err)
 		}
+		if kafkaVer == "" {
+			ver, _ := kafkactl.MatchKafkaVersion(getKafkaVersion(meta.APIMaxVersions))
+			kafkaVer = ver.String()
+		}
 		c, err := client.Controller()
 		if err != nil {
 			closeFatal("Error obtaining controller: %v\n", err)
 		}
-		if len(meta.Errors) > 0 {
+		if len(meta.ErrorStack) > 0 {
 			fmt.Println("ERRORs:")
-			for _, e := range meta.Errors {
+			for _, e := range meta.ErrorStack {
 				fmt.Printf(" %v\n", e)
 			}
 		}
 		fmt.Println("\nBrokers: ", meta.BrokerCount())
 		fmt.Println(" Topics: ", meta.TopicCount())
 		fmt.Println(" Groups: ", meta.GroupCount())
-		fmt.Printf("\nCluster: (Kafka: %v)\n", getKafkaVersion(meta.APIMaxVersions))
+		fmt.Printf("\nCluster: (Kafka: %v)\n", kafkaVer)
 		for _, b := range meta.Brokers {
 			if strings.Contains(b, c.Addr()) {
 				fmt.Println("*", b)

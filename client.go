@@ -154,7 +154,7 @@ func GetConf() (*sarama.Config, error) {
 	random := randstr.Hex(3)
 	conf := sarama.NewConfig()
 	conf.ClientID = string("kafkactl" + "-" + random)
-	conf.Version = sarama.V1_1_0_0
+	conf.Version = MinKafkaVersion
 	err := conf.Validate()
 	return conf, err
 }
@@ -174,4 +174,29 @@ func ReturnFirstValid(brokers ...string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("Error: No Connectivity to Provided Brokers.")
+}
+
+func ReturnAPIVersions(broker string) (apiMaxVers, apiMinVers map[int16]int16, err error) {
+	b := sarama.NewBroker(broker)
+	conf, err := GetConf()
+	if err != nil {
+		return
+	}
+	b.Open(conf)
+	apiReq := sarama.ApiVersionsRequest{}
+	apiVers, err := b.ApiVersions(&apiReq)
+	if err != nil {
+		return
+	}
+	apiMaxVers = make(map[int16]int16)
+	apiMinVers = make(map[int16]int16)
+	for _, api := range apiVers.ApiVersions {
+		apiMaxVers[api.ApiKey] = api.MaxVersion
+		apiMinVers[api.ApiKey] = api.MinVersion
+	}
+	return
+}
+
+func MatchKafkaVersion(version string) (sarama.KafkaVersion, error) {
+	return sarama.ParseKafkaVersion(version)
 }

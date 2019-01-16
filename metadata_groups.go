@@ -151,11 +151,6 @@ func (kc *KClient) GetGroupMeta() ([]GroupMeta, error) {
 			return groupMeta, fmt.Errorf("%v", errs[len(errs)-1])
 		}
 	}
-	/*
-		if err != nil {
-			return groupMeta, err
-		}
-	*/
 	request := sarama.DescribeGroupsRequest{
 		Groups: gl,
 	}
@@ -216,13 +211,10 @@ func (kc *KClient) QuickGroupMeta() ([]QuickGroupMeta, error) {
 	var qGroupMeta []QuickGroupMeta
 	gl, errs := kc.ListGroups()
 	if len(errs) > 0 {
-		return qGroupMeta, fmt.Errorf("%v", errs[len(errs)-1])
-	}
-	/*
-		if err != nil {
-			return qGroupMeta, err
+		if len(gl) < 1 {
+			return qGroupMeta, fmt.Errorf("%v", errs[len(errs)-1])
 		}
-	*/
+	}
 	request := sarama.DescribeGroupsRequest{
 		Groups: gl,
 	}

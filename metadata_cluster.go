@@ -1,7 +1,6 @@
 package kafkactl
 
 import (
-	"fmt"
 	"sort"
 
 	"github.com/Shopify/sarama"
@@ -16,7 +15,7 @@ type ClusterMeta struct {
 	Controller     int32
 	APIMinVersions map[int16]int16
 	APIMaxVersions map[int16]int16
-	Errors         []string
+	ErrorStack     []string
 }
 
 func (cm ClusterMeta) BrokerCount() int {
@@ -54,12 +53,7 @@ func (kc *KClient) GetClusterMeta() (ClusterMeta, error) {
 	}
 	grps, errs := kc.ListGroups()
 	if len(errs) > 0 {
-		if len(grps) < 1 {
-			return cm, fmt.Errorf("%v", errs[len(errs)-1])
-		}
-		if len(errs) > 0 {
-			cm.Errors = append(cm.Errors, errs...)
-		}
+		cm.ErrorStack = append(cm.ErrorStack, errs...)
 	}
 	cm.Controller = res.ControllerID
 	for _, b := range res.Brokers {
@@ -74,7 +68,11 @@ func (kc *KClient) GetClusterMeta() (ClusterMeta, error) {
 	}
 	cm.APIMaxVersions, cm.APIMinVersions, err = kc.GetAPIVersions()
 	if err != nil {
-		return cm, err
+		if len(grps) > 0 {
+			cm.ErrorStack = append(cm.ErrorStack, err.Error())
+		} else {
+			return cm, err
+		}
 	}
 	cm.Groups = grps
 	sort.Strings(cm.Groups)
@@ -210,3 +208,5 @@ var APIDescriptions = map[int16]string{
 	APIKeyDescribeDelegationToken: "DescribeDelegationToken",
 	APIKeyDeleteGroups:            "DeleteGroups",
 }
+
+var MinKafkaVersion = sarama.V0_10_0_0

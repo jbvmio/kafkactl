@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Shopify/sarama"
 	"github.com/jbvmio/kafkactl"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -46,8 +47,12 @@ func launchClient() {
 		kafkactl.Logger("")
 	}
 	conf, err := kafkactl.GetConf()
-	if errd != nil {
+	if err != nil {
 		log.Fatalf("Error: %v\n", err)
+	}
+	conf.Version, err = sarama.ParseKafkaVersion(clientVer)
+	if err != nil {
+		conf.Version = kafkactl.MinKafkaVersion
 	}
 	conf.Net.DialTimeout = clientTimeout
 	conf.Net.ReadTimeout = clientTimeout
@@ -90,10 +95,6 @@ func validateBootStrap() {
 				log.Fatalf("Error reading config: %v\n", errd)
 			}
 		}
-		if !strings.Contains(bootStrap, ":") {
-			bootStrap = net.JoinHostPort(bootStrap, bsport)
-		}
-		return
 	}
 	if !strings.Contains(bootStrap, ":") {
 		bootStrap = net.JoinHostPort(bootStrap, bsport)
@@ -101,42 +102,35 @@ func validateBootStrap() {
 	if bootStrap != "" {
 		kafkaBrokers = []string{bootStrap}
 	}
-}
-
-/*
-func validateBootStrap() {
-	if bootStrap == "" {
-		if cfgFile {
-			bootStrap, errd = kafkactl.ReturnFirstValid(kafkaBrokers...)
-			if errd != nil {
-				log.Fatalf("Error reading config: %v\n", errd)
-			}
+	if clientVer == "query" {
+		apiVer, _, err := kafkactl.ReturnAPIVersions(bootStrap)
+		if err != nil {
+			fmt.Println("ERR", err)
 		}
+		clientVer = getKafkaVersion(apiVer)
+		ver, _ := kafkactl.MatchKafkaVersion(clientVer)
+		kafkaVer = ver.String()
 	}
-	if !strings.Contains(bootStrap, ":") {
-		bootStrap = net.JoinHostPort(bootStrap, bsport)
-	}
+	return
 }
-*/
 
 func getKafkaVersion(apiKeys map[int16]int16) string {
 	match := true
-	//refKey := apiKeys[kafkactl.APIKeyFetch]
 	switch match {
 	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] == 2:
-		return "v2.1"
+		return "2.1.0"
 	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] == 1:
-		return "v2.0"
+		return "2.0.0"
 	case apiKeys[kafkactl.APIKeyFetch] == 7:
-		return "v1.1"
+		return "1.1.0"
 	case apiKeys[kafkactl.APIKeyFetch] == 6:
-		return "v1.0"
+		return "1.0.0"
 	case apiKeys[kafkactl.APIKeyFetch] == 5:
-		return "v0.11.0"
+		return "0.11.0"
 	case apiKeys[kafkactl.APIKeyUpdateMetadata] == 3:
-		return "v0.10.2.0"
+		return "0.10.2.0"
 	case apiKeys[kafkactl.APIKeyFetch] == 3:
-		return "v0.10.1.0"
+		return "0.10.1.0"
 	}
 	return "UnknownVersion"
 }
