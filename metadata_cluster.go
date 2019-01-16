@@ -37,12 +37,21 @@ func (kc *KClient) BrokerList() ([]string, error) {
 		return brokerlist, err
 	}
 	for _, b := range res.Brokers {
-		id := b.ID()
-		addr := b.Addr()
-		broker := string(addr + "/" + cast.ToString(id))
-		brokerlist = append(brokerlist, broker)
+		brokerlist = append(brokerlist, b.Addr())
 	}
 	return brokerlist, nil
+}
+
+func (kc *KClient) BrokerIDMap() (map[int32]string, error) {
+	brokerMap := make(map[int32]string, len(kc.brokers))
+	res, err := kc.ReqMetadata()
+	if err != nil {
+		return brokerMap, err
+	}
+	for _, b := range res.Brokers {
+		brokerMap[b.ID()] = b.Addr()
+	}
+	return brokerMap, nil
 }
 
 func (kc *KClient) GetClusterMeta() (ClusterMeta, error) {
@@ -209,4 +218,4 @@ var APIDescriptions = map[int16]string{
 	APIKeyDeleteGroups:            "DeleteGroups",
 }
 
-var MinKafkaVersion = sarama.V0_10_0_0
+var MinKafkaVersion = sarama.V1_1_0_0

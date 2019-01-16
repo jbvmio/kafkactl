@@ -51,7 +51,11 @@ func (kc *KClient) NewConsumerGroup(groupID string, debug bool, topics ...string
 		config.Group.Return.Notifications = true
 		dChan = make(chan *DEBUG, 256)
 	}
-	consumer, err := cluster.NewConsumer([]string{kc.bootStrap}, groupID, topics, config)
+	brokers, err := kc.BrokerList()
+	if err != nil {
+		return &cg, err
+	}
+	consumer, err := cluster.NewConsumer(brokers, groupID, topics, config)
 	if err != nil {
 		return &cg, err
 	}
@@ -61,7 +65,6 @@ func (kc *KClient) NewConsumerGroup(groupID string, debug bool, topics ...string
 		cg.haveDebugChan = make(chan bool, 1)
 		go startDEBUG(&cg)
 	}
-
 	return &cg, nil
 }
 
@@ -96,17 +99,6 @@ func startDEBUG(cg *ConsumerGroup) {
 			if !ok {
 				break
 			}
-			//tmp := *note
-			//claimed := tmp.Claimed
-
-			/*
-				n := Notification{
-					Type:     tmp.Type.String(),
-					Claimed:  claimed,
-					Released: tmp.Released,
-					Current:  tmp.Current,
-				}
-			*/
 			d := DEBUG{}
 			d.Type = note.Type.String()
 			d.Claimed = note.Claimed
@@ -117,14 +109,6 @@ func startDEBUG(cg *ConsumerGroup) {
 			//fmt.Printf("%+v\n", d)
 			cg.debugChan <- &d
 			cg.haveDebugChan <- true
-			/*
-				cg.debugChan <- &DEBUG{
-					HasData:      true,
-					IsNote:       true,
-					Notification: n,
-				}
-			*/
-
 		case err, ok := <-cg.consumer.Errors():
 			if !ok {
 				break

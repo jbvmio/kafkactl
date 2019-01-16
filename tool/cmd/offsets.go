@@ -80,7 +80,7 @@ func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {
 				}
 				gpm := GroupPartitionMeta{
 					Group:            grp.Group,
-					GroupCoordinator: grp.Coordinator,
+					GroupCoordinator: grp.CoordinatorAddr,
 				}
 				offset, lag, err := client.OffSetAdmin().Group(grp.Group).Topic(ts.Topic).GetOffsetLag(p)
 				if err != nil {

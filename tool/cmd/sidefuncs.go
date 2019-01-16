@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"sort"
@@ -55,7 +54,7 @@ func printOutput(i interface{}) {
 	case []kafkactl.GroupListMeta:
 		tbl = table.New("GROUPTYPE", "GROUP", "COORDINATOR")
 		for _, v := range i {
-			tbl.AddRow(v.Type, v.Group, v.Coordinator)
+			tbl.AddRow(v.Type, v.Group, v.CoordinatorAddr)
 		}
 	case []GroupTopicOffsetMeta:
 		tbl = table.New("GROUP", "PARTITION", "PART", "GrpOFFSET", "TopicOFFSET", "LAG", "GrpCoordinator")
@@ -123,6 +122,11 @@ func printOutput(i interface{}) {
 		for _, v := range i {
 			tbl.AddRow(v.description, v.key, v.minVer, v.maxVer)
 		}
+	case []*Broker:
+		tbl = table.New("BROKER", "ID", "GRPs", "P.LEADERS", "P.REPLICAS", "P.TOTAL", "P.NOTLEADER")
+		for _, v := range i {
+			tbl.AddRow(v.Address, v.ID, v.GroupCoordinating, v.LeaderPartitions, v.ReplicaPartitions, v.TotalPartitions, v.NotLeader)
+		}
 	}
 	if highlightColumn {
 		tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
@@ -181,22 +185,6 @@ func filterUnique(strSlice []string) []string {
 func stdinAvailable() bool {
 	stat, _ := os.Stdin.Stat()
 	return (stat.Mode() & os.ModeCharDevice) == 0
-}
-
-func parseStdin(b []byte) (string, []string) {
-	bits := bytes.TrimSpace(b)
-	lines := string(bits)
-
-	var args []string
-	a := strings.Split(lines, "\n")
-	kindIn := strings.Fields(strings.TrimSpace(a[0]))[0]
-
-	for _, b := range a[1:] {
-		b := strings.TrimSpace(b)
-		c := cutField(b, 1)
-		args = append(args, c)
-	}
-	return kindIn, args
 }
 
 func cutField(s string, f int) string {

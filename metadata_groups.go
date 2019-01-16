@@ -6,14 +6,14 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/spf13/cast"
 )
 
 type GroupListMeta struct {
-	Group       string
-	Type        string
-	Coordinator string
-	State       string
+	Group           string
+	Type            string
+	CoordinatorAddr string
+	CoordinatorID   int32
+	State           string
 }
 
 type GroupMeta struct {
@@ -125,12 +125,14 @@ func (kc *KClient) GetGroupListMeta() ([]GroupListMeta, error) {
 		if err != nil {
 			return groups, err
 		}
-		coord := string(broker.Addr() + "/" + cast.ToString(broker.ID()))
+		id := broker.ID()
+		coord := broker.Addr()
 		for k, v := range grps.Groups {
 			grp := GroupListMeta{
-				Group:       k,
-				Type:        v,
-				Coordinator: coord,
+				Group:           k,
+				Type:            v,
+				CoordinatorAddr: coord,
+				CoordinatorID:   id,
 			}
 			for _, qg := range qgMeta {
 				if qg.Group == k {

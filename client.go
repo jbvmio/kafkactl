@@ -10,8 +10,7 @@ import (
 )
 
 type KClient struct {
-	bootStrap string
-	brokers   []*sarama.Broker
+	brokers []*sarama.Broker
 
 	cl     sarama.Client
 	ca     clusterAdmin
@@ -32,15 +31,10 @@ func NewClient(brokerList ...string) (*KClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	bootStrap, err := ReturnFirstValid(brokerList...)
-	if err != nil {
-		return nil, err
-	}
 	kc := KClient{
-		bootStrap: bootStrap,
-		cl:        client,
-		config:    conf,
-		brokers:   client.Brokers(),
+		cl:      client,
+		config:  conf,
+		brokers: client.Brokers(),
 	}
 	kc.Connect()
 	return &kc, nil
@@ -55,15 +49,14 @@ func NewCustomClient(conf *sarama.Config, brokerList ...string) (*KClient, error
 	if err != nil {
 		return nil, err
 	}
-	C, err := client.Controller() // Connectivity check
+	_, err = client.Controller() // Connectivity check
 	if err != nil {
 		return nil, err
 	}
 	kc := KClient{
-		bootStrap: C.Addr(),
-		cl:        client,
-		config:    conf,
-		brokers:   client.Brokers(),
+		cl:      client,
+		config:  conf,
+		brokers: client.Brokers(),
 	}
 	kc.Connect()
 	return &kc, nil
