@@ -37,7 +37,6 @@ var (
 
 type apiVersion struct {
 	key         int16
-	minVer      int16
 	maxVer      int16
 	description string
 }
@@ -103,7 +102,7 @@ func validateBootStrap() {
 		kafkaBrokers = []string{bootStrap}
 	}
 	if clientVer == "query" {
-		apiVer, _, err := kafkactl.ReturnAPIVersions(bootStrap)
+		apiVer, err := kafkactl.BrokerAPIVersions(bootStrap)
 		if err != nil {
 			fmt.Println("ERR", err)
 		}
@@ -137,14 +136,13 @@ func getKafkaVersion(apiKeys map[int16]int16) string {
 
 func getAPIVersions() []apiVersion {
 	var apis []apiVersion
-	max, min, err := client.GetAPIVersions()
+	max, err := client.GetAPIVersions()
 	if err != nil {
 		closeFatal("Unable to Retrieve API Versions.")
 	}
 	for k := range max {
 		api := apiVersion{
 			key:         k,
-			minVer:      min[k],
 			maxVer:      max[k],
 			description: kafkactl.APIDescriptions[k],
 		}

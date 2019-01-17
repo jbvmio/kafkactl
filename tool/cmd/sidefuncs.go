@@ -118,9 +118,9 @@ func printOutput(i interface{}) {
 			}
 		}
 	case []apiVersion:
-		tbl = table.New("DESCRIPTION", "KEY", "MIN", "MAX")
+		tbl = table.New("DESCRIPTION", "KEY", "MAX")
 		for _, v := range i {
-			tbl.AddRow(v.description, v.key, v.minVer, v.maxVer)
+			tbl.AddRow(v.description, v.key, v.maxVer)
 		}
 	case []*Broker:
 		tbl = table.New("BROKER", "ID", "GRPs", "P.LEADERS", "P.REPLICAS", "P.TOTAL", "P.NOTLEADER")

@@ -10,6 +10,7 @@ import (
 )
 
 type KClient struct {
+	apiVers map[int16]int16
 	brokers []*sarama.Broker
 
 	cl     sarama.Client
@@ -64,20 +65,6 @@ func NewCustomClient(conf *sarama.Config, brokerList ...string) (*KClient, error
 
 func (kc *KClient) Controller() (*sarama.Broker, error) {
 	return kc.cl.Controller()
-}
-
-func (kc *KClient) APIVersions() (*sarama.ApiVersionsResponse, error) {
-	var apiRes *sarama.ApiVersionsResponse
-	controller, err := kc.cl.Controller()
-	if err != nil {
-		return apiRes, err
-	}
-	apiReq := sarama.ApiVersionsRequest{}
-	apiRes, err = controller.ApiVersions(&apiReq)
-	if err != nil {
-		return apiRes, err
-	}
-	return apiRes, nil
 }
 
 func (kc *KClient) Connect() error {
@@ -167,29 +154,4 @@ func ReturnFirstValid(brokers ...string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("Error: No Connectivity to Provided Brokers.")
-}
-
-func ReturnAPIVersions(broker string) (apiMaxVers, apiMinVers map[int16]int16, err error) {
-	b := sarama.NewBroker(broker)
-	conf, err := GetConf()
-	if err != nil {
-		return
-	}
-	b.Open(conf)
-	apiReq := sarama.ApiVersionsRequest{}
-	apiVers, err := b.ApiVersions(&apiReq)
-	if err != nil {
-		return
-	}
-	apiMaxVers = make(map[int16]int16)
-	apiMinVers = make(map[int16]int16)
-	for _, api := range apiVers.ApiVersions {
-		apiMaxVers[api.ApiKey] = api.MaxVersion
-		apiMinVers[api.ApiKey] = api.MinVersion
-	}
-	return
-}
-
-func MatchKafkaVersion(version string) (sarama.KafkaVersion, error) {
-	return sarama.ParseKafkaVersion(version)
 }

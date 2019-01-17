@@ -13,7 +13,6 @@ type ClusterMeta struct {
 	Topics         []string
 	Groups         []string
 	Controller     int32
-	APIMinVersions map[int16]int16
 	APIMaxVersions map[int16]int16
 	ErrorStack     []string
 }
@@ -75,7 +74,7 @@ func (kc *KClient) GetClusterMeta() (ClusterMeta, error) {
 	for _, t := range res.Topics {
 		cm.Topics = append(cm.Topics, t.Name)
 	}
-	cm.APIMaxVersions, cm.APIMinVersions, err = kc.GetAPIVersions()
+	cm.APIMaxVersions, err = kc.GetAPIVersions()
 	if err != nil {
 		if len(grps) > 0 {
 			cm.ErrorStack = append(cm.ErrorStack, err.Error())
@@ -88,25 +87,6 @@ func (kc *KClient) GetClusterMeta() (ClusterMeta, error) {
 	sort.Strings(cm.Brokers)
 	sort.Strings(cm.Topics)
 	return cm, nil
-}
-
-func (kc *KClient) GetAPIVersions() (apiMaxVers, apiMinVers map[int16]int16, err error) {
-	apiMaxVers = make(map[int16]int16)
-	apiMinVers = make(map[int16]int16)
-	apiReq := sarama.ApiVersionsRequest{}
-	controller, err := kc.Controller()
-	if err != nil {
-		return
-	}
-	apiVers, err := controller.ApiVersions(&apiReq)
-	if err != nil {
-		return
-	}
-	for _, api := range apiVers.ApiVersions {
-		apiMaxVers[api.ApiKey] = api.MaxVersion
-		apiMinVers[api.ApiKey] = api.MinVersion
-	}
-	return
 }
 
 func (kc *KClient) ReqMetadata() (*sarama.MetadataResponse, error) {
@@ -219,3 +199,52 @@ var APIDescriptions = map[int16]string{
 }
 
 var MinKafkaVersion = sarama.V1_1_0_0
+
+func (kc *KClient) GetAPIVersions() (apiMaxVers map[int16]int16, err error) {
+	apiMaxVers = make(map[int16]int16)
+	apiVers, err := kc.apiVersions()
+	if err != nil {
+		return
+	}
+	for _, api := range apiVers.ApiVersions {
+		apiMaxVers[api.ApiKey] = api.MaxVersion
+	}
+	return
+}
+
+func (kc *KClient) apiVersions() (*sarama.ApiVersionsResponse, error) {
+	var apiRes *sarama.ApiVersionsResponse
+	controller, err := kc.cl.Controller()
+	if err != nil {
+		return apiRes, err
+	}
+	apiReq := sarama.ApiVersionsRequest{}
+	apiRes, err = controller.ApiVersions(&apiReq)
+	if err != nil {
+		return apiRes, err
+	}
+	return apiRes, nil
+}
+
+func BrokerAPIVersions(broker string) (apiMaxVers map[int16]int16, err error) {
+	b := sarama.NewBroker(broker)
+	conf, err := GetConf()
+	if err != nil {
+		return
+	}
+	b.Open(conf)
+	apiReq := sarama.ApiVersionsRequest{}
+	apiVers, err := b.ApiVersions(&apiReq)
+	if err != nil {
+		return
+	}
+	apiMaxVers = make(map[int16]int16)
+	for _, api := range apiVers.ApiVersions {
+		apiMaxVers[api.ApiKey] = api.MaxVersion
+	}
+	return
+}
+
+func MatchKafkaVersion(version string) (sarama.KafkaVersion, error) {
+	return sarama.ParseKafkaVersion(version)
+}
