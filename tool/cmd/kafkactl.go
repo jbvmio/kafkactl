@@ -126,7 +126,7 @@ func getKafkaVersion(apiKeys map[int16]int16) string {
 	case apiKeys[kafkactl.APIKeyFetch] == 6:
 		return "1.0.0"
 	case apiKeys[kafkactl.APIKeyFetch] == 5:
-		return "0.11.0"
+		return "0.11.0.0"
 	case apiKeys[kafkactl.APIKeyUpdateMetadata] == 3:
 		return "0.10.2.0"
 	case apiKeys[kafkactl.APIKeyFetch] == 3:

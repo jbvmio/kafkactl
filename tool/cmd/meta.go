@@ -49,7 +49,8 @@ var metaCmd = &cobra.Command{
 		fmt.Println("\nBrokers: ", meta.BrokerCount())
 		fmt.Println(" Topics: ", meta.TopicCount())
 		fmt.Println(" Groups: ", meta.GroupCount())
-		fmt.Printf("\nCluster: (Kafka: %v)\n", kafkaVer)
+		fmt.Printf("\nClient:  (Using: %v)\n", clientVer)
+		fmt.Printf("Cluster: (Kafka: %v)\n", kafkaVer)
 		for _, b := range meta.Brokers {
 			if strings.Contains(b, c.Addr()) {
 				fmt.Println("*", b)
