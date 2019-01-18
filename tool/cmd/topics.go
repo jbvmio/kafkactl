@@ -15,10 +15,12 @@
 package cmd
 
 import (
+	"bytes"
 	"sort"
 	"strings"
 
 	"github.com/jbvmio/kafkactl"
+	"github.com/spf13/cast"
 )
 
 func searchTopicMeta(topics ...string) []kafkactl.TopicMeta {
@@ -133,4 +135,33 @@ func validateLeaders(leaders []int32) {
 			pMap[p] = true
 		}
 	}
+}
+
+// Parses Stdin passed from kafkactl topic metadata
+func parseTopicStdin(b []byte) []topicStdinData {
+	bits := bytes.TrimSpace(b)
+	lines := string(bits)
+
+	var topicData []topicStdinData
+	a := strings.Split(lines, "\n")
+	headers := strings.Fields(strings.TrimSpace(a[0]))
+	if len(headers) < 3 {
+		closeFatal("Invalid Stdin Passed\n")
+	}
+	if headers[0] != "TOPIC" || headers[1] != "PART" || headers[2] != "OFFSET" {
+		closeFatal("Best to pass stdin through kafkactl itself.\n")
+	}
+	for _, b := range a[1:] {
+		td := topicStdinData{}
+		b := strings.TrimSpace(b)
+		td.topic = cutField(b, 1)
+		td.partition = cast.ToInt32(cutField(b, 2))
+		topicData = append(topicData, td)
+	}
+	return topicData
+}
+
+type topicStdinData struct {
+	topic     string
+	partition int32
 }

@@ -15,6 +15,9 @@
 package cmd
 
 import (
+	"io/ioutil"
+	"os"
+
 	"github.com/spf13/cobra"
 )
 
@@ -50,7 +53,16 @@ var preCmd = &cobra.Command{
 			allTopicsPRE()
 			return
 		}
-		closeFatal("Error: Must specify either --topic OR --alltopics, try again.")
+		if stdinAvailable() {
+			b, err := ioutil.ReadAll(os.Stdin)
+			if err != nil {
+				closeFatal("Failed to read from stdin: %v\n", err)
+			}
+			tData := parseTopicStdin(b)
+			preTopicsStdin(tData)
+			return
+		}
+		closeFatal("Error: Must specify either --topic, --alltopics or Pipe Stdin, try again.")
 	},
 }
 

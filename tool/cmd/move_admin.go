@@ -15,13 +15,10 @@
 package cmd
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/jbvmio/kafkactl"
-	"github.com/spf13/cast"
 )
 
 func validateBrokers(brokers []int32) {
@@ -105,7 +102,7 @@ func movePartitions(topicMeta []kafkactl.TopicMeta, brokers []int32) {
 	zkCreateReassignPartitions("/admin/reassign_partitions", j)
 }
 
-func movePartitionsStdin(moveData []moveStdinData, brokers []int32) {
+func movePartitionsStdin(moveData []topicStdinData, brokers []int32) {
 	var raparts []RAPartition
 	for _, tm := range moveData {
 		rap := RAPartition{
@@ -125,27 +122,4 @@ func movePartitionsStdin(moveData []moveStdinData, brokers []int32) {
 	}
 	fmt.Printf("%s", j)
 	zkCreateReassignPartitions("/admin/reassign_partitions", j)
-}
-
-func parseMoveStdin(b []byte) (string, []moveStdinData) {
-	bits := bytes.TrimSpace(b)
-	lines := string(bits)
-
-	var moveData []moveStdinData
-	a := strings.Split(lines, "\n")
-	kindIn := strings.Fields(strings.TrimSpace(a[0]))[0]
-
-	for _, b := range a[1:] {
-		md := moveStdinData{}
-		b := strings.TrimSpace(b)
-		md.topic = cutField(b, 1)
-		md.partition = cast.ToInt32(cutField(b, 2))
-		moveData = append(moveData, md)
-	}
-	return kindIn, moveData
-}
-
-type moveStdinData struct {
-	topic     string
-	partition int32
 }

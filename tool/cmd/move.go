@@ -69,11 +69,7 @@ var moveCmd = &cobra.Command{
 			if err != nil {
 				closeFatal("Failed to read from stdin: %v\n", err)
 			}
-			header, mData := parseMoveStdin(b)
-			if header != "TOPIC" {
-				closeFatal("Best to pass stdin through kafkactl itself.\n")
-			}
-
+			mData := parseTopicStdin(b)
 			brokes := strings.Split(targetKey, ",")
 			for _, b := range brokes {
 				tBrokers = append(tBrokers, cast.ToInt32(b))
