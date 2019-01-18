@@ -15,6 +15,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/jbvmio/kafkactl"
 	"github.com/spf13/cobra"
 )
@@ -38,6 +40,15 @@ To see detailed metadata information, use the meta command or the -m flag here.
 		if len(args) < 1 {
 			args = []string{""}
 		}
+		if preAllTopics {
+			tom := chanGetTopicOffsetMap(findPRETopics(args...))
+			if len(tom) < 1 {
+				fmt.Println("\n No Topics Require PRE.\n")
+				return
+			}
+			printOutput(tom)
+			return
+		}
 		if meta || cmd.Flags().Changed("leaders") {
 			desc := []string{"topic"}
 			desc = append(desc, args...)
@@ -56,6 +67,7 @@ func init() {
 	rootCmd.AddCommand(topicCmd)
 	topicCmd.Flags().BoolVarP(&exact, "exact", "x", false, "Find exact match")
 	topicCmd.Flags().BoolVarP(&meta, "meta", "m", false, "Show extra/metadata details")
+	topicCmd.Flags().BoolVar(&preAllTopics, "needpre", false, "Show Topics that need a Preferred Leader Election")
 	topicCmd.Flags().StringVar(&leaderList, "leaders", "", `Only show specified Leaders. (eg "1,3,7"; auto passes to --meta)`)
 	topicCmd.Flags().BoolVarP(&refreshMeta, "refresh-metadata", "r", false, "Query the Cluster to Refresh the Available Metadata for the given Topic(s)")
 }
