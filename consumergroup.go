@@ -24,6 +24,7 @@ type ConsumerGroup struct {
 	consumer      *cluster.Consumer
 	debugChan     chan *DEBUG
 	haveDebugChan chan bool
+	debugEnabled  bool
 }
 
 // CG returns the underlying Consumer from sarama-cluster
@@ -32,7 +33,9 @@ func (cg *ConsumerGroup) CG() *cluster.Consumer {
 }
 
 func (cg *ConsumerGroup) Close() error {
-	close(cg.debugChan)
+	if cg.debugEnabled {
+		close(cg.debugChan)
+	}
 	return cg.consumer.Close()
 }
 
@@ -63,6 +66,7 @@ func (kc *KClient) NewConsumerGroup(groupID string, debug bool, topics ...string
 	if debug {
 		cg.debugChan = dChan
 		cg.haveDebugChan = make(chan bool, 1)
+		cg.debugEnabled = true
 		go startDEBUG(&cg)
 	}
 	return &cg, nil

@@ -76,7 +76,6 @@ func preTopicsStdin(td []topicStdinData) {
 	if err != nil {
 		closeFatal("Error Marshaling Topic/Partition Data: %v\n", err)
 	}
-	//fmt.Printf("%s\n", j)
 	zkCreatePRE("/admin/preferred_replica_election", j)
 }
 

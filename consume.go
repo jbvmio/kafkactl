@@ -62,7 +62,7 @@ func (kc *KClient) ConsumeOffsetMsg(topic string, partition int32, offset int64)
 }
 
 // ChanPartitionConsume retreives messages from the given topic, partition and literal offset.
-// Meant to be used via a goroutine, a Message and bool channel (for stopping the process) should be passed.
+// Meant to be used via a goroutine, a Message channel and bool channel (for stopping the process) should be passed.
 // Will return an error through the msgChan if any are encountered before initializing the Consume Loop.
 func (kc *KClient) ChanPartitionConsume(topic string, partition int32, offset int64, msgChan chan *Message, stopChan chan bool) {
 	consumer, err := sarama.NewConsumerFromClient(kc.cl)
