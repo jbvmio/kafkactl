@@ -19,6 +19,7 @@ import (
 	"os"
 
 	"github.com/jbvmio/kafkactl/cli/cmd/cfg"
+	"github.com/jbvmio/kafkactl/cli/cmd/describe"
 	"github.com/jbvmio/kafkactl/cli/cmd/get"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 
@@ -60,7 +61,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.2kafkactl.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "cfg", "", "config file (default is $HOME/.2kafkactl.yaml)")
 	rootCmd.PersistentFlags().StringVar(&kafkaFlags.Context, "context", "", "Specify a context.")
 	rootCmd.PersistentFlags().StringVar(&kafkaFlags.Version, "version", "", "Specify a client version.")
 	rootCmd.PersistentFlags().BoolVarP(&kafkaFlags.Verbose, "verbose", "v", false, "Display additional info or errors.")
@@ -68,6 +69,7 @@ func init() {
 
 	rootCmd.AddCommand(cfg.CmdConfig)
 	rootCmd.AddCommand(get.CmdGet)
+	rootCmd.AddCommand(describe.CmdDescribe)
 
 }
 

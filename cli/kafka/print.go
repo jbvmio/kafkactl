@@ -18,6 +18,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/jbvmio/kafkactl"
+	"github.com/jbvmio/kafkactl/cli/x"
 	"github.com/rodaine/table"
 )
 
@@ -37,10 +38,28 @@ func PrintOut(i interface{}) {
 		for _, v := range i {
 			tbl.AddRow(v.Topic, v.Parts, v.RFactor, v.ISRs, v.OfflineReplicas)
 		}
+	case []kafkactl.TopicOffsetMap:
+		tbl = table.New("TOPIC", "PART", "OFFSET", "LEADER", "REPLICAS", "ISRs", "OFFLINE")
+		for _, v := range i {
+			for _, p := range v.TopicMeta {
+				tbl.AddRow(p.Topic, p.Partition, v.PartitionOffsets[p.Partition], p.Leader, p.Replicas, p.ISRs, p.OfflineReplicas)
+			}
+		}
 	case []kafkactl.GroupListMeta:
 		tbl = table.New("GROUPTYPE", "GROUP", "COORDINATOR")
 		for _, v := range i {
 			tbl.AddRow(v.Type, v.Group, v.CoordinatorAddr)
+		}
+	case []kafkactl.GroupMeta:
+		tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER")
+		for _, v := range i {
+			grpName := x.TruncateString(v.Group, 64)
+			for _, m := range v.MemberAssignments {
+				cID := m.ClientID
+				for t, p := range m.TopicPartitions {
+					tbl.AddRow(grpName, t, x.MakeSeqStr(p), cID)
+				}
+			}
 		}
 	}
 	if highlightColumn {

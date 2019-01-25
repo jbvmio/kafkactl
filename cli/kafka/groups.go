@@ -21,6 +21,11 @@ import (
 	"github.com/jbvmio/kafkactl"
 )
 
+type GroupFlags struct {
+	Describe bool
+	Lag      bool
+}
+
 func SearchGroupListMeta(groups ...string) []kafkactl.GroupListMeta {
 	var groupListMeta []kafkactl.GroupListMeta
 	var err error
@@ -36,19 +41,29 @@ func SearchGroupListMeta(groups ...string) []kafkactl.GroupListMeta {
 		if err != nil {
 			closeFatal("Error getting grouplist metadata: %s\n", err)
 		}
-		for _, g := range groups {
-			for _, m := range glMeta {
-				if exact {
+		subMatch := true
+		switch subMatch {
+		case exact:
+			for _, g := range groups {
+				for _, m := range glMeta {
 					if m.Group == g {
-						groupListMeta = append(groupListMeta, m)
-					}
-				} else {
-					if strings.Contains(m.Group, g) {
 						groupListMeta = append(groupListMeta, m)
 					}
 				}
 			}
+		default:
+			for _, g := range groups {
+				for _, m := range glMeta {
+					if strings.Contains(m.Group, g) {
+						groupListMeta = append(groupListMeta, m)
+					}
+
+				}
+			}
 		}
+	}
+	if len(groupListMeta) < 1 {
+		closeFatal("No Results Found.\n")
 	}
 	sort.Slice(groupListMeta, func(i, j int) bool {
 		return groupListMeta[i].Group < groupListMeta[j].Group
@@ -56,31 +71,38 @@ func SearchGroupListMeta(groups ...string) []kafkactl.GroupListMeta {
 	return groupListMeta
 }
 
-func searchGroupMeta(group ...string) []kafkactl.GroupMeta {
+func SearchGroupMeta(group ...string) []kafkactl.GroupMeta {
+	var groupMeta []kafkactl.GroupMeta
 	grpMeta, err := client.GetGroupMeta()
 	if err != nil {
 		closeFatal("Error getting group metadata: %s\n", err)
 	}
-	if len(group) >= 1 {
-		if group[0] != "" {
-			var groupMeta []kafkactl.GroupMeta
+	match := true
+	switch match {
+	case len(group) < 1:
+		return grpMeta
+	case len(group) > 0:
+		subMatch := true
+		switch subMatch {
+		case exact:
 			for _, g := range group {
 				for _, gm := range grpMeta {
-					if exact {
-						if gm.Group == g {
-							groupMeta = append(groupMeta, gm)
-						}
-					} else {
-						if strings.Contains(gm.Group, g) {
-							groupMeta = append(groupMeta, gm)
-						}
+					if gm.Group == g {
+						groupMeta = append(groupMeta, gm)
 					}
 				}
 			}
-			return groupMeta
+		default:
+			for _, g := range group {
+				for _, gm := range grpMeta {
+					if strings.Contains(gm.Group, g) {
+						groupMeta = append(groupMeta, gm)
+					}
+				}
+			}
 		}
 	}
-	return grpMeta
+	return groupMeta
 }
 
 func groupMetaByTopic(topic string, grpMeta []kafkactl.GroupMeta) []kafkactl.GroupMeta {

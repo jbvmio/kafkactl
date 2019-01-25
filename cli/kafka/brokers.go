@@ -42,7 +42,9 @@ func GetBrokerInfo(b ...string) []*Broker {
 	brIDMap, err := client.BrokerIDMap()
 	if len(b) > 0 {
 		tmpMap := make(map[int32]string)
-		if exact {
+		match := true
+		switch match {
+		case exact:
 			for _, a := range b {
 				for id, addr := range brIDMap {
 					if a == addr {
@@ -50,7 +52,7 @@ func GetBrokerInfo(b ...string) []*Broker {
 					}
 				}
 			}
-		} else {
+		default:
 			for _, a := range b {
 				for id, addr := range brIDMap {
 					if strings.Contains(addr, a) {

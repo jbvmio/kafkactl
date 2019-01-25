@@ -6,10 +6,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var CmdGetGroup = &cobra.Command{
+var CmdDescGroup = &cobra.Command{
 	Use:     "group",
 	Aliases: []string{"groups"},
-	Short:   "Get Group Info",
+	Short:   "Get Group Details",
 	Run: func(cmd *cobra.Command, args []string) {
 		match := true
 		switch match {
@@ -18,9 +18,9 @@ var CmdGetGroup = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.PrintObject(kafka.SearchGroupListMeta(args...), outFmt)
+			out.PrintObject(kafka.SearchGroupMeta(args...), outFmt)
 		default:
-			kafka.PrintOut(kafka.SearchGroupListMeta(args...))
+			kafka.PrintOut(kafka.SearchGroupMeta(args...))
 		}
 	},
 }

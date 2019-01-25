@@ -1,4 +1,4 @@
-package group
+package topic
 
 import (
 	"github.com/jbvmio/kafkactl/cli/kafka"
@@ -6,10 +6,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var CmdGetGroup = &cobra.Command{
-	Use:     "group",
-	Aliases: []string{"groups"},
-	Short:   "Get Group Info",
+var CmdDescTopic = &cobra.Command{
+	Use:     "topic",
+	Aliases: []string{"topics"},
+	Short:   "Get Topic Details",
 	Run: func(cmd *cobra.Command, args []string) {
 		match := true
 		switch match {
@@ -18,9 +18,9 @@ var CmdGetGroup = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.PrintObject(kafka.SearchGroupListMeta(args...), outFmt)
+			out.PrintObject(kafka.SearchTOM(args...), outFmt)
 		default:
-			kafka.PrintOut(kafka.SearchGroupListMeta(args...))
+			kafka.PrintOut(kafka.SearchTOM(args...))
 		}
 	},
 }

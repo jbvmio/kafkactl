@@ -32,7 +32,66 @@ type TopicOffsetMap struct {
 	PartitionLeaders map[int32]int32
 }
 
+type partitionOffset struct {
+	topic     string
+	partition int32
+	offset    int64
+}
+
 func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
+	var TOM []TopicOffsetMap
+	parts := make(map[string][]int32)
+	tmMap := make(map[string][]TopicMeta)
+	for _, tm := range topicMeta {
+		parts[tm.Topic] = append(parts[tm.Topic], tm.Partition)
+		tmMap[tm.Topic] = append(tmMap[tm.Topic], tm)
+	}
+	tomChan := make(chan TopicOffsetMap, len(tmMap))
+	for topic := range tmMap {
+		tm := tmMap[topic]
+		pars := parts[topic]
+		go func(topic string, tMeta []TopicMeta, parts []int32) {
+			poMap := make(map[int32]int64)
+			poChan := make(chan partitionOffset, 10000)
+			for _, p := range parts {
+				go func(topic string, p int32) {
+					off, err := kc.GetOffsetNewest(topic, p)
+					if err != nil {
+						off = -7777
+					}
+					po := partitionOffset{
+						topic:     topic,
+						partition: p,
+						offset:    off,
+					}
+					poChan <- po
+				}(topic, p)
+			}
+			for i := 0; i < len(parts); i++ {
+				po := <-poChan
+				poMap[po.partition] = po.offset
+			}
+			pLdrMap := make(map[int32]int32, len(parts))
+			for _, tm := range tMeta {
+				pLdrMap[tm.Partition] = tm.Leader
+			}
+			tom := TopicOffsetMap{
+				Topic:            topic,
+				TopicMeta:        tmMap[topic],
+				PartitionOffsets: poMap,
+				PartitionLeaders: pLdrMap,
+			}
+			tomChan <- tom
+		}(topic, tm, pars)
+	}
+	for i := 0; i < len(tmMap); i++ {
+		tom := <-tomChan
+		TOM = append(TOM, tom)
+	}
+	return TOM
+}
+
+func (kc *KClient) makeTopicOffsetMap2(topicMeta []TopicMeta) []TopicOffsetMap {
 	var TOM []TopicOffsetMap
 	parts := make(map[string][]int32)
 	tmMap := make(map[string][]TopicMeta)

@@ -22,8 +22,9 @@ import (
 )
 
 type TopicFlags struct {
-	FindPRE bool
-	Leaders []string
+	FindPRE  bool
+	Describe bool
+	Leaders  []string
 }
 
 func SearchTopicMeta(topics ...string) []kafkactl.TopicMeta {
@@ -61,6 +62,9 @@ func SearchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 			}
 		}
 	}
+	if len(topicMeta) < 1 {
+		closeFatal("No Results Found.\n")
+	}
 	sort.Slice(topicMeta, func(i, j int) bool {
 		if topicMeta[i].Topic < topicMeta[j].Topic {
 			return true
@@ -73,11 +77,19 @@ func SearchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 	return topicMeta
 }
 
-/*
-func getTopicOffsetMap(tm []kafkactl.TopicMeta) []kafkactl.TopicOffsetMap {
+func SearchTOM(topics ...string) []kafkactl.TopicOffsetMap {
+	tom := GetTopicOffsetMap(SearchTopicMeta(topics...))
+	if len(tom) < 1 {
+		closeFatal("no results for that group/topic combination\n")
+	}
+	return tom
+}
+
+func GetTopicOffsetMap(tm []kafkactl.TopicMeta) []kafkactl.TopicOffsetMap {
 	return client.MakeTopicOffsetMap(tm)
 }
 
+/*
 func filterTOMByLeader(tom []kafkactl.TopicOffsetMap, leaders []int32) []kafkactl.TopicOffsetMap {
 	var TOM []kafkactl.TopicOffsetMap
 	done := make(map[string]bool)

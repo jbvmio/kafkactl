@@ -7,27 +7,35 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var outFlags out.OutFlags
+var topicFlags kafka.TopicFlags
 
 var CmdGetTopic = &cobra.Command{
 	Use:     "topic",
 	Aliases: []string{"topics"},
-	Short:   "Get Topic Details",
+	Short:   "Get Topic Info",
 	Run: func(cmd *cobra.Command, args []string) {
+		var topicSummaries []kafkactl.TopicSummary
 		match := true
+		switch match {
+		case topicFlags.Describe:
+			CmdDescTopic.Run(cmd, args)
+		default:
+			topicSummaries = kafkactl.GetTopicSummaries(kafka.SearchTopicMeta(args...))
+		}
 		switch match {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.PrintObject(kafkactl.GetTopicSummaries(kafka.SearchTopicMeta(args...)), outFmt)
+			out.PrintObject(topicSummaries, outFmt)
 		default:
-			kafka.PrintOut(kafkactl.GetTopicSummaries(kafka.SearchTopicMeta(args...)))
+			kafka.PrintOut(topicSummaries)
 		}
 	},
 }
 
 func init() {
-	CmdGetTopic.PersistentFlags().StringVar(&outFlags.Format, "out", "yaml", "Output Format - yaml|json.")
+	CmdGetTopic.Flags().BoolVar(&topicFlags.Describe, "describe", false, "Shortcut/Pass to Describe Command.")
+	CmdGetTopic.Flags().StringVar(&topicFlags.Leaders, "leader", "", "Filter Topic Partitions by Current Leaders")
 }
