@@ -1,29 +1,47 @@
 package group
 
 import (
+	"github.com/jbvmio/kafkactl"
+	"github.com/jbvmio/kafkactl/cli/cmd/lag"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
+
+var groupFlags kafka.GroupFlags
 
 var CmdGetGroup = &cobra.Command{
 	Use:     "group",
 	Aliases: []string{"groups"},
 	Short:   "Get Group Info",
 	Run: func(cmd *cobra.Command, args []string) {
+		var glm []kafkactl.GroupListMeta
 		match := true
+		switch match {
+		case groupFlags.Lag:
+			lag.CmdGetLag.Run(cmd, args)
+			return
+		case groupFlags.Describe:
+			CmdDescGroup.Run(cmd, args)
+			return
+		case groupFlags.Topic:
+		default:
+			glm = kafka.SearchGroupListMeta(args...)
+		}
 		switch match {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.PrintObject(kafka.SearchGroupListMeta(args...), outFmt)
+			out.Marshal(glm, outFmt)
 		default:
-			kafka.PrintOut(kafka.SearchGroupListMeta(args...))
+			kafka.PrintOut(glm)
 		}
 	},
 }
 
 func init() {
+	CmdGetGroup.Flags().BoolVar(&groupFlags.Describe, "describe", false, "Shortcut/Pass to Describe Command.")
+	CmdGetGroup.Flags().BoolVar(&groupFlags.Lag, "lag", false, "Shortcut/Pass to Lag Command.")
 }

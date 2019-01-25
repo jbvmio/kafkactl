@@ -47,7 +47,7 @@ func Exitf(code int, msg string, args ...interface{}) {
 	os.Exit(code)
 }
 
-func PrintObject(object interface{}, format string) {
+func Marshal(object interface{}, format string) {
 	if format == "yaml" {
 		yamlString, err := yaml.Marshal(object)
 		if err != nil {

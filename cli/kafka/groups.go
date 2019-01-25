@@ -24,6 +24,7 @@ import (
 type GroupFlags struct {
 	Describe bool
 	Lag      bool
+	Topic    bool
 }
 
 func SearchGroupListMeta(groups ...string) []kafkactl.GroupListMeta {
@@ -105,56 +106,121 @@ func SearchGroupMeta(group ...string) []kafkactl.GroupMeta {
 	return groupMeta
 }
 
-func groupMetaByTopic(topic string, grpMeta []kafkactl.GroupMeta) []kafkactl.GroupMeta {
+func GroupMetaByTopics(topics ...string) []kafkactl.GroupMeta {
 	var groupMeta []kafkactl.GroupMeta
-	for _, gm := range grpMeta {
-		gMeta := gm
-		gMeta.MemberAssignments = nil
-		for _, ma := range gm.MemberAssignments {
-			mm := kafkactl.MemberMeta{
-				ClientHost:      ma.ClientHost,
-				ClientID:        ma.ClientID,
-				Active:          ma.Active,
-				TopicPartitions: make(map[string][]int32),
-			}
-			for t, p := range ma.TopicPartitions {
-				if exact {
-					if t == topic {
-						mm.TopicPartitions[t] = append(mm.TopicPartitions[t], p...)
-						gMeta.MemberAssignments = append(gMeta.MemberAssignments, mm)
-					}
-				} else {
-					if strings.Contains(t, topic) {
-						mm.TopicPartitions[t] = append(mm.TopicPartitions[t], p...)
-						gMeta.MemberAssignments = append(gMeta.MemberAssignments, mm)
-					}
+	grpMeta := SearchGroupMeta()
+	matchMap := make(map[string]bool)
+	topicsAvail, err := client.ListTopics()
+	handleC("Metadata Error: %v", err)
+	match := true
+	switch match {
+	case exact:
+		for _, topic := range topics {
+			for _, t := range topicsAvail {
+				if t == topic {
+					matchMap[t] = true
 				}
-
 			}
 		}
-		groupMeta = append(groupMeta, gMeta)
+	default:
+		for _, topic := range topics {
+			for _, t := range topicsAvail {
+				if strings.Contains(t, topic) {
+					matchMap[t] = true
+				}
+			}
+		}
+	}
+	for _, gm := range grpMeta {
+		var matchCount uint16
+		for _, topic := range gm.Topics {
+			if matchMap[topic] {
+				matchCount++
+			}
+		}
+		switch match {
+		case matchCount < 1:
+			continue
+		default:
+			gMeta := gm
+			gMeta.MemberAssignments = nil
+			for _, ma := range gm.MemberAssignments {
+				mm := kafkactl.MemberMeta{
+					ClientHost:      ma.ClientHost,
+					ClientID:        ma.ClientID,
+					Active:          ma.Active,
+					TopicPartitions: make(map[string][]int32),
+				}
+				for t, p := range ma.TopicPartitions {
+
+					if matchMap[t] {
+
+						mm.TopicPartitions[t] = append(mm.TopicPartitions[t], p...)
+						gMeta.MemberAssignments = append(gMeta.MemberAssignments, mm)
+
+					}
+				}
+			}
+			groupMeta = append(groupMeta, gMeta)
+		}
 	}
 	return groupMeta
 }
 
-func groupMetaByMember(member string, grpMeta []kafkactl.GroupMeta) []kafkactl.GroupMeta {
+func GroupMetaByMember(members ...string) []kafkactl.GroupMeta {
 	var groupMeta []kafkactl.GroupMeta
+	grpMeta, err := client.GetGroupMeta()
+	handleC("Metadata Error: %v", err)
 	for _, gm := range grpMeta {
-		gMeta := gm
-		gMeta.MemberAssignments = nil
-		for _, ma := range gm.MemberAssignments {
-			if exact {
-				if ma.ClientID == member {
-					gMeta.MemberAssignments = append(gMeta.MemberAssignments, ma)
+		var gMeta kafkactl.GroupMeta
+		var MA []kafkactl.MemberMeta
+		match := true
+		switch match {
+		case exact:
+			for _, ma := range gm.MemberAssignments {
+				for _, member := range members {
+					if ma.ClientID == member {
+						MA = append(MA, ma)
+						//gMeta.MemberAssignments = append(gMeta.MemberAssignments, ma)
+					}
 				}
-			} else {
-				if strings.Contains(ma.ClientID, member) {
-					gMeta.MemberAssignments = append(gMeta.MemberAssignments, ma)
+			}
+		default:
+			for _, ma := range gm.MemberAssignments {
+				for _, member := range members {
+					if strings.Contains(ma.ClientID, member) {
+						MA = append(MA, ma)
+						//gMeta.MemberAssignments = append(gMeta.MemberAssignments, ma)
+					}
 				}
-
 			}
 		}
-		groupMeta = append(groupMeta, gMeta)
+
+		if len(MA) > 0 {
+			gMeta = gm
+			//gMeta.MemberAssignments = nil
+			gMeta.MemberAssignments = MA
+			groupMeta = append(groupMeta, gMeta)
+
+		}
+
+		/*
+			gMeta := gm
+			gMeta.MemberAssignments = nil
+			for _, ma := range gm.MemberAssignments {
+				if exact {
+					if ma.ClientID == member {
+						gMeta.MemberAssignments = append(gMeta.MemberAssignments, ma)
+					}
+				} else {
+					if strings.Contains(ma.ClientID, member) {
+						gMeta.MemberAssignments = append(gMeta.MemberAssignments, ma)
+					}
+
+				}
+			}
+		*/
+		//groupMeta = append(groupMeta, gMeta)
 	}
 	return groupMeta
 }

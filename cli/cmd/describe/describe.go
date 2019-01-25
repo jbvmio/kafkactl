@@ -10,8 +10,9 @@ import (
 var outFlags out.OutFlags
 
 var CmdDescribe = &cobra.Command{
-	Use:   "describe",
-	Short: "Get Kafka Details",
+	Use:     "describe",
+	Aliases: []string{"desc"},
+	Short:   "Get Kafka Details",
 }
 
 func init() {

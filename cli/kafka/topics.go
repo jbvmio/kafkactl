@@ -24,6 +24,8 @@ import (
 type TopicFlags struct {
 	FindPRE  bool
 	Describe bool
+	Group    bool
+	Lag      bool
 	Leaders  []string
 }
 

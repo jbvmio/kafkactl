@@ -15,8 +15,17 @@
 package kafka
 
 import (
+	"sort"
+	"sync"
+
 	"github.com/jbvmio/kafkactl"
+	"github.com/spf13/cast"
 )
+
+type LagFlags struct {
+	Group bool
+	Topic bool
+}
 
 // PartitionLag struct def:
 type PartitionLag struct {
@@ -28,6 +37,139 @@ type PartitionLag struct {
 	Lag       int64
 }
 
+func FindLag() []PartitionLag {
+	grpMeta, err := client.GetGroupMeta()
+	handleC("Metadata Error: %v", err)
+	var wg sync.WaitGroup
+	var partitionLag []PartitionLag
+	plChan := make(chan PartitionLag, 10000)
+	var count uint32
+	for _, gm := range grpMeta {
+		wg.Add(1)
+		go func(gm kafkactl.GroupMeta) {
+			for _, m := range gm.MemberAssignments {
+				for topic, partitions := range m.TopicPartitions {
+					groupLag, err := client.OffSetAdmin().Group(gm.Group).Topic(topic).GetTotalLag(partitions)
+					handleW("WARN: %v", err)
+					match := true
+					switch match {
+					case groupLag.TotalLag > 0:
+						wg.Add(1)
+						for p := range groupLag.PartitionLag {
+							if groupLag.PartitionLag[p] > 0 {
+								count++
+								pl := PartitionLag{
+									Group:     gm.Group,
+									Topic:     topic,
+									Partition: p,
+									Member:    m.ClientID,
+									Offset:    groupLag.PartitionOffset[p],
+									Lag:       groupLag.PartitionLag[p],
+								}
+								plChan <- pl
+							}
+						}
+						wg.Done()
+					}
+				}
+			}
+			wg.Done()
+		}(gm)
+	}
+	wg.Wait()
+	var i uint32
+	for ; i < count; i++ {
+		pl := <-plChan
+		partitionLag = append(partitionLag, pl)
+	}
+	sort.Slice(partitionLag, func(i, j int) bool {
+		if partitionLag[i].Group < partitionLag[j].Group {
+			return true
+		}
+		if partitionLag[i].Group > partitionLag[j].Group {
+			return false
+		}
+		return partitionLag[i].Partition < partitionLag[j].Partition
+	})
+	return partitionLag
+}
+
+func GetGroupLag(grpMeta []kafkactl.GroupMeta) []PartitionLag {
+	var wg sync.WaitGroup
+	var partitionLag []PartitionLag
+	plChan := make(chan PartitionLag, 10000)
+	var count uint32
+	for _, gm := range grpMeta {
+		wg.Add(1)
+		go func(gm kafkactl.GroupMeta) {
+			for _, m := range gm.MemberAssignments {
+				for topic, partitions := range m.TopicPartitions {
+					wg.Add(1)
+					count = count + cast.ToUint32(len(partitions))
+					wg.Done()
+					groupLag, err := client.OffSetAdmin().Group(gm.Group).Topic(topic).GetTotalLag(partitions)
+					handleW("WARN: %v", err)
+					for _, p := range partitions {
+						pl := PartitionLag{
+							Group:     gm.Group,
+							Topic:     topic,
+							Partition: p,
+							Member:    m.ClientID,
+							Offset:    groupLag.PartitionOffset[p],
+							Lag:       groupLag.PartitionLag[p],
+						}
+						plChan <- pl
+					}
+				}
+			}
+			wg.Done()
+		}(gm)
+	}
+	wg.Wait()
+	var i uint32
+	for ; i < count; i++ {
+		pl := <-plChan
+		partitionLag = append(partitionLag, pl)
+	}
+	sort.Slice(partitionLag, func(i, j int) bool {
+		if partitionLag[i].Group < partitionLag[j].Group {
+			return true
+		}
+		if partitionLag[i].Group > partitionLag[j].Group {
+			return false
+		}
+		return partitionLag[i].Partition < partitionLag[j].Partition
+	})
+	return partitionLag
+}
+
+func getGroupLag2(grpMeta []kafkactl.GroupMeta) []PartitionLag {
+	var partitionLag []PartitionLag
+	for _, gm := range grpMeta {
+		for _, m := range gm.MemberAssignments {
+			for topic, partitions := range m.TopicPartitions {
+				for _, p := range partitions {
+					offset, lag, err := client.OffSetAdmin().Group(gm.Group).Topic(topic).GetOffsetLag(p)
+					if err != nil {
+						lag = -7777
+					}
+					pl := PartitionLag{
+						Group:     gm.Group,
+						Topic:     topic,
+						Partition: p,
+						Member:    m.ClientID,
+						Offset:    offset,
+						Lag:       lag,
+					}
+					partitionLag = append(partitionLag, pl)
+				}
+			}
+		}
+	}
+	return partitionLag
+}
+
+/*
 func getPartitionLag(grpMeta []kafkactl.GroupMeta) []PartitionLag {
 	var partitionLag []PartitionLag
 	for _, gm := range grpMeta {
@@ -90,3 +232,4 @@ func goGetPartitionLag(client *kafkactl.KClient, group, topic, clientID string, 
 	}
 	plChan <- pl
 }
+*/

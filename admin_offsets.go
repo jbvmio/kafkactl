@@ -24,7 +24,7 @@ type OffsetAdmin interface {
 	Topic(topic string) OffsetAdmin
 	Valid() bool
 	GetOffsetLag(partition int32) (int64, int64, error)
-	GetTotalLag(partitions []int32) (int64, error)
+	GetTotalLag(partitions []int32) (GroupLag, error)
 	ResetOffset(partition int32, targetOffset int64) error
 }
 
@@ -34,6 +34,20 @@ type offsetAdmin struct {
 	client sarama.Client
 	om     sarama.OffsetManager
 	pom    sarama.PartitionOffsetManager
+}
+
+type GroupLag struct {
+	Group           string
+	Topic           string
+	PartitionOffset map[int32]int64
+	PartitionLag    map[int32]int64
+	TotalLag        int64
+}
+
+type grpPartLag struct {
+	partition int32
+	offset    int64
+	lag       int64
 }
 
 func (kc *KClient) OffSetAdmin() OffsetAdmin {
@@ -87,9 +101,7 @@ func (oa *offsetAdmin) GetOffsetLag(partition int32) (groupOffset int64, partiti
 	return
 }
 
-// Improve or Remove this:
-// GetTotalLag returns the sum of total lag given for a group of partitions.
-func (oa *offsetAdmin) GetTotalLag(partitions []int32) (totalLag int64, err error) {
+func (oa *offsetAdmin) GetTotalLag(partitions []int32) (groupLag GroupLag, err error) {
 	if !oa.Valid() {
 		err = fmt.Errorf("No specified Group and/or Topic")
 		return
@@ -98,24 +110,49 @@ func (oa *offsetAdmin) GetTotalLag(partitions []int32) (totalLag int64, err erro
 	if err != nil {
 		return
 	}
+	var totalLag int64
+	partitionOff := make(map[int32]int64, len(partitions))
+	partitionLag := make(map[int32]int64, len(partitions))
+	plChan := make(chan grpPartLag, 100)
 	for _, partition := range partitions {
-		var groupOffset int64
-		var partOffset int64
-		oa.pom, err = oa.om.ManagePartition(oa.top, partition)
-		if err != nil {
-			return
-		}
-		groupOffset, _ = oa.pom.NextOffset()
-		partOffset, err = oa.client.GetOffset(oa.top, partition, sarama.OffsetNewest)
-		if err != nil {
-			return
-		}
-		if groupOffset == -1 {
-			groupOffset = partOffset
-		}
-		totalLag = (totalLag + (partOffset - groupOffset))
-		oa.pom.Close()
+		go func(part int32) {
+			var groupOffset int64
+			var partOffset int64
+			oa.pom, err = oa.om.ManagePartition(oa.top, part)
+			if err != nil {
+				return
+			}
+			groupOffset, _ = oa.pom.NextOffset()
+			partOffset, err = oa.client.GetOffset(oa.top, part, sarama.OffsetNewest)
+			if err != nil {
+				return
+			}
+			if groupOffset == -1 {
+				groupOffset = partOffset
+			}
+			partLag := (partOffset - groupOffset)
+
+			pl := grpPartLag{
+				partition: part,
+				offset:    groupOffset,
+				lag:       partLag,
+			}
+			plChan <- pl
+			oa.pom.Close()
+		}(partition)
+
 	}
+	for i := 0; i < len(partitions); i++ {
+		pl := <-plChan
+		partitionOff[pl.partition] = pl.offset
+		partitionLag[pl.partition] = pl.lag
+		totalLag = (totalLag + pl.lag)
+	}
+	groupLag.Group = oa.grp
+	groupLag.Topic = oa.top
+	groupLag.TotalLag = totalLag
+	groupLag.PartitionOffset = partitionOff
+	groupLag.PartitionLag = partitionLag
 	oa.om.Close()
 	return
 }

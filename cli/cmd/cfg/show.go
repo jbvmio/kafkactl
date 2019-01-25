@@ -9,7 +9,7 @@ var cmdShow = &cobra.Command{
 	Use:   "show",
 	Short: "Display kafkactl configurations",
 	Run: func(cmd *cobra.Command, args []string) {
-		out.PrintObject(GetConfig(), outFlags.Format)
+		out.Marshal(GetConfig(), outFlags.Format)
 	},
 }
 

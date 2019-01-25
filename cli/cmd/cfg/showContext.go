@@ -15,11 +15,11 @@ var cmdShowContext = &cobra.Command{
 		match := true
 		switch match {
 		case cmd.CalledAs() == "current":
-			out.PrintObject(GetContext(), outFlags.Format)
+			out.Marshal(GetContext(), outFlags.Format)
 		case list:
-			out.PrintObject(GetContextList(), outFlags.Format)
+			out.Marshal(GetContextList(), outFlags.Format)
 		default:
-			out.PrintObject(GetContext(args...), outFlags.Format)
+			out.Marshal(GetContext(args...), outFlags.Format)
 		}
 	},
 }

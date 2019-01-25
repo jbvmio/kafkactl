@@ -1,0 +1,42 @@
+package lag
+
+import (
+	"github.com/jbvmio/kafkactl/cli/kafka"
+	"github.com/jbvmio/kafkactl/cli/x/out"
+	"github.com/spf13/cobra"
+)
+
+var lagFlags kafka.LagFlags
+
+var CmdGetLag = &cobra.Command{
+	Use:   "lag",
+	Short: "Get Lag Info",
+	Run: func(cmd *cobra.Command, args []string) {
+		var lag []kafka.PartitionLag
+		match := true
+		switch match {
+		case cmd.CalledAs() == "topic":
+			lag = kafka.GetGroupLag(kafka.GroupMetaByTopics(args...))
+		case cmd.CalledAs() == "member":
+			lag = kafka.GetGroupLag(kafka.GroupMetaByMember(args...))
+		case len(args) > 0:
+			lag = kafka.GetGroupLag(kafka.SearchGroupMeta(args...))
+		default:
+			lag = kafka.FindLag()
+		}
+		switch match {
+		case cmd.Flags().Changed("out"):
+			outFmt, err := cmd.Flags().GetString("out")
+			if err != nil {
+				out.Warnf("WARN: %v", err)
+			}
+			out.Marshal(lag, outFmt)
+		default:
+			kafka.PrintOut(lag)
+		}
+	},
+}
+
+func init() {
+	//CmdGetLag.Flags().BoolVar(&lagFlags.Topic, "describe", false, "Shortcut/Pass to Describe Command.")
+}

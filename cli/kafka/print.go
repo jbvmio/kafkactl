@@ -61,6 +61,11 @@ func PrintOut(i interface{}) {
 				}
 			}
 		}
+	case []PartitionLag:
+		tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER", "OFFSET", "LAG")
+		for _, v := range i {
+			tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag)
+		}
 	}
 	if highlightColumn {
 		tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)

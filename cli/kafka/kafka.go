@@ -96,7 +96,25 @@ func CloseClient() {
 	}
 }
 
-func closeFatal(format string, msg ...interface{}) {
+func closeFatal(format string, args ...interface{}) {
 	CloseClient()
-	out.Failf(format, msg...)
+	out.Failf(format, args...)
+}
+
+func handleF(format string, err error) {
+	if err != nil {
+		out.Failf(format, err)
+	}
+}
+
+func handleW(format string, err error) {
+	if err != nil {
+		out.Warnf(format, err)
+	}
+}
+
+func handleC(format string, err error) {
+	if err != nil {
+		closeFatal(format, err)
+	}
 }

@@ -18,7 +18,7 @@ var CmdGetBroker = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.PrintObject(kafka.GetBrokerInfo(args...), outFmt)
+			out.Marshal(kafka.GetBrokerInfo(args...), outFmt)
 		default:
 			kafka.PrintOut(kafka.GetBrokerInfo(args...))
 		}

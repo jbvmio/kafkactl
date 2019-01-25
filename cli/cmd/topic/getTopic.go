@@ -2,6 +2,8 @@ package topic
 
 import (
 	"github.com/jbvmio/kafkactl"
+	"github.com/jbvmio/kafkactl/cli/cmd/group"
+	"github.com/jbvmio/kafkactl/cli/cmd/lag"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
@@ -17,8 +19,15 @@ var CmdGetTopic = &cobra.Command{
 		var topicSummaries []kafkactl.TopicSummary
 		match := true
 		switch match {
+		case topicFlags.Lag:
+			lag.CmdGetLag.Run(cmd, args)
+			return
+		case topicFlags.Group:
+			group.CmdDescGroup.Run(cmd, args)
+			return
 		case topicFlags.Describe:
 			CmdDescTopic.Run(cmd, args)
+			return
 		default:
 			topicSummaries = kafkactl.GetTopicSummaries(kafka.SearchTopicMeta(args...))
 		}
@@ -28,7 +37,7 @@ var CmdGetTopic = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.PrintObject(topicSummaries, outFmt)
+			out.Marshal(topicSummaries, outFmt)
 		default:
 			kafka.PrintOut(topicSummaries)
 		}
@@ -37,5 +46,7 @@ var CmdGetTopic = &cobra.Command{
 
 func init() {
 	CmdGetTopic.Flags().BoolVar(&topicFlags.Describe, "describe", false, "Shortcut/Pass to Describe Command.")
-	CmdGetTopic.Flags().StringVar(&topicFlags.Leaders, "leader", "", "Filter Topic Partitions by Current Leaders")
+	CmdGetTopic.Flags().BoolVar(&topicFlags.Group, "groups", false, "Show Active Groups Consuming from Specified Topics.")
+	CmdGetTopic.Flags().BoolVar(&topicFlags.Lag, "lag", false, "Show Any Lag from Specified Topics.")
+	CmdGetTopic.Flags().StringSliceVar(&topicFlags.Leaders, "leader", []string{""}, "Filter Topic Partitions by Current Leaders")
 }
