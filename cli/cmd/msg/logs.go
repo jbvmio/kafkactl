@@ -23,6 +23,9 @@ var CmdLogs = &cobra.Command{
 		var msgs []*kafkactl.Message
 		match := true
 		switch match {
+		case logsFlags.Follow:
+			kafka.TailTopic(logsFlags, args...)
+			return
 		default:
 			msgs = kafka.GetMessages(logsFlags, args...)
 		}
@@ -34,7 +37,6 @@ var CmdLogs = &cobra.Command{
 			}
 			out.Marshal(msgs, outFmt)
 		default:
-			//kafka.PrintOut(msgs)
 			kafka.PrintMSGs(msgs, outFlags.Header)
 		}
 	},

@@ -94,3 +94,17 @@ func PrintMSGs(msgs []*kafkactl.Message, header bool) {
 		}
 	}
 }
+
+func PrintMSG(msg *kafkactl.Message) {
+	match := true
+	switch match {
+	/*
+		case header:
+			out.Infof("%s", msg.Value)
+	*/
+	default:
+		headerFmt := color.New(color.FgGreen).SprintfFunc()
+		h := headerFmt("TOPIC: %v, PARTITION: %v, OFFSET: %v, TIMESTAMP: %v\n", msg.Topic, msg.Partition, msg.Offset, msg.Timestamp)
+		out.Infof("%v%s\n", h, msg.Value)
+	}
+}

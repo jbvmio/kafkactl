@@ -1,6 +1,7 @@
 package msg
 
 import (
+	"github.com/jbvmio/kafkactl/cli/kafka"
 	"github.com/spf13/cobra"
 )
 
@@ -15,6 +16,9 @@ var CmdGetMsg = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		match := true
 		switch match {
+		case logsFlags.Follow:
+			kafka.TailTopic(logsFlags, args...)
+			return
 		default:
 			CmdLogs.Run(cmd, args)
 			return
