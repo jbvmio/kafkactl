@@ -24,6 +24,7 @@ import (
 
 type OutFlags struct {
 	Format string
+	Header bool
 }
 
 func Failf(msg string, args ...interface{}) {

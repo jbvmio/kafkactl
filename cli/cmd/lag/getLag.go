@@ -1,6 +1,8 @@
 package lag
 
 import (
+	"strings"
+
 	"github.com/jbvmio/kafkactl/cli/kafka"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
@@ -15,7 +17,7 @@ var CmdGetLag = &cobra.Command{
 		var lag []kafka.PartitionLag
 		match := true
 		switch match {
-		case cmd.CalledAs() == "topic":
+		case strings.Contains(cmd.CalledAs(), "topic"):
 			lag = kafka.GetGroupLag(kafka.GroupMetaByTopics(args...))
 		case cmd.CalledAs() == "member":
 			lag = kafka.GetGroupLag(kafka.GroupMetaByMember(args...))

@@ -16,12 +16,133 @@ package kafka
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/jbvmio/kafkactl"
 )
 
-func getMSG(topic string, partition int32, offset int64) *kafkactl.Message {
+type MSGFlags struct {
+	Partitions  []string
+	Partition   int32
+	Offset      int64
+	Tail        int64
+	TailTouched bool
+	Follow      bool
+}
+
+func GetMessages(flags MSGFlags, topics ...string) []*kafkactl.Message {
+	exact = true
+	var messages []*kafkactl.Message
+	match := true
+	switch match {
+	case flags.TailTouched:
+		return tailMSGs(flags, topics...)
+	default:
+		return getMSGs(flags, topics...)
+	}
+	return messages
+}
+
+func getMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
+	var messages []*kafkactl.Message
+	for _, topic := range topics {
+		var parts []int32
+		topicSummary := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
+		match := true
+		switch match {
+		case len(topicSummary) != 1:
+			closeFatal("Error isolating topic: %v\n", topic)
+		case flags.Partition != -1:
+			parts = append(parts, flags.Partition)
+		case len(flags.Partitions) == 0:
+			parts = topicSummary[0].Partitions
+		default:
+			parts = validateParts(flags.Partitions)
+		}
+		pMap := make(map[int32]int64, len(parts))
+		switch match {
+		case flags.Offset == -1:
+			fmt.Println("OFFSET -1")
+			for _, p := range parts {
+				off, err := client.GetOffsetNewest(topic, p)
+				if err != nil {
+					closeFatal("Error validating Partition: %v for topic: %v\n", p, err)
+				}
+				pMap[p] = off + flags.Offset
+			}
+		default:
+			fmt.Println("DEFAULT")
+			for _, p := range parts {
+				pMap[p] = flags.Offset
+			}
+		}
+		for part, off := range pMap {
+			msg, err := client.ConsumeOffsetMsg(topic, part, off)
+			if err != nil {
+				closeFatal("Error retrieving message: %v\n", off)
+			}
+			messages = append(messages, msg)
+		}
+	}
+	return messages
+}
+
+func tailMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
+	var messages []*kafkactl.Message
+	for _, topic := range topics {
+		var parts []int32
+		topicSummary := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
+		match := true
+		switch match {
+		case len(topicSummary) != 1:
+			closeFatal("Error isolating topic: %v\n", topic)
+		case flags.Partition != -1:
+			parts = append(parts, flags.Partition)
+		case len(flags.Partitions) == 0:
+			parts = topicSummary[0].Partitions
+		default:
+			parts = validateParts(flags.Partitions)
+		}
+		startMap := make(map[int32]int64, len(parts))
+		endMap := make(map[int32]int64, len(parts))
+		offset := getTailValue(flags.Tail)
+		for _, p := range parts {
+			off, err := client.GetOffsetNewest(topic, p)
+			if err != nil {
+				closeFatal("Error validating Partition: %v for topic: %v\n", p, err)
+			}
+			startMap[p] = off + offset
+			endMap[p] = off
+		}
+		msgChan := make(chan *kafkactl.Message, 100)
+		doneChan := make(chan bool, len(parts))
+		for _, p := range parts {
+			go func(topic string, p int32) {
+				off := startMap[p]
+				for off < endMap[p] {
+					msg, err := client.ConsumeOffsetMsg(topic, p, off)
+					if err != nil {
+						closeFatal("Error retrieving message: %v\n", off)
+					}
+					msgChan <- msg
+					off++
+				}
+				doneChan <- true
+			}(topic, p)
+		}
+		for i := 0; i < len(parts); {
+			select {
+			case msg := <-msgChan:
+				messages = append(messages, msg)
+			case <-doneChan:
+				i++
+			}
+		}
+	}
+	return messages
+}
+
+/*
+func GetMSG(topic string, partition int32, offset int64) *kafkactl.Message {
 	msg, err := client.ConsumeOffsetMsg(topic, partition, offset)
 	if err != nil {
 		closeFatal("Error retrieving message: %v\n", err)
@@ -40,3 +161,4 @@ func getMSGByTime(topic string, partition int32, datetime string) *kafkactl.Mess
 	}
 	return msg
 }
+*/

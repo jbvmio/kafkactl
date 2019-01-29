@@ -20,13 +20,13 @@ import (
 )
 
 type Broker struct {
-	Address           string
-	ID                int32
-	GroupCoordinating int64
-	LeaderPartitions  int64
-	ReplicaPartitions int64
-	TotalPartitions   int64
-	NotLeader         int64
+	Address            string
+	ID                 int32
+	GroupsCoordinating int64
+	LeaderReplicas     int64
+	PeerReplicas       int64
+	TotalReplicas      int64
+	NeedsPRE           int64
 }
 
 func GetBrokerInfo(b ...string) []*Broker {
@@ -79,26 +79,26 @@ func GetBrokerInfo(b ...string) []*Broker {
 	}
 	for _, tm := range tMeta {
 		if brMap[tm.Leader] != nil {
-			brMap[tm.Leader].LeaderPartitions++
+			brMap[tm.Leader].LeaderReplicas++
 			for _, reps := range tm.Replicas {
 				if reps != tm.Leader {
-					brMap[tm.Leader].ReplicaPartitions++
+					brMap[tm.Leader].PeerReplicas++
 				}
 			}
 			if len(tm.Replicas) > 0 {
 				if tm.Leader != tm.Replicas[0] {
-					brMap[tm.Leader].NotLeader++
+					brMap[tm.Leader].NeedsPRE++
 				}
 			}
 		}
 	}
 	for _, grp := range gl {
 		if brMap[grp.CoordinatorID] != nil {
-			brMap[grp.CoordinatorID].GroupCoordinating++
+			brMap[grp.CoordinatorID].GroupsCoordinating++
 		}
 	}
 	for _, br := range brMap {
-		br.TotalPartitions = br.LeaderPartitions + br.ReplicaPartitions
+		br.TotalReplicas = br.LeaderReplicas + br.PeerReplicas
 		brokers = append(brokers, br)
 	}
 	sort.Slice(brokers, func(i, j int) bool {

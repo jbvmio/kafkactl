@@ -17,6 +17,7 @@ package kafka
 import (
 	"bytes"
 	"log"
+	"regexp"
 	"strings"
 
 	"github.com/jbvmio/kafkactl/cli/x"
@@ -53,3 +54,51 @@ func parseTopicStdin(b []byte) []topicStdinData {
 	}
 	return topicData
 }
+
+func validateParts(partitions []string) []int32 {
+	var tParts []int32
+	for _, p := range partitions {
+		if match, err := regexp.MatchString(`^[0-9]`, p); !match || err != nil {
+			if err != nil {
+				closeFatal("Partition Error: %v\n", err)
+			}
+			closeFatal("Error: invalid partition entered or duplicate.")
+		}
+		tParts = append(tParts, cast.ToInt32(p))
+	}
+	pMap := make(map[int32]bool, len(tParts))
+	for _, p := range tParts {
+		if pMap[p] {
+			closeFatal("Error: invalid partition entered or duplicate.")
+		} else {
+			pMap[p] = true
+		}
+	}
+	return tParts
+}
+
+func getTailValue(arg int64) int64 {
+	if arg < 0 {
+		return arg
+	}
+	return arg - (arg * 2)
+}
+
+/*
+func validateTailArgs(args []string) int64 {
+	var tailTarget int64
+	if len(args) > 1 {
+		closeFatal("Error: Too many tail arguments, try again.")
+	}
+	if len(args) < 1 {
+		tailTarget = -1
+	}
+	if len(args) == 1 {
+		tailTarget = cast.ToInt64(args[0])
+		if tailTarget > 0 {
+			tailTarget = tailTarget - (tailTarget * 2)
+		}
+	}
+	return tailTarget
+}
+*/

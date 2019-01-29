@@ -103,6 +103,9 @@ func SearchGroupMeta(group ...string) []kafkactl.GroupMeta {
 			}
 		}
 	}
+	if len(groupMeta) < 1 {
+		closeFatal("No Results Found.\n")
+	}
 	return groupMeta
 }
 
@@ -164,6 +167,9 @@ func GroupMetaByTopics(topics ...string) []kafkactl.GroupMeta {
 			groupMeta = append(groupMeta, gMeta)
 		}
 	}
+	if len(groupMeta) < 1 {
+		closeFatal("No Results Found.\n")
+	}
 	return groupMeta
 }
 
@@ -203,24 +209,9 @@ func GroupMetaByMember(members ...string) []kafkactl.GroupMeta {
 			groupMeta = append(groupMeta, gMeta)
 
 		}
-
-		/*
-			gMeta := gm
-			gMeta.MemberAssignments = nil
-			for _, ma := range gm.MemberAssignments {
-				if exact {
-					if ma.ClientID == member {
-						gMeta.MemberAssignments = append(gMeta.MemberAssignments, ma)
-					}
-				} else {
-					if strings.Contains(ma.ClientID, member) {
-						gMeta.MemberAssignments = append(gMeta.MemberAssignments, ma)
-					}
-
-				}
-			}
-		*/
-		//groupMeta = append(groupMeta, gMeta)
+	}
+	if len(groupMeta) < 1 {
+		closeFatal("No Results Found.\n")
 	}
 	return groupMeta
 }

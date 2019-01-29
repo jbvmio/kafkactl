@@ -21,6 +21,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/cmd/cfg"
 	"github.com/jbvmio/kafkactl/cli/cmd/describe"
 	"github.com/jbvmio/kafkactl/cli/cmd/get"
+	"github.com/jbvmio/kafkactl/cli/cmd/msg"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -70,6 +71,7 @@ func init() {
 	rootCmd.AddCommand(cfg.CmdConfig)
 	rootCmd.AddCommand(get.CmdGet)
 	rootCmd.AddCommand(describe.CmdDescribe)
+	rootCmd.AddCommand(msg.CmdLogs)
 
 }
 

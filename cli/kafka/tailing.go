@@ -20,7 +20,6 @@ import (
 	"os/signal"
 
 	"github.com/jbvmio/kafkactl"
-	"github.com/spf13/cast"
 )
 
 func getTopicMsg(topic string, partition int32, offset int64) {
@@ -74,32 +73,4 @@ ConsumeLoop:
 			break ConsumeLoop
 		}
 	}
-}
-
-func validateParts(parts []int32) {
-	pMap := make(map[int32]bool, len(parts))
-	for _, p := range parts {
-		if pMap[p] {
-			closeFatal("Error: invalid partition entered or duplicate.")
-		} else {
-			pMap[p] = true
-		}
-	}
-}
-
-func validateTailArgs(args []string) int64 {
-	var tailTarget int64
-	if len(args) > 1 {
-		closeFatal("Error: Too many tail arguments, try again.")
-	}
-	if len(args) < 1 {
-		tailTarget = -1
-	}
-	if len(args) == 1 {
-		tailTarget = cast.ToInt64(args[0])
-		if tailTarget > 0 {
-			tailTarget = tailTarget - (tailTarget * 2)
-		}
-	}
-	return tailTarget
 }

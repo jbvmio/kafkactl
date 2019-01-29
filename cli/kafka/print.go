@@ -16,6 +16,8 @@ package kafka
 import (
 	"fmt"
 
+	"github.com/jbvmio/kafkactl/cli/x/out"
+
 	"github.com/fatih/color"
 	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/x"
@@ -29,9 +31,9 @@ func PrintOut(i interface{}) {
 	var tbl table.Table
 	switch i := i.(type) {
 	case []*Broker:
-		tbl = table.New("BROKER", "ID", "GRPs", "P.LEADERS", "P.REPLICAS", "P.TOTAL", "P.NOTLEADER")
+		tbl = table.New("BROKER", "ID", "GRPs", "LDR.REPLICAS", "PEER.REPLICAS", "TOTAL.REPLICAS", "NEED.PRE.COUNT")
 		for _, v := range i {
-			tbl.AddRow(v.Address, v.ID, v.GroupCoordinating, v.LeaderPartitions, v.ReplicaPartitions, v.TotalPartitions, v.NotLeader)
+			tbl.AddRow(v.Address, v.ID, v.GroupsCoordinating, v.LeaderReplicas, v.PeerReplicas, v.TotalReplicas, v.NeedsPRE)
 		}
 	case []kafkactl.TopicSummary:
 		tbl = table.New("TOPIC", "PART", "RFactor", "ISRs", "OFFLINE")
@@ -75,4 +77,20 @@ func PrintOut(i interface{}) {
 
 	tbl.Print()
 	fmt.Println()
+}
+
+func PrintMSGs(msgs []*kafkactl.Message, header bool) {
+	match := true
+	switch match {
+	case header:
+		for _, msg := range msgs {
+			out.Infof("%s", msg.Value)
+		}
+	default:
+		headerFmt := color.New(color.FgGreen).SprintfFunc()
+		for _, msg := range msgs {
+			h := headerFmt("TOPIC: %v, PARTITION: %v, OFFSET: %v, TIMESTAMP: %v\n", msg.Topic, msg.Partition, msg.Offset, msg.Timestamp)
+			out.Infof("%v%s\n", h, msg.Value)
+		}
+	}
 }
