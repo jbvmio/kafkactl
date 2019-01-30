@@ -1,4 +1,4 @@
-package adminget
+package adminset
 
 import (
 	"github.com/jbvmio/kafkactl/cli/kafka"
@@ -8,16 +8,16 @@ import (
 
 var topicFlags kafka.TopicConfigFlags
 
-var cmdAdminGetTopic = &cobra.Command{
+var cmdAdminSetTopic = &cobra.Command{
 	Use:   "topic",
-	Short: "Get Topic Configurations",
+	Short: "Set Topic Configuration",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var topicConfigs []kafka.TopicConfig
 		match := true
 		switch match {
 		default:
-			topicConfigs = kafka.SearchTopicConfigs(topicFlags.Configs, args...)
+			topicConfigs = kafka.SetTopicConfig(topicFlags.Config, topicFlags.Value, args...)
 		}
 		switch match {
 		case cmd.Flags().Changed("out"):
@@ -33,5 +33,8 @@ var cmdAdminGetTopic = &cobra.Command{
 }
 
 func init() {
-	cmdAdminGetTopic.Flags().StringSliceVar(&topicFlags.Configs, "filter", []string{}, "Filter by Configuration or Key Names.")
+	cmdAdminSetTopic.Flags().StringVar(&topicFlags.Config, "config", "", "Configuration or Key Names to set.")
+	cmdAdminSetTopic.Flags().StringVar(&topicFlags.Value, "value", "", "Configuration Value to set.")
+	cmdAdminSetTopic.MarkFlagRequired("config")
+	cmdAdminSetTopic.MarkFlagRequired("value")
 }

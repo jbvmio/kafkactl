@@ -73,7 +73,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.Flags().StringVarP(&outFlags.Format, "out", "o", "", "Change Output Format - yaml|json.")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "cfg", "", "config file (default is $HOME/.2kafkactl.yaml)")
-	rootCmd.PersistentFlags().StringVar(&kafkaFlags.Context, "context", "", "Specify a context.")
+	rootCmd.PersistentFlags().StringVarP(&kafkaFlags.Context, "context", "C", "", "Specify a context.")
 	rootCmd.PersistentFlags().StringVar(&kafkaFlags.Version, "version", "", "Specify a client version.")
 	rootCmd.PersistentFlags().BoolVarP(&kafkaFlags.Verbose, "verbose", "v", false, "Display additional info or errors.")
 	rootCmd.PersistentFlags().BoolVarP(&kafkaFlags.Exact, "exact", "x", false, "Find exact matches.")

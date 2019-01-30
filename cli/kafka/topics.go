@@ -65,7 +65,7 @@ func SearchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 		}
 	}
 	if len(topicMeta) < 1 {
-		closeFatal("No Results Found.\n")
+		closeFatal("No Results Found for Topic: %v\n", topics)
 	}
 	sort.Slice(topicMeta, func(i, j int) bool {
 		if topicMeta[i].Topic < topicMeta[j].Topic {

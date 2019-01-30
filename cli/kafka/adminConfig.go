@@ -15,10 +15,16 @@
 package kafka
 
 import (
+	"strings"
+
+	"github.com/jbvmio/kafkactl/cli/x/out"
+
 	"github.com/jbvmio/kafkactl"
 )
 
 type TopicConfigFlags struct {
+	Config  string
+	Value   string
 	Configs []string
 }
 
@@ -34,22 +40,52 @@ type TopicConfig struct {
 
 func GetTopicConfigs(configs []string, topics ...string) []TopicConfig {
 	var topicConfig []TopicConfig
-	for _, t := range topics {
-		c, err := client.GetTopicConfig(t, configs...)
-		if err != nil {
-			closeFatal("Error getting config for topic %v: %v\n", t, err)
-		}
-		for _, v := range c {
-			tc := TopicConfig{
-				Topic:     t,
-				Config:    v.Name,
-				Value:     v.Value,
-				ReadOnly:  v.ReadOnly,
-				Default:   v.Default,
-				Sensitive: v.Sensitive,
+	match := true
+	switch match {
+	case exact || len(configs) < 1:
+		for _, t := range topics {
+			c, err := client.GetTopicConfig(t, configs...)
+			if err != nil {
+				closeFatal("Error getting config for topic %v: %v\n", t, err)
 			}
-			topicConfig = append(topicConfig, tc)
+			for _, v := range c {
+				tc := TopicConfig{
+					Topic:     t,
+					Config:    v.Name,
+					Value:     v.Value,
+					ReadOnly:  v.ReadOnly,
+					Default:   v.Default,
+					Sensitive: v.Sensitive,
+				}
+				topicConfig = append(topicConfig, tc)
+			}
 		}
+	default:
+		for _, t := range topics {
+			c, err := client.GetTopicConfig(t)
+			if err != nil {
+				closeFatal("Error getting config for topic %v: %v\n", t, err)
+			}
+			for _, config := range configs {
+				for _, v := range c {
+
+					if strings.Contains(v.Name, config) {
+						tc := TopicConfig{
+							Topic:     t,
+							Config:    v.Name,
+							Value:     v.Value,
+							ReadOnly:  v.ReadOnly,
+							Default:   v.Default,
+							Sensitive: v.Sensitive,
+						}
+						topicConfig = append(topicConfig, tc)
+					}
+				}
+			}
+		}
+	}
+	if len(topicConfig) < 1 {
+		closeFatal("Config not found: %v\n", configs)
 	}
 	return topicConfig
 }
@@ -59,7 +95,7 @@ func SearchTopicConfigs(configs []string, topics ...string) []TopicConfig {
 	for _, topic := range topics {
 		ts := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
 		if len(ts) < 1 {
-			closeFatal("unable to locate specified topic: %v\n", topic)
+			closeFatal("unable to isolate topic: %v\n", topic)
 		}
 		for _, t := range ts {
 			tops = append(tops, t.Topic)
@@ -68,14 +104,21 @@ func SearchTopicConfigs(configs []string, topics ...string) []TopicConfig {
 	return GetTopicConfigs(configs, tops...)
 }
 
-func setTopicConfig(topic, configName, value string) error {
-	if configName == "" || value == "" {
-		closeFatal("Error: Missing Key and/or Value\n")
-	}
+func SetTopicConfig(config, value string, topics ...string) []TopicConfig {
+	var topicConfigs []TopicConfig
 	exact = true
-	ts := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
-	if len(ts) != 1 {
-		closeFatal("Error validating topic: %v\n", topic)
+	for _, topic := range topics {
+		ts := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
+		if len(ts) != 1 {
+			out.Warnf("Error validating topic: %v", topic)
+		}
+		tc := GetTopicConfigs([]string{config}, topic)
+
+		err := client.SetTopicConfig(topic, config, value)
+		handleC("Error setting configuration: %v\n", err)
+
+		tc = GetTopicConfigs([]string{config}, topic)
+		topicConfigs = append(topicConfigs, tc...)
 	}
-	return client.SetTopicConfig(topic, configName, value)
+	return topicConfigs
 }
