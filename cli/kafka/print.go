@@ -25,7 +25,6 @@ import (
 )
 
 func PrintOut(i interface{}) {
-	//var highlightColumn = true
 	headerFmt := color.New(color.FgGreen, color.Underline).SprintfFunc()
 	columnFmt := color.New(color.FgYellow).SprintfFunc()
 	var tbl table.Table
@@ -76,15 +75,6 @@ func PrintOut(i interface{}) {
 	}
 
 	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
-
-	/*
-		if highlightColumn {
-			tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
-		} else {
-			tbl.WithHeaderFormatter(headerFmt)
-		}
-	*/
-
 	tbl.Print()
 	fmt.Println()
 }

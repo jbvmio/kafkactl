@@ -20,12 +20,6 @@ var CmdAdminGet = &cobra.Command{
 }
 
 func init() {
-	//CmdAdminGet.PersistentFlags().StringVarP(&outFlags.Format, "out", "o", "", "Change Output Format - yaml|json.")
-
 	CmdAdminGet.AddCommand(cmdAdminGetTopic)
-	//CmdAdmin.AddCommand(topic.CmdGetTopic)
-	//CmdAdmin.AddCommand(group.CmdGetGroup)
-	//CmdAdmin.AddCommand(group.CmdGetMember)
-	//CmdAdmin.AddCommand(lag.CmdGetLag)
-	//CmdAdmin.AddCommand(msg.CmdGetMsg)
+	CmdAdminGet.AddCommand(cmdAdminGetPre)
 }

@@ -1,13 +1,13 @@
-package adminset
+package zk
 
 import (
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
 
-var CmdAdminSet = &cobra.Command{
-	Use:   "set",
-	Short: "Set Kafka Configurations",
+var cmdZKdelete = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete Zookeeper Paths and Values",
 	Run: func(cmd *cobra.Command, args []string) {
 		match := true
 		switch match {
@@ -20,6 +20,5 @@ var CmdAdminSet = &cobra.Command{
 }
 
 func init() {
-	CmdAdminSet.AddCommand(cmdAdminSetTopic)
-	CmdAdminSet.AddCommand(cmdAdminSetPre)
+	//cmdZKls.PersistentFlags().StringVarP(&outFlags.Format, "out", "o", "", "Change Output Format - yaml|json.")
 }

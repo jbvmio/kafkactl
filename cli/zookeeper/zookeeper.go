@@ -17,23 +17,153 @@ package zookeeper
 import (
 	"fmt"
 	"log"
+	"sort"
 
-	"github.com/fatih/color"
+	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/zk"
 )
 
-var zkClient *zk.ZooKeeper
+var (
+	// verbose enables additional details to print.
+	verbose bool
+)
 
-func launchZKClient() {
-	if len(zkServers) < 1 {
+type ZKFlags struct {
+	Context string
+	Depth   uint8
+	Recurse bool
+	Values  bool
+	Verbose bool
+}
+
+type ZKPathValue struct {
+	Type       string
+	Key        string
+	Value      []string
+	EmptyValue bool
+}
+
+type ZKPath struct {
+	Type       string
+	Key        string
+	EmptyValue bool
+}
+
+// client variables
+var (
+	zkClient *zk.ZooKeeper
+)
+
+func LaunchZKClient(context *cx.Context, flags ZKFlags) {
+	if len(context.Zookeeper) < 1 {
 		log.Fatalf("No Zookeeper Servers Defined.\n")
 	}
 	zkClient = zk.NewZooKeeper()
-	zkClient.EnableLogger(verbose)
-	zkClient.SetServers(zkServers)
+	zkClient.EnableLogger(flags.Verbose)
+	zkClient.SetServers(context.Zookeeper)
 }
 
-func zkLS(path ...string) {
+func ZKls(path ...string) []ZKPathValue {
+	var ZKP []ZKPathValue
+	for _, p := range path {
+		zkp := ZKPathValue{
+			Key: p,
+		}
+		match := true
+		sp, err := zkClient.Children(p)
+
+		switch match {
+		case err != nil:
+			log.Fatalf("Error retrieving path: %v\n", p)
+		case len(sp) == 0:
+			val, err := zkClient.Get(p)
+			if err != nil {
+				log.Fatalf("Error retrieving value: %v\n", p)
+			}
+			value := fmt.Sprintf("%s", val)
+			zkp.Type = "value"
+			zkp.EmptyValue = (value == "")
+			if !zkp.EmptyValue {
+				zkp.Value = []string{value}
+			}
+			//zkp.Value = []string{fmt.Sprintf("%s", val)}
+			//zkp.EmptyValue = (zkp.Value == "")
+		default:
+			zkp.Type = "path"
+			zkp.Value = sp
+		}
+		ZKP = append(ZKP, zkp)
+	}
+	return ZKP
+}
+
+func ZKRecurseLS(depth uint8, path ...string) []ZKPath {
+	var zkPaths []ZKPath
+	var limit uint8
+	pathMap := make(map[string]bool)
+	ZKP := ZKls(path...)
+	zkPaths = append(zkPaths, zkConvertValPath(ZKP...)...)
+	count := len(ZKP)
+RecurseLoop:
+	for count > 0 {
+		var newPaths []string
+		for _, parent := range ZKP {
+			if parent.Type == "path" {
+				if !pathMap[parent.Key] {
+					pathMap[parent.Key] = true
+				}
+				for _, child := range parent.Value {
+					if !pathMap[child] {
+						var new string
+						if parent.Key == "/" {
+							new = string(parent.Key + child)
+						} else {
+							new = string(parent.Key + "/" + child)
+						}
+						newPaths = append(newPaths, new)
+						pathMap[new] = true
+					}
+				}
+			}
+		}
+		ZKP = ZKls(newPaths...)
+		zkPaths = append(zkPaths, zkConvertValPath(ZKP...)...)
+		count = len(ZKP)
+		limit++
+		if limit == depth {
+			break RecurseLoop
+		}
+	}
+	sort.Slice(zkPaths, func(i, j int) bool {
+		return zkPaths[i].Key < zkPaths[j].Key
+	})
+	return zkPaths
+}
+
+func zkConvertValPath(ZKP ...ZKPathValue) []ZKPath {
+	var zkPaths []ZKPath
+	for _, zkpv := range ZKP {
+		zkPaths = append(zkPaths, ZKPath{
+			Type:       zkpv.Type,
+			Key:        zkpv.Key,
+			EmptyValue: zkpv.EmptyValue,
+		})
+	}
+	return zkPaths
+}
+
+func ZKFilterAllVals(zkp []ZKPath) []ZKPath {
+	var zkPaths []ZKPath
+	for _, z := range zkp {
+		if !z.EmptyValue && (z.Type == "value") {
+			zkPaths = append(zkPaths, z)
+		}
+	}
+	return zkPaths
+}
+
+/*
+func ZKls(path ...string) {
 	if len(path) == 0 {
 		path = []string{"/"}
 	}
@@ -142,3 +272,4 @@ func zkCreateReassignPartitions(path string, value []byte) {
 	fmt.Println("\n\n", "Successfully Started Reassign Partition Process.\n")
 	return
 }
+*/

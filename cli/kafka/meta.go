@@ -22,7 +22,7 @@ import (
 )
 
 // ClusterDetails prints details for the current context.
-func ClusterDetails(client *kafkactl.KClient) {
+func ClusterDetails() {
 	meta, err := client.GetClusterMeta()
 	if err != nil {
 		closeFatal("Error getting cluster metadata: %v\n", err)

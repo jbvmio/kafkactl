@@ -26,6 +26,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/cmd/get"
 	"github.com/jbvmio/kafkactl/cli/cmd/msg"
 	"github.com/jbvmio/kafkactl/cli/cmd/send"
+	"github.com/jbvmio/kafkactl/cli/cmd/zk"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -56,7 +57,7 @@ var rootCmd = &cobra.Command{
 		case outFlags.Format != "":
 			out.IfErrf(out.Marshal(kafka.MetaData(), outFlags.Format))
 		default:
-			kafka.ClusterDetails(kafka.Client())
+			kafka.ClusterDetails()
 		}
 	},
 }
@@ -84,6 +85,7 @@ func init() {
 	rootCmd.AddCommand(msg.CmdLogs)
 	rootCmd.AddCommand(send.CmdSend)
 	rootCmd.AddCommand(admin.CmdAdmin)
+	rootCmd.AddCommand(zk.CmdZK)
 
 }
 

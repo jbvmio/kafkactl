@@ -12,12 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mgmt
+package kafka
 
 import (
 	"encoding/json"
 	"fmt"
 )
+
+type PREFlags struct {
+	AllTopics  bool
+	Partition  int32
+	Partitions []string
+}
 
 type PREList struct {
 	Version    int            `json:"version"`
@@ -31,7 +37,7 @@ type PREPartition struct {
 
 func performTopicPRE(topic string) {
 	exact = true
-	tom := chanGetTopicOffsetMap(searchTopicMeta(topic))
+	tom := GetTopicOffsetMap(SearchTopicMeta(topic))
 	if len(tom) < 1 {
 		closeFatal("Error: Cannot find topic: %v\n", topic)
 	}
@@ -54,7 +60,7 @@ func performTopicPRE(topic string) {
 		closeFatal("Error Marshaling Topic/Partition Data: %v\n", err)
 	}
 	fmt.Printf("%s", j)
-	zkCreatePRE("/admin/preferred_replica_election", j)
+	//zkCreatePRE("/admin/preferred_replica_election", j)
 }
 
 func preTopicsStdin(td []topicStdinData) {
@@ -76,11 +82,12 @@ func preTopicsStdin(td []topicStdinData) {
 	if err != nil {
 		closeFatal("Error Marshaling Topic/Partition Data: %v\n", err)
 	}
-	zkCreatePRE("/admin/preferred_replica_election", j)
+	fmt.Printf("%s", j)
+	//zkCreatePRE("/admin/preferred_replica_election", j)
 }
 
 func allTopicsPRE() {
-	tom := chanGetTopicOffsetMap(searchTopicMeta(""))
+	tom := GetTopicOffsetMap(SearchTopicMeta())
 	if len(tom) < 1 {
 		closeFatal("Error: No Topics Available.\n")
 	}
@@ -102,5 +109,6 @@ func allTopicsPRE() {
 	if err != nil {
 		closeFatal("Error Marshaling Topic/Partition Data: %v\n", err)
 	}
-	zkCreatePRE("/admin/preferred_replica_election", j)
+	fmt.Printf("%s", j)
+	//zkCreatePRE("/admin/preferred_replica_election", j)
 }
