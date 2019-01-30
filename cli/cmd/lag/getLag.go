@@ -32,7 +32,7 @@ var CmdGetLag = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.Marshal(lag, outFmt)
+			out.IfErrf(out.Marshal(lag, outFmt))
 		default:
 			kafka.PrintOut(lag)
 		}

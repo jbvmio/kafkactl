@@ -13,7 +13,7 @@ var outFlags out.OutFlags
 
 var CmdLogs = &cobra.Command{
 	Use:     "logs",
-	Aliases: []string{"log", "msg", "msgs"},
+	Aliases: []string{"consume"},
 	Short:   "Get Messages from a Kafka Topic",
 	Args:    cobra.MinimumNArgs(1),
 	PreRun: func(cmd *cobra.Command, args []string) {
@@ -24,20 +24,16 @@ var CmdLogs = &cobra.Command{
 		match := true
 		switch match {
 		case logsFlags.Follow:
-			kafka.TailTopic(logsFlags, args...)
+			kafka.FollowTopic(logsFlags, outFlags, args...)
 			return
 		default:
 			msgs = kafka.GetMessages(logsFlags, args...)
 		}
 		switch match {
 		case cmd.Flags().Changed("out"):
-			outFmt, err := cmd.Flags().GetString("out")
-			if err != nil {
-				out.Warnf("WARN: %v", err)
-			}
-			out.Marshal(msgs, outFmt)
+			out.IfErrf(out.Marshal(msgs, outFlags.Format))
 		default:
-			kafka.PrintMSGs(msgs, outFlags.Header)
+			kafka.PrintMSGs(msgs, outFlags)
 		}
 	},
 }

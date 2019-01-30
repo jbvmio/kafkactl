@@ -15,9 +15,8 @@
 package kafka
 
 import (
-	"fmt"
-
 	"github.com/jbvmio/kafkactl"
+	"github.com/jbvmio/kafkactl/cli/x/out"
 )
 
 type MSGFlags struct {
@@ -61,7 +60,6 @@ func getMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 		pMap := make(map[int32]int64, len(parts))
 		switch match {
 		case flags.Offset == -1:
-			fmt.Println("OFFSET -1")
 			for _, p := range parts {
 				off, err := client.GetOffsetNewest(topic, p)
 				if err != nil {
@@ -70,7 +68,6 @@ func getMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 				pMap[p] = off + flags.Offset
 			}
 		default:
-			fmt.Println("DEFAULT")
 			for _, p := range parts {
 				pMap[p] = flags.Offset
 			}
@@ -78,10 +75,14 @@ func getMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 		for part, off := range pMap {
 			msg, err := client.ConsumeOffsetMsg(topic, part, off)
 			if err != nil {
-				closeFatal("Error retrieving message: %v\n", off)
+				out.Warnf("WARN %v [%v] %v: %v", topic, part, off, err)
+			} else {
+				messages = append(messages, msg)
 			}
-			messages = append(messages, msg)
 		}
+	}
+	if len(messages) < 1 {
+		closeFatal("Error: No Messages Received.\n")
 	}
 	return messages
 }
@@ -121,9 +122,10 @@ func tailMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 				for off < endMap[p] {
 					msg, err := client.ConsumeOffsetMsg(topic, p, off)
 					if err != nil {
-						closeFatal("Error retrieving message: %v\n", off)
+						out.Warnf("WARN %v [%v] %v: %v", topic, p, off, err)
+					} else {
+						msgChan <- msg
 					}
-					msgChan <- msg
 					off++
 				}
 				doneChan <- true
@@ -137,6 +139,9 @@ func tailMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 				i++
 			}
 		}
+	}
+	if len(messages) < 1 {
+		closeFatal("Error: No Messages Received.\n")
 	}
 	return messages
 }

@@ -25,7 +25,7 @@ var CmdDescTopic = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.Marshal(tom, outFmt)
+			out.IfErrf(out.Marshal(tom, outFmt))
 		default:
 			kafka.PrintOut(tom)
 		}

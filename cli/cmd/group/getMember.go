@@ -31,7 +31,7 @@ var CmdGetMember = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.Marshal(groupMeta, outFmt)
+			out.IfErrf(out.Marshal(groupMeta, outFmt))
 		default:
 			kafka.PrintOut(groupMeta)
 		}

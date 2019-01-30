@@ -187,7 +187,6 @@ func GroupMetaByMember(members ...string) []kafkactl.GroupMeta {
 				for _, member := range members {
 					if ma.ClientID == member {
 						MA = append(MA, ma)
-						//gMeta.MemberAssignments = append(gMeta.MemberAssignments, ma)
 					}
 				}
 			}
@@ -196,15 +195,12 @@ func GroupMetaByMember(members ...string) []kafkactl.GroupMeta {
 				for _, member := range members {
 					if strings.Contains(ma.ClientID, member) {
 						MA = append(MA, ma)
-						//gMeta.MemberAssignments = append(gMeta.MemberAssignments, ma)
 					}
 				}
 			}
 		}
-
 		if len(MA) > 0 {
 			gMeta = gm
-			//gMeta.MemberAssignments = nil
 			gMeta.MemberAssignments = MA
 			groupMeta = append(groupMeta, gMeta)
 

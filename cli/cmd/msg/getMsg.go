@@ -17,7 +17,7 @@ var CmdGetMsg = &cobra.Command{
 		match := true
 		switch match {
 		case logsFlags.Follow:
-			kafka.TailTopic(logsFlags, args...)
+			kafka.FollowTopic(logsFlags, outFlags, args...)
 			return
 		default:
 			CmdLogs.Run(cmd, args)

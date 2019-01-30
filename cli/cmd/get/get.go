@@ -20,6 +20,8 @@ var CmdGet = &cobra.Command{
 		switch match {
 		case len(args) > 0:
 			out.Failf("No such resource: %v", args[0])
+		default:
+			cmd.Help()
 		}
 	},
 }

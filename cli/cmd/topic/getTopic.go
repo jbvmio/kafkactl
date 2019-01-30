@@ -37,7 +37,7 @@ var CmdGetTopic = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.Marshal(topicSummaries, outFmt)
+			out.IfErrf(out.Marshal(topicSummaries, outFmt))
 		default:
 			kafka.PrintOut(topicSummaries)
 		}

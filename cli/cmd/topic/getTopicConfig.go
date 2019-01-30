@@ -1,4 +1,4 @@
-package group
+package topic
 
 import (
 	"github.com/jbvmio/kafkactl"
@@ -7,19 +7,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var CmdDescGroup = &cobra.Command{
-	Use:     "group",
-	Aliases: []string{"groups"},
-	Short:   "Get Group Details",
-	Args:    cobra.MinimumNArgs(1),
+var CmdGetTopicConfig = &cobra.Command{
+	Use:   "config",
+	Short: "Get Topic Configuration Details",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var groupMeta []kafkactl.GroupMeta
+		var tom []kafkactl.TopicOffsetMap
 		match := true
 		switch match {
-		case cmd.Flags().Changed("groups"):
-			groupMeta = kafka.GroupMetaByTopics(args...)
 		default:
-			groupMeta = kafka.SearchGroupMeta(args...)
+			tom = kafka.SearchTOM(args...)
 		}
 		switch match {
 		case cmd.Flags().Changed("out"):
@@ -27,9 +24,9 @@ var CmdDescGroup = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.IfErrf(out.Marshal(groupMeta, outFmt))
+			out.IfErrf(out.Marshal(tom, outFmt))
 		default:
-			kafka.PrintOut(groupMeta)
+			kafka.PrintOut(tom)
 		}
 	},
 }

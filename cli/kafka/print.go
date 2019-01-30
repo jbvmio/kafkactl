@@ -25,7 +25,7 @@ import (
 )
 
 func PrintOut(i interface{}) {
-	var highlightColumn = true
+	//var highlightColumn = true
 	headerFmt := color.New(color.FgGreen, color.Underline).SprintfFunc()
 	columnFmt := color.New(color.FgYellow).SprintfFunc()
 	var tbl table.Table
@@ -68,21 +68,31 @@ func PrintOut(i interface{}) {
 		for _, v := range i {
 			tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag)
 		}
+	case []TopicConfig:
+		tbl = table.New("TOPIC", "CONFIG", "VALUE", "READONLY", "DEFAULT", "SENSITIVE")
+		for _, v := range i {
+			tbl.AddRow(v.Topic, v.Config, v.Value, v.ReadOnly, v.Default, v.Sensitive)
+		}
 	}
-	if highlightColumn {
-		tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
-	} else {
-		tbl.WithHeaderFormatter(headerFmt)
-	}
+
+	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
+
+	/*
+		if highlightColumn {
+			tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
+		} else {
+			tbl.WithHeaderFormatter(headerFmt)
+		}
+	*/
 
 	tbl.Print()
 	fmt.Println()
 }
 
-func PrintMSGs(msgs []*kafkactl.Message, header bool) {
+func PrintMSGs(msgs []*kafkactl.Message, outFlags out.OutFlags) {
 	match := true
 	switch match {
-	case header:
+	case outFlags.Header:
 		for _, msg := range msgs {
 			out.Infof("%s", msg.Value)
 		}
@@ -95,13 +105,14 @@ func PrintMSGs(msgs []*kafkactl.Message, header bool) {
 	}
 }
 
-func PrintMSG(msg *kafkactl.Message) {
+// PrintMSG returns messages displayed by the desired format while following a topic.
+func PrintMSG(msg *kafkactl.Message, outFlags out.OutFlags) {
 	match := true
 	switch match {
-	/*
-		case header:
-			out.Infof("%s", msg.Value)
-	*/
+	case outFlags.Format != "":
+		out.Marshal(msg, outFlags.Format)
+	case outFlags.Header:
+		out.Infof("%s", msg.Value)
 	default:
 		headerFmt := color.New(color.FgGreen).SprintfFunc()
 		h := headerFmt("TOPIC: %v, PARTITION: %v, OFFSET: %v, TIMESTAMP: %v\n", msg.Topic, msg.Partition, msg.Offset, msg.Timestamp)

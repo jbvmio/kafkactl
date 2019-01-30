@@ -52,3 +52,9 @@ func ClusterDetails(client *kafkactl.KClient) {
 	}
 	fmt.Printf("\n(*)Controller\n\n")
 }
+
+func MetaData() kafkactl.ClusterMeta {
+	meta, err := client.GetClusterMeta()
+	handleC("Error getting cluster metadata: %v\n", err)
+	return meta
+}

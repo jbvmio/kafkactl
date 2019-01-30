@@ -18,10 +18,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/jbvmio/kafkactl/cli/x/out"
+
+	"github.com/jbvmio/kafkactl/cli/cmd/admin"
 	"github.com/jbvmio/kafkactl/cli/cmd/cfg"
 	"github.com/jbvmio/kafkactl/cli/cmd/describe"
 	"github.com/jbvmio/kafkactl/cli/cmd/get"
 	"github.com/jbvmio/kafkactl/cli/cmd/msg"
+	"github.com/jbvmio/kafkactl/cli/cmd/send"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -30,12 +34,11 @@ import (
 )
 
 var (
-	cfgFile       string
-	targetContext string
-	//verbose       bool
+	cfgFile string
 )
 
 var kafkaFlags kafka.ClientFlags
+var outFlags out.OutFlags
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -48,7 +51,13 @@ var rootCmd = &cobra.Command{
 		kafka.CloseClient()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		kafka.ClusterDetails(kafka.Client())
+		match := true
+		switch match {
+		case outFlags.Format != "":
+			out.IfErrf(out.Marshal(kafka.MetaData(), outFlags.Format))
+		default:
+			kafka.ClusterDetails(kafka.Client())
+		}
 	},
 }
 
@@ -62,6 +71,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	rootCmd.Flags().StringVarP(&outFlags.Format, "out", "o", "", "Change Output Format - yaml|json.")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "cfg", "", "config file (default is $HOME/.2kafkactl.yaml)")
 	rootCmd.PersistentFlags().StringVar(&kafkaFlags.Context, "context", "", "Specify a context.")
 	rootCmd.PersistentFlags().StringVar(&kafkaFlags.Version, "version", "", "Specify a client version.")
@@ -72,6 +82,8 @@ func init() {
 	rootCmd.AddCommand(get.CmdGet)
 	rootCmd.AddCommand(describe.CmdDescribe)
 	rootCmd.AddCommand(msg.CmdLogs)
+	rootCmd.AddCommand(send.CmdSend)
+	rootCmd.AddCommand(admin.CmdAdmin)
 
 }
 
@@ -87,11 +99,7 @@ func initConfig() {
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".2kafkactl")
 	}
-
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
+	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err == nil {
-		//fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }

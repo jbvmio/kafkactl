@@ -18,19 +18,22 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/jbvmio/kafkactl"
+	"github.com/jbvmio/kafkactl/cli/x/out"
 )
 
-type tailDetails struct {
+type followDetails struct {
 	topic   string
 	partMap map[int32]int64
 }
 
-func TailTopic(flags MSGFlags, topics ...string) {
+func FollowTopic(flags MSGFlags, outFlags out.OutFlags, topics ...string) {
 	exact = true
 	var count int
-	var details []tailDetails
+	var details []followDetails
+	var timeCheck time.Time
 	for _, topic := range topics {
 		var parts []int32
 		topicSummary := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
@@ -46,7 +49,6 @@ func TailTopic(flags MSGFlags, topics ...string) {
 			parts = validateParts(flags.Partitions)
 		}
 		startMap := make(map[int32]int64, len(parts))
-		//endMap := make(map[int32]int64, len(parts))
 		offset := getTailValue(flags.Tail)
 		for _, p := range parts {
 			off, err := client.GetOffsetNewest(topic, p)
@@ -54,10 +56,9 @@ func TailTopic(flags MSGFlags, topics ...string) {
 				closeFatal("Error validating Partition: %v for topic: %v\n", p, err)
 			}
 			startMap[p] = off + offset
-			//endMap[p] = off
 			count++
 		}
-		d := tailDetails{
+		d := followDetails{
 			topic:   topic,
 			partMap: startMap,
 		}
@@ -76,7 +77,14 @@ ConsumeLoop:
 	for {
 		select {
 		case msg := <-msgChan:
-			PrintMSG(msg)
+			if msg.Timestamp == timeCheck {
+				if len(msg.Value) != 0 {
+					out.Warnf("%s", msg.Value)
+				}
+			} else {
+				PrintMSG(msg, outFlags)
+			}
+			continue ConsumeLoop
 		case <-sigChan:
 			fmt.Printf("signal: interrupt\n  Stopping kafkactl ...\n")
 			for i := 0; i < count; i++ {
@@ -85,34 +93,6 @@ ConsumeLoop:
 			break ConsumeLoop
 		}
 	}
-
-	/*
-		msgChan := make(chan *kafkactl.Message, 100)
-		doneChan := make(chan bool, len(parts))
-		for _, p := range parts {
-			go func(topic string, p int32) {
-				off := startMap[p]
-				for off < endMap[p] {
-					msg, err := client.ConsumeOffsetMsg(topic, p, off)
-					if err != nil {
-						closeFatal("Error retrieving message: %v\n", off)
-					}
-					msgChan <- msg
-					off++
-				}
-				doneChan <- true
-			}(topic, p)
-		}
-		for i := 0; i < len(parts); {
-			select {
-			case msg := <-msgChan:
-				messages = append(messages, msg)
-			case <-doneChan:
-				i++
-			}
-		}
-	*/
-
 }
 
 /*

@@ -34,7 +34,7 @@ var CmdGetGroup = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.Marshal(glm, outFmt)
+			out.IfErrf(out.Marshal(glm, outFmt))
 		default:
 			kafka.PrintOut(glm)
 		}
