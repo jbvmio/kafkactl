@@ -1,18 +1,19 @@
 package zk
 
 import (
-	"github.com/jbvmio/kafkactl/cli/x/out"
+	"github.com/jbvmio/kafkactl/cli/zookeeper"
 	"github.com/spf13/cobra"
 )
 
 var cmdZKdelete = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete Zookeeper Paths and Values",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		match := true
 		switch match {
-		case len(args) > 0:
-			out.Failf("No such resource: %v", args[0])
+		case len(args) == 1:
+			zookeeper.ZKDelete(args[0], zkFlags.Recurse)
 		default:
 			cmd.Help()
 		}
@@ -20,5 +21,5 @@ var cmdZKdelete = &cobra.Command{
 }
 
 func init() {
-	//cmdZKls.PersistentFlags().StringVarP(&outFlags.Format, "out", "o", "", "Change Output Format - yaml|json.")
+	cmdZKdelete.Flags().BoolVar(&zkFlags.Recurse, "RMR", false, "Delete Recursively - All Child Subdirectories")
 }

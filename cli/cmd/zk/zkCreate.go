@@ -1,24 +1,26 @@
 package zk
 
 import (
-	"github.com/jbvmio/kafkactl/cli/x/out"
+	"github.com/jbvmio/kafkactl/cli/zookeeper"
 	"github.com/spf13/cobra"
 )
 
 var cmdZKcreate = &cobra.Command{
 	Use:   "create",
 	Short: "Create Zookeeper Paths and Values",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		match := true
 		switch match {
-		case len(args) > 0:
-			out.Failf("No such resource: %v", args[0])
+		case len([]byte(zkFlags.Value)) > 0:
+			zookeeper.ZKCreate(args[0], zkFlags.Force, []byte(zkFlags.Value)...)
 		default:
-			cmd.Help()
+			zookeeper.ZKCreate(args[0], zkFlags.Force)
 		}
 	},
 }
 
 func init() {
-	//cmdZKls.PersistentFlags().StringVarP(&outFlags.Format, "out", "o", "", "Change Output Format - yaml|json.")
+	cmdZKcreate.Flags().BoolVarP(&zkFlags.Force, "force", "F", false, "Force Operation / Create Parent Paths if Necessary")
+	cmdZKcreate.Flags().StringVar(&zkFlags.Value, "value", "", "Value to Create or Set")
 }

@@ -28,6 +28,7 @@ import (
 type Config struct {
 	Contexts       map[string]cx.Context `yaml:"contexts"`
 	CurrentContext string                `yaml:"current-context"`
+	ConfigVersion  int                   `yaml:"config-version"`
 }
 
 func GetConfig() *Config {

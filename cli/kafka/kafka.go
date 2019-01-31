@@ -64,7 +64,7 @@ func LaunchClient(context *cx.Context, flags ClientFlags) {
 	case context.ClientVersion == "":
 		context.ClientVersion = findKafkaVersion(context)
 	}
-	conf.Version, err = sarama.ParseKafkaVersion(context.ClientVersion)
+	conf.Version, err = kafkactl.MatchKafkaVersion(context.ClientVersion)
 	if err != nil {
 		out.Warnf("WARN: %v", err)
 		conf.Version = kafkactl.MinKafkaVersion

@@ -20,16 +20,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	yTime   = 1546300800
+	maint   = "19"
+	version = "1.0."
+)
+
+var (
+	revision   string
+	buildTime  string
+	commitHash string
+	fullVer    string
+)
+
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print kafkactl version and exit",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		nonMainCMD = true
-	},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Version   : %s\n", buildTime)
+		fmt.Printf("Version   : %s\n", fullVer)
+		fmt.Printf("Build     : %s\n", buildTime)
 		fmt.Printf("Commit    : %s\n", commitHash)
-		return
 	},
 }
 

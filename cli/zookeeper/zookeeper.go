@@ -16,10 +16,11 @@ package zookeeper
 
 import (
 	"fmt"
-	"log"
 	"sort"
 
 	"github.com/jbvmio/kafkactl/cli/cx"
+	"github.com/jbvmio/kafkactl/cli/kafka"
+	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/jbvmio/zk"
 )
 
@@ -30,7 +31,9 @@ var (
 
 type ZKFlags struct {
 	Context string
+	Value   string
 	Depth   uint8
+	Force   bool
 	Recurse bool
 	Values  bool
 	Verbose bool
@@ -56,7 +59,8 @@ var (
 
 func LaunchZKClient(context *cx.Context, flags ZKFlags) {
 	if len(context.Zookeeper) < 1 {
-		log.Fatalf("No Zookeeper Servers Defined.\n")
+		kafka.CloseClient()
+		out.Failf("No Zookeeper Servers Defined.\n")
 	}
 	zkClient = zk.NewZooKeeper()
 	zkClient.EnableLogger(flags.Verbose)
@@ -71,14 +75,15 @@ func ZKls(path ...string) []ZKPathValue {
 		}
 		match := true
 		sp, err := zkClient.Children(p)
-
 		switch match {
 		case err != nil:
-			log.Fatalf("Error retrieving path: %v\n", p)
+			kafka.CloseClient()
+			out.Failf("Error retrieving path: %v", p)
 		case len(sp) == 0:
 			val, err := zkClient.Get(p)
 			if err != nil {
-				log.Fatalf("Error retrieving value: %v\n", p)
+				kafka.CloseClient()
+				out.Failf("Error retrieving value: %v", p)
 			}
 			value := fmt.Sprintf("%s", val)
 			zkp.Type = "value"
@@ -86,8 +91,6 @@ func ZKls(path ...string) []ZKPathValue {
 			if !zkp.EmptyValue {
 				zkp.Value = []string{value}
 			}
-			//zkp.Value = []string{fmt.Sprintf("%s", val)}
-			//zkp.EmptyValue = (zkp.Value == "")
 		default:
 			zkp.Type = "path"
 			zkp.Value = sp
@@ -162,79 +165,102 @@ func ZKFilterAllVals(zkp []ZKPath) []ZKPath {
 	return zkPaths
 }
 
-/*
-func ZKls(path ...string) {
-	if len(path) == 0 {
-		path = []string{"/"}
+func ZKCreate(path string, force bool, value ...byte) {
+	match := true
+	switch match {
+	case path != "" && value == nil:
+		zkCreatePath(path, force)
+	case path != "" && value != nil:
+		zkCreateValue(path, force, value)
+	default:
+		kafka.CloseClient()
+		out.Failf("Invalid Path or Value")
 	}
-	subPath := make(map[string][]string, len(path))
-	for _, p := range path {
-		var keyVal = string("PATH: " + p)
-		sp, err := zkClient.Children(p)
-		if err != nil {
-			log.Fatalf("Error retrieving path: %v\n", p)
-		}
-		if len(sp) == 0 {
-			val, err := zkClient.Get(p)
-			if err == nil {
-				keyVal = string("VALUE: " + p)
-				sp = []string{
-					fmt.Sprintf("%s", val),
-				}
-			}
-		}
-		subPath[keyVal] = sp
-	}
-	fmt.Println()
-	for k, v := range subPath {
-		fmt.Println(color.YellowString(k))
-		for _, sp := range v {
-			fmt.Printf(" %v\n", sp)
-		}
-	}
-	fmt.Println()
 }
 
-func zkCreateValue(path string, value []byte) {
-	if path == "" {
-		log.Fatalf("Error: No Path Specified.\n")
-	}
+func zkCreatePath(path string, force bool) {
+	var pathString string
+	var errd error
 	check, err := zkClient.Exists(path)
-	if err != nil {
-		log.Fatalf("Error Validating Path: %v\n", err)
+	match := true
+	switch match {
+	case err != nil:
+		kafka.CloseClient()
+		out.Failf("Error Validating Path: %v", err)
+	case check:
+		kafka.CloseClient()
+		out.Failf("Error: Path Exists.")
+	case force:
+		pathString, errd = zkClient.Create(path, nil, "", true)
+	default:
+		pathString, errd = zkClient.Create(path, nil, "", false)
 	}
-	if check {
-		if value == nil {
-			if !zkForceUpdate {
-				log.Fatalf("Empty Value Submitted. Use --force to override.\n")
-			}
-		}
-		_, err := zkClient.Set(path, value)
-		if err != nil {
-			log.Fatalf("Error Setting Value: %v\n", err)
-		}
-		fmt.Println("Successfully Updated:", path)
-		return
+	if errd != nil {
+		kafka.CloseClient()
+		out.Failf("Error Creating Path: %v. Try --force", errd)
 	}
-	str, err := zkClient.Create(path, value, "", false)
-	if err != nil {
-		log.Fatalf("Error Setting Value: %v\n", err)
-	}
-	fmt.Println("Successfully Created:", str)
-	return
+	out.Infof("Successfully Created: %v", pathString)
 }
 
-func zkDeleteValue(path string) {
-	if path == "" {
-		log.Fatalf("Error: No Path Specified.\n")
+func zkCreateValue(path string, force bool, value []byte) {
+	var pathString string
+	var errd error
+	var children bool
+	check, err := zkClient.Exists(path)
+	children, errd = zkClient.HasChildren(path)
+	match := true
+	switch match {
+	case err != nil || errd != nil:
+		kafka.CloseClient()
+		out.Failf("Error Validating Path:\n %v\n %v", err, errd)
+	case children:
+		kafka.CloseClient()
+		out.Failf("Error: Child SubPaths Detected.")
+	case check && force:
+		_, errd = zkClient.Set(path, value)
+		pathString = path
+	case check:
+		kafka.CloseClient()
+		out.Failf("Error: Path Exists. Use --force to override.")
+	case force:
+		pathString, errd = zkClient.Create(path, value, "", true)
+	default:
+		pathString, errd = zkClient.Create(path, value, "", false)
 	}
-	err := zkClient.Delete(path)
-	if err != nil {
-		log.Fatalf("Error Deleting Path: %v\n", err)
+	if errd != nil {
+		kafka.CloseClient()
+		out.Failf("Error Creating Path: %v", errd)
 	}
-	fmt.Println("Successfully Deleted:", path)
+	out.Infof("Successfully Created: %v", pathString)
 }
 
+func ZKDelete(path string, RMR bool) {
+	var errd error
+	check, err := zkClient.Exists(path)
+	match := true
+	switch match {
+	case path == "":
+		kafka.CloseClient()
+		out.Failf("Empty Path Entered.")
+	case !check:
+		kafka.CloseClient()
+		out.Failf("Path Does Not Exist.")
+	case err != nil:
+		kafka.CloseClient()
+		out.Failf("Error Validating Path: %v", err)
+	case RMR:
+		errd = zkClient.DeleteRecursive(path)
+	default:
+		errd = zkClient.Delete(path)
+	}
+	if errd != nil {
+		kafka.CloseClient()
+		out.Failf("Error Deleting Path: %v\n", errd)
+	}
+	out.Infof("Successfully Deleted: %v", path)
+}
+
+/*
 func zkCreatePRE(path string, value []byte) {
 	if path == "" {
 		log.Fatalf("Error: No Path Specified.\n")

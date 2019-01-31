@@ -60,19 +60,16 @@ func Marshal(object interface{}, format string) error {
 	if format == "yaml" {
 		fmtString, err = yaml.Marshal(object)
 		if err != nil {
-			//Failf("unable to format yaml: %v", err)
 			err = fmt.Errorf("unable to format yaml: %v", err)
 		}
 		fmt.Println(string(fmtString))
 	} else if format == "json" {
 		fmtString, err = json.Marshal(object)
 		if err != nil {
-			//Failf("unable to format json: %v", err)
 			err = fmt.Errorf("unable to format json: %v", err)
 		}
 		fmt.Printf("%s", pretty.Pretty(fmtString))
 	} else {
-		//Failf("unknown format: %v", format)
 		err = fmt.Errorf("unknown format: %v", format)
 	}
 	return err

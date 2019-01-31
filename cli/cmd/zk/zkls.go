@@ -41,7 +41,7 @@ var cmdZKls = &cobra.Command{
 }
 
 func init() {
-	cmdZKls.Flags().BoolVarP(&zkFlags.Recurse, "recurse", "r", false, "List Recursively")
+	cmdZKls.Flags().BoolVarP(&zkFlags.Recurse, "recurse", "R", false, "List Recursively")
 	cmdZKls.Flags().BoolVar(&zkFlags.Values, "values", false, "Return non-empty Values Only (Used with recurse)")
 	cmdZKls.Flags().Uint8VarP(&zkFlags.Depth, "depth", "D", 3, "Specify Recursive Depth")
 }

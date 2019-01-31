@@ -35,6 +35,10 @@ type PREPartition struct {
 	Partition int32  `json:"partition"`
 }
 
+const (
+	prePath = `/admin/preferred_replica_election`
+)
+
 func performTopicPRE(topic string) {
 	exact = true
 	tom := GetTopicOffsetMap(SearchTopicMeta(topic))
