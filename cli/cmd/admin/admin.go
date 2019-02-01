@@ -2,6 +2,7 @@ package admin
 
 import (
 	"github.com/jbvmio/kafkactl/cli/cmd/admin/adminGet"
+	"github.com/jbvmio/kafkactl/cli/cmd/admin/adminOps"
 	"github.com/jbvmio/kafkactl/cli/cmd/admin/adminSet"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
@@ -26,6 +27,9 @@ func init() {
 
 	CmdAdmin.AddCommand(adminget.CmdAdminGet)
 	CmdAdmin.AddCommand(adminset.CmdAdminSet)
+	CmdAdmin.AddCommand(adminops.CmdAdminCreate)
+	CmdAdmin.AddCommand(adminops.CmdAdminDelete)
+
 	//CmdAdmin.AddCommand(topic.CmdGetTopic)
 	//CmdAdmin.AddCommand(group.CmdGetGroup)
 	//CmdAdmin.AddCommand(group.CmdGetMember)

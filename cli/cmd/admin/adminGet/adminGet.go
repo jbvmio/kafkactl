@@ -22,4 +22,6 @@ var CmdAdminGet = &cobra.Command{
 func init() {
 	CmdAdminGet.AddCommand(cmdAdminGetTopic)
 	CmdAdminGet.AddCommand(cmdAdminGetPre)
+	CmdAdminGet.AddCommand(cmdAdminGetOffsets)
+	CmdAdminGet.AddCommand(cmdAdminGetReplicas)
 }

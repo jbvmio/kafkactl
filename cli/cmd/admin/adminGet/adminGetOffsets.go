@@ -1,13 +1,13 @@
-package adminset
+package adminget
 
 import (
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
 
-var CmdAdminSet = &cobra.Command{
-	Use:   "set",
-	Short: "Set Kafka Configurations",
+var cmdAdminGetOffsets = &cobra.Command{
+	Use:   "offsets",
+	Short: "Get Kafka Group Offsets",
 	Run: func(cmd *cobra.Command, args []string) {
 		match := true
 		switch match {
@@ -20,8 +20,6 @@ var CmdAdminSet = &cobra.Command{
 }
 
 func init() {
-	CmdAdminSet.AddCommand(cmdAdminSetTopic)
-	CmdAdminSet.AddCommand(cmdAdminSetPre)
-	CmdAdminSet.AddCommand(cmdAdminSetOffsets)
-	CmdAdminSet.AddCommand(cmdAdminSetReplicas)
+	//cmdAdminGetOffsets.AddCommand(cmdAdminGetTopic)
+	//cmdAdminGetOffsets.AddCommand(cmdAdminGetPre)
 }
