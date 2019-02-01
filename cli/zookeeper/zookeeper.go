@@ -86,6 +86,10 @@ func KafkaZK(context string, verbose bool) error {
 	return nil
 }
 
+func ZKCheckExists(path string) (bool, error) {
+	return zkClient.Exists(path)
+}
+
 func ZKls(path ...string) []ZKPathValue {
 	var ZKP []ZKPathValue
 	for _, p := range path {

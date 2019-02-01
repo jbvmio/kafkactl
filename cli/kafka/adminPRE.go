@@ -68,7 +68,7 @@ func PerformTopicPRE(topics ...string) PRETopicMeta {
 
 func zkCreatePRE(data []byte) {
 	handleC("%v", zookeeper.KafkaZK(targetContext, verbose))
-	check, err := zkClient.Exists(prePath)
+	check, err := zookeeper.ZKCheckExists(prePath)
 	handleC("Error: %v", err)
 	if check {
 		closeFatal("Preferred Replica Election Already in Progress.")
