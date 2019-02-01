@@ -67,13 +67,7 @@ func PrintOut(i interface{}) {
 		for _, v := range i {
 			tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag)
 		}
-	case []TopicConfig:
-		tbl = table.New("TOPIC", "CONFIG", "VALUE", "READONLY", "DEFAULT", "SENSITIVE")
-		for _, v := range i {
-			tbl.AddRow(v.Topic, v.Config, v.Value, v.ReadOnly, v.Default, v.Sensitive)
-		}
 	}
-
 	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
 	tbl.Print()
 	fmt.Println()

@@ -27,7 +27,7 @@ var cmdAdminSetTopic = &cobra.Command{
 			}
 			out.IfErrf(out.Marshal(topicConfigs, outFmt))
 		default:
-			kafka.PrintOut(topicConfigs)
+			kafka.PrintAdm(topicConfigs)
 		}
 	},
 }

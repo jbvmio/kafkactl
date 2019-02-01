@@ -12,24 +12,23 @@ var cmdAdminGetPre = &cobra.Command{
 	Use:   "pre",
 	Short: "Get Preferred Replica Election Details",
 	Run: func(cmd *cobra.Command, args []string) {
+		var preMeta kafka.PRETopicMeta
 		match := true
 		switch match {
 		default:
-			out.Infof("GET PRE HERE")
+			preMeta = kafka.GetPREMeta(args...)
+		}
+		switch match {
+		case cmd.Flags().Changed("out"):
+			outFmt, err := cmd.Flags().GetString("out")
+			if err != nil {
+				out.Warnf("WARN: %v", err)
+			}
+			out.IfErrf(out.Marshal(preMeta.CreatePREList(), outFmt))
+		default:
+			kafka.PrintAdm(preMeta.CreatePRESummary())
 		}
 
-		/*
-			switch match {
-			case cmd.Flags().Changed("out"):
-				outFmt, err := cmd.Flags().GetString("out")
-				if err != nil {
-					out.Warnf("WARN: %v", err)
-				}
-				out.IfErrf(out.Marshal(topicConfigs, outFmt))
-			default:
-				kafka.PrintOut(topicConfigs)
-			}
-		*/
 	},
 }
 

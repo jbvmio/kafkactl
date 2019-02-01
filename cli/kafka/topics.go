@@ -154,18 +154,6 @@ func refreshMetadata(topics ...string) {
 	}
 }
 
-func findPRETopics(topics ...string) []kafkactl.TopicMeta {
-	var preMeta []kafkactl.TopicMeta
-	tMeta := searchTopicMeta(topics...)
-	for _, tm := range tMeta {
-		if len(tm.Replicas) > 0 {
-			if tm.Leader != tm.Replicas[0] {
-				preMeta = append(preMeta, tm)
-			}
-		}
-	}
-	return preMeta
-}
 
 func validateLeaders(leaders []int32) {
 	pMap := make(map[int32]bool, len(leaders))
