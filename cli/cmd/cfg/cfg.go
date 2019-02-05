@@ -35,6 +35,7 @@ func GetConfig() *Config {
 	var config Config
 	viper.Unmarshal(&config)
 	config.CurrentContext = viper.GetString("current-context")
+	config.ConfigVersion = viper.GetInt("config-version")
 	return &config
 }
 

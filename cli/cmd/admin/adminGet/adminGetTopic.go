@@ -36,6 +36,6 @@ var cmdAdminGetTopic = &cobra.Command{
 }
 
 func init() {
-	cmdAdminGetTopic.Flags().StringSliceVar(&topicFlags.Configs, "filter", []string{}, "Filter by Configuration / Key Names.")
-	cmdAdminGetTopic.Flags().BoolVar(&topicFlags.GetNonDefaults, "non-defaults", false, "Only show configs not using broker defaults.")
+	cmdAdminGetTopic.Flags().StringSliceVar(&topicFlags.Configs, "config", []string{}, "Filter by Configuration / Key Names.")
+	cmdAdminGetTopic.Flags().BoolVar(&topicFlags.GetNonDefaults, "changed", false, "Only show configs that have changed.")
 }

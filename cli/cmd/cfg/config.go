@@ -19,6 +19,7 @@ func init() {
 	CmdConfig.PersistentFlags().StringVarP(&outFlags.Format, "out", "o", "yaml", "Output Format - yaml|json.")
 	CmdConfig.Flags().BoolVar(&showSample, "sample", false, "Display a sample config file.")
 
+	CmdConfig.AddCommand(cmdView)
 	CmdConfig.AddCommand(cmdShowContext)
 	CmdConfig.AddCommand(cmdUseContext)
 }

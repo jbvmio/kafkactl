@@ -205,6 +205,14 @@ func ZKCreate(path string, silent, force bool, value ...byte) {
 	}
 }
 
+func ZKSetSeq() {
+	zkClient.SetSequencial()
+}
+
+func ZKRemoveFlags() {
+	zkClient.SetFlags(0)
+}
+
 func zkCreatePath(path string, silent, force bool) {
 	var pathString string
 	var errd error

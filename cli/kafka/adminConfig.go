@@ -42,11 +42,22 @@ type TopicConfig struct {
 	Sensitive bool
 }
 
-const topicConfigPath = `/config/topics/`
+const (
+	topicConfVersion      = 1
+	topicEntityVersion    = 2
+	topicConfigPath       = `/config/topics/`
+	topicEntityChangePath = `/config/changes/config_change_`
+	topicEntityPath       = `topics/`
+)
 
 type emptyConfig struct {
 	Version int               `json:"version"`
 	Config  map[string]string `json:"config"`
+}
+
+type configChange struct {
+	Version    int    `json:"version"`
+	EntityPath string `json:"entity_path"`
 }
 
 func GetTopicConfigs(configs []string, topics ...string) []TopicConfig {
@@ -156,8 +167,9 @@ func SetDefaultConfig(config string, topics ...string) []TopicConfig {
 		preTC := GetTopicConfigs([]string{config}, topic)
 
 		configs := make(map[string]string, 1)
-		defaultConfig := emptyConfig{Version: 1, Config: configs}
-		j, _ := json.Marshal(defaultConfig)
+		defaultConfig := emptyConfig{Version: topicConfVersion, Config: configs}
+		j, err := json.Marshal(defaultConfig)
+		handleC("Error on config marshal: %v", err)
 		sent := zkCreateDefaultConfig(topic, j)
 		if sent {
 			postTC := GetTopicConfigs([]string{config}, topic)
@@ -193,5 +205,26 @@ func zkCreateDefaultConfig(topic string, data []byte) bool {
 		return false
 	}
 	zookeeper.ZKCreate(topicPath, true, true, data...)
+	zkTopicChangeNotify(topic)
 	return true
+}
+
+func zkTopicChangeNotify(topic string) {
+	entityPath := topicEntityPath + topic
+	change := configChange{
+		Version:    topicEntityVersion,
+		EntityPath: entityPath,
+	}
+	j, err := json.Marshal(change)
+	handleC("Error on config marshal: %v", err)
+
+	zookeeper.ZKSetSeq()
+	zookeeper.ZKCreate(topicEntityChangePath, true, false, j...)
+	zookeeper.ZKRemoveFlags()
+
+	/*
+		handleC("%v", zookeeper.KafkaZK(targetContext, verbose))
+		zookeeper.ZKSetSeq()
+		zookeeper.ZKCreate(path, false, false, []byte(value)...)
+	*/
 }
