@@ -22,8 +22,9 @@ import (
 
 const (
 	yTime   = 1546300800
-	maint   = "19"
-	version = "1.0."
+	maint   = `19`
+	version = `1.0.`
+	contact = `jbonds@jbvm.io`
 )
 
 var (
@@ -37,8 +38,10 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print kafkactl version and exit",
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("kafkactl  : %s\n", contact)
 		fmt.Printf("Version   : %s\n", fullVer)
 		fmt.Printf("Build     : %s\n", buildTime)
+		fmt.Printf("Revision  : %s\n", revision)
 		fmt.Printf("Commit    : %s\n", commitHash)
 	},
 }
