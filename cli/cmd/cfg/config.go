@@ -6,6 +6,7 @@ import (
 )
 
 var outFlags out.OutFlags
+var showSample bool
 
 var CmdConfig = &cobra.Command{
 	Use:   "config",
@@ -16,7 +17,8 @@ var CmdConfig = &cobra.Command{
 
 func init() {
 	CmdConfig.PersistentFlags().StringVarP(&outFlags.Format, "out", "o", "yaml", "Output Format - yaml|json.")
+	CmdConfig.Flags().BoolVar(&showSample, "sample", false, "Display a sample config file.")
 
-	CmdConfig.AddCommand(cmdShow)
-	CmdConfig.AddCommand(cmdUse)
+	CmdConfig.AddCommand(cmdShowContext)
+	CmdConfig.AddCommand(cmdUseContext)
 }

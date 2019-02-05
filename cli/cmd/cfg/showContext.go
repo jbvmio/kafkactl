@@ -8,15 +8,15 @@ import (
 var list bool
 
 var cmdShowContext = &cobra.Command{
-	Use:     "context",
-	Aliases: []string{"current", "ctx"},
+	Use:     "get-context",
+	Aliases: []string{"current-context", "get-contexts"},
 	Short:   "Display current and available context details",
 	Run: func(cmd *cobra.Command, args []string) {
 		match := true
 		switch match {
-		case cmd.CalledAs() == "current":
+		case cmd.CalledAs() == "current-context":
 			out.Marshal(GetContext(), outFlags.Format)
-		case list:
+		case len(args) < 1:
 			out.Marshal(GetContextList(), outFlags.Format)
 		default:
 			out.Marshal(GetContext(args...), outFlags.Format)
@@ -25,5 +25,5 @@ var cmdShowContext = &cobra.Command{
 }
 
 func init() {
-	cmdShowContext.Flags().BoolVarP(&list, "list", "l", false, "List available contexts.")
+	//cmdShowContext.Flags().BoolVarP(&list, "list", "l", false, "List available contexts.")
 }

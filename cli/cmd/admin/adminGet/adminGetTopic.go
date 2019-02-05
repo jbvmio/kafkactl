@@ -18,6 +18,9 @@ var cmdAdminGetTopic = &cobra.Command{
 		switch match {
 		default:
 			topicConfigs = kafka.SearchTopicConfigs(topicFlags.Configs, args...)
+			if topicFlags.GetNonDefaults {
+				topicConfigs = kafka.GetNonDefaultConfigs(topicConfigs)
+			}
 		}
 		switch match {
 		case cmd.Flags().Changed("out"):
@@ -33,5 +36,6 @@ var cmdAdminGetTopic = &cobra.Command{
 }
 
 func init() {
-	cmdAdminGetTopic.Flags().StringSliceVar(&topicFlags.Configs, "filter", []string{}, "Filter by Configuration or Key Names.")
+	cmdAdminGetTopic.Flags().StringSliceVar(&topicFlags.Configs, "filter", []string{}, "Filter by Configuration / Key Names.")
+	cmdAdminGetTopic.Flags().BoolVar(&topicFlags.GetNonDefaults, "non-defaults", false, "Only show configs not using broker defaults.")
 }

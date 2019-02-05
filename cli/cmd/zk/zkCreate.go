@@ -13,9 +13,9 @@ var cmdZKcreate = &cobra.Command{
 		match := true
 		switch match {
 		case len([]byte(zkFlags.Value)) > 0:
-			zookeeper.ZKCreate(args[0], zkFlags.Force, []byte(zkFlags.Value)...)
+			zookeeper.ZKCreate(args[0], false, zkFlags.Force, []byte(zkFlags.Value)...)
 		default:
-			zookeeper.ZKCreate(args[0], zkFlags.Force)
+			zookeeper.ZKCreate(args[0], false, zkFlags.Force)
 		}
 	},
 }

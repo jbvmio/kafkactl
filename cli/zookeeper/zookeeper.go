@@ -123,6 +123,10 @@ func ZKls(path ...string) []ZKPathValue {
 	return ZKP
 }
 
+func ZKGetValue(path string) ([]byte, error) {
+	return zkClient.Get(path)
+}
+
 func ZKRecurseLS(depth uint8, path ...string) []ZKPath {
 	var zkPaths []ZKPath
 	var limit uint8
@@ -188,20 +192,20 @@ func ZKFilterAllVals(zkp []ZKPath) []ZKPath {
 	return zkPaths
 }
 
-func ZKCreate(path string, force bool, value ...byte) {
+func ZKCreate(path string, silent, force bool, value ...byte) {
 	match := true
 	switch match {
 	case path != "" && value == nil:
-		zkCreatePath(path, force)
+		zkCreatePath(path, silent, force)
 	case path != "" && value != nil:
-		zkCreateValue(path, force, value)
+		zkCreateValue(path, silent, force, value)
 	default:
 		//kafka.CloseClient()
 		out.Failf("Invalid Path or Value")
 	}
 }
 
-func zkCreatePath(path string, force bool) {
+func zkCreatePath(path string, silent, force bool) {
 	var pathString string
 	var errd error
 	check, err := zkClient.Exists(path)
@@ -222,10 +226,12 @@ func zkCreatePath(path string, force bool) {
 		//kafka.CloseClient()
 		out.Failf("Error Creating Path: %v. Try --force", errd)
 	}
-	out.Infof("Successfully Created: %v", pathString)
+	if !silent {
+		out.Infof("ZK Successfully Created: %v", pathString)
+	}
 }
 
-func zkCreateValue(path string, force bool, value []byte) {
+func zkCreateValue(path string, silent, force bool, value []byte) {
 	var pathString string
 	var errd error
 	var children bool
@@ -256,7 +262,9 @@ func zkCreateValue(path string, force bool, value []byte) {
 		//kafka.CloseClient()
 		out.Failf("Error Creating Path: %v", errd)
 	}
-	out.Infof("Successfully Created: %v", pathString)
+	if !silent {
+		out.Infof("ZK Successfully Created: %v", pathString)
+	}
 }
 
 func ZKDelete(path string, RMR bool) {

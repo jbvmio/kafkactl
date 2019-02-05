@@ -61,19 +61,23 @@ func PerformTopicPRE(topics ...string) PRETopicMeta {
 	if err != nil {
 		closeFatal("Error Marshaling Topic/Partition Data: %v\n", err)
 	}
-	zkCreatePRE(j)
+	sent := zkCreatePRE(j)
+	if sent {
+		out.Infof("Preferred Replica Election Successfully Sent.")
+	}
 	return preMeta
 	//zkCreatePRE("/admin/preferred_replica_election", j)
 }
 
-func zkCreatePRE(data []byte) {
+func zkCreatePRE(data []byte) bool {
 	handleC("%v", zookeeper.KafkaZK(targetContext, verbose))
 	check, err := zookeeper.ZKCheckExists(prePath)
 	handleC("Error: %v", err)
 	if check {
 		closeFatal("Preferred Replica Election Already in Progress.")
 	}
-	zookeeper.ZKCreate(prePath, false, data...)
+	zookeeper.ZKCreate(prePath, true, false, data...)
+	return true
 }
 
 func GetPREMeta(topics ...string) PRETopicMeta {

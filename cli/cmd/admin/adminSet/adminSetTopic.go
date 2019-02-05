@@ -16,6 +16,11 @@ var cmdAdminSetTopic = &cobra.Command{
 		var topicConfigs []kafka.TopicConfig
 		match := true
 		switch match {
+		case topicFlags.SetDefault:
+			topicConfigs = kafka.SetDefaultConfig(topicFlags.Config, args...)
+		case topicFlags.Config == "" || topicFlags.Value == "":
+			out.Warnf("ERROR: --config and --value flags required unless performing a reset.")
+			return
 		default:
 			topicConfigs = kafka.SetTopicConfig(topicFlags.Config, topicFlags.Value, args...)
 		}
@@ -35,6 +40,5 @@ var cmdAdminSetTopic = &cobra.Command{
 func init() {
 	cmdAdminSetTopic.Flags().StringVar(&topicFlags.Config, "config", "", "Configuration or Key Names to set.")
 	cmdAdminSetTopic.Flags().StringVar(&topicFlags.Value, "value", "", "Configuration Value to set.")
-	cmdAdminSetTopic.MarkFlagRequired("config")
-	cmdAdminSetTopic.MarkFlagRequired("value")
+	cmdAdminSetTopic.Flags().BoolVar(&topicFlags.SetDefault, "reset", false, "Set All Topic Configs Back to defaults.")
 }

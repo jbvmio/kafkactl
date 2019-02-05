@@ -10,11 +10,10 @@ import (
 )
 
 var cmdUseContext = &cobra.Command{
-	Use:     "context",
-	Aliases: []string{"ctx"},
-	Short:   "switch active context",
-	Long:    `command to switch active context`,
-	Args:    cobra.MinimumNArgs(1),
+	Use:   "use-context",
+	Short: "switch active context",
+	Long:  `command to switch active context`,
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		context := strings.Join(args, " ")
 		ctx := GetContext(context)
@@ -27,5 +26,4 @@ var cmdUseContext = &cobra.Command{
 }
 
 func init() {
-
 }
