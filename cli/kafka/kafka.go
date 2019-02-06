@@ -60,8 +60,7 @@ func LaunchClient(context *cx.Context, flags ClientFlags) {
 	if err != nil {
 		out.Failf("Error: %v", err)
 	}
-	match := true
-	switch match {
+	switch true {
 	case flags.Version != "":
 		context.ClientVersion = flags.Version
 	case context.ClientVersion == "":

@@ -11,8 +11,7 @@ var cmdAdminDeleteTopic = &cobra.Command{
 	Short: "Delete Kafka Topics",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		match := true
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			out.Warnf("Error: Cannot use --out when deleting topics.")
 			return

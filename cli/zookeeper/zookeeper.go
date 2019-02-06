@@ -96,9 +96,8 @@ func ZKls(path ...string) []ZKPathValue {
 		zkp := ZKPathValue{
 			Key: p,
 		}
-		match := true
 		sp, err := zkClient.Children(p)
-		switch match {
+		switch true {
 		case err != nil:
 			//kafka.CloseClient()
 			out.Failf("Error retrieving path: %v", p)
@@ -193,8 +192,7 @@ func ZKFilterAllVals(zkp []ZKPath) []ZKPath {
 }
 
 func ZKCreate(path string, silent, force bool, value ...byte) {
-	match := true
-	switch match {
+	switch true {
 	case path != "" && value == nil:
 		zkCreatePath(path, silent, force)
 	case path != "" && value != nil:
@@ -217,8 +215,7 @@ func zkCreatePath(path string, silent, force bool) {
 	var pathString string
 	var errd error
 	check, err := zkClient.Exists(path)
-	match := true
-	switch match {
+	switch true {
 	case err != nil:
 		//kafka.CloseClient()
 		out.Failf("Error Validating Path: %v", err)
@@ -245,8 +242,7 @@ func zkCreateValue(path string, silent, force bool, value []byte) {
 	var children bool
 	check, err := zkClient.Exists(path)
 	children, errd = zkClient.HasChildren(path)
-	match := true
-	switch match {
+	switch true {
 	case err != nil || (errd != nil && children):
 		//kafka.CloseClient()
 		fmt.Println(check, err)
@@ -278,8 +274,7 @@ func zkCreateValue(path string, silent, force bool, value []byte) {
 func ZKDelete(path string, RMR bool) {
 	var errd error
 	check, err := zkClient.Exists(path)
-	match := true
-	switch match {
+	switch true {
 	case path == "":
 		//kafka.CloseClient()
 		out.Failf("Empty Path Entered.")

@@ -51,8 +51,7 @@ func FindLag() []PartitionLag {
 				for topic, partitions := range m.TopicPartitions {
 					groupLag, err := client.OffSetAdmin().Group(gm.Group).Topic(topic).GetTotalLag(partitions)
 					handleW("WARN: %v", err)
-					match := true
-					switch match {
+					switch true {
 					case groupLag.TotalLag > 0:
 						wg.Add(1)
 						for p := range groupLag.PartitionLag {
@@ -82,15 +81,7 @@ func FindLag() []PartitionLag {
 		pl := <-plChan
 		partitionLag = append(partitionLag, pl)
 	}
-	sort.Slice(partitionLag, func(i, j int) bool {
-		if partitionLag[i].Group < partitionLag[j].Group {
-			return true
-		}
-		if partitionLag[i].Group > partitionLag[j].Group {
-			return false
-		}
-		return partitionLag[i].Partition < partitionLag[j].Partition
-	})
+	sortPartitionLag(partitionLag)
 	return partitionLag
 }
 
@@ -131,42 +122,28 @@ func GetGroupLag(grpMeta []kafkactl.GroupMeta) []PartitionLag {
 		pl := <-plChan
 		partitionLag = append(partitionLag, pl)
 	}
+	sortPartitionLag(partitionLag)
+	return partitionLag
+}
+
+func sortPartitionLag(partitionLag []PartitionLag) {
 	sort.Slice(partitionLag, func(i, j int) bool {
-		if partitionLag[i].Group < partitionLag[j].Group {
+		switch true {
+		case partitionLag[i].Group == partitionLag[j].Group:
+			switch true {
+			case partitionLag[i].Topic == partitionLag[j].Topic:
+				return partitionLag[i].Partition < partitionLag[j].Partition
+			default:
+				return partitionLag[i].Topic < partitionLag[j].Topic
+			}
+		case partitionLag[i].Group < partitionLag[j].Group:
 			return true
-		}
-		if partitionLag[i].Group > partitionLag[j].Group {
+
+		case partitionLag[i].Group > partitionLag[j].Group:
 			return false
 		}
 		return partitionLag[i].Partition < partitionLag[j].Partition
 	})
-	return partitionLag
-}
-
-func getGroupLag2(grpMeta []kafkactl.GroupMeta) []PartitionLag {
-	var partitionLag []PartitionLag
-	for _, gm := range grpMeta {
-		for _, m := range gm.MemberAssignments {
-			for topic, partitions := range m.TopicPartitions {
-				for _, p := range partitions {
-					offset, lag, err := client.OffSetAdmin().Group(gm.Group).Topic(topic).GetOffsetLag(p)
-					if err != nil {
-						lag = -7777
-					}
-					pl := PartitionLag{
-						Group:     gm.Group,
-						Topic:     topic,
-						Partition: p,
-						Member:    m.ClientID,
-						Offset:    offset,
-						Lag:       lag,
-					}
-					partitionLag = append(partitionLag, pl)
-				}
-			}
-		}
-	}
-	return partitionLag
 }
 
 /*

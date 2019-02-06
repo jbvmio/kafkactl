@@ -13,8 +13,7 @@ var cmdZKls = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var zkpv []zookeeper.ZKPathValue
 		var zkp []zookeeper.ZKPath
-		match := true
-		switch match {
+		switch true {
 		case zkFlags.Recurse:
 			zkp = zookeeper.ZKRecurseLS(zkFlags.Depth, args...)
 			if zkFlags.Values {
@@ -23,7 +22,7 @@ var cmdZKls = &cobra.Command{
 		default:
 			zkpv = zookeeper.ZKls(args...)
 		}
-		switch match {
+		switch true {
 		case outFlags.Format != "":
 			if zkFlags.Recurse {
 				out.IfErrf(out.Marshal(zkp, outFlags.Format))

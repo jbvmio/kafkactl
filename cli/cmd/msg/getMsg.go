@@ -14,8 +14,7 @@ var CmdGetMsg = &cobra.Command{
 		logsFlags.TailTouched = cmd.Flags().Changed("tail")
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		match := true
-		switch match {
+		switch true {
 		case logsFlags.Follow:
 			kafka.FollowTopic(logsFlags, outFlags, args...)
 			return

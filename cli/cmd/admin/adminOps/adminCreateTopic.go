@@ -11,8 +11,7 @@ var cmdAdminCreateTopic = &cobra.Command{
 	Short: "Create Kafka Topics",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		match := true
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			out.Warnf("Error: Cannot use --out when creating topics.")
 			return

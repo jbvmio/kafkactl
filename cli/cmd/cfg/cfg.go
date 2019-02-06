@@ -54,8 +54,7 @@ func GetContextList() map[string][]string {
 
 // GetContext returns the configuration for the given context, or the current context if none is specified.
 func GetContext(context ...string) *cx.Context {
-	match := true
-	switch match {
+	switch true {
 	case len(context) > 1:
 		out.Failf("Error: too many contexts specified, only 1 allowed")
 	case len(context) < 1:

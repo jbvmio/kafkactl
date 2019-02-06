@@ -15,8 +15,7 @@ var cmdAdminSetTopic = &cobra.Command{
 	ValidArgs: []string{"<topic name>"},
 	Run: func(cmd *cobra.Command, args []string) {
 		var topicConfigs []kafka.TopicConfig
-		match := true
-		switch match {
+		switch true {
 		case topicFlags.SetDefault:
 			topicConfigs = kafka.SetDefaultConfig(topicFlags.Config, args...)
 		case topicFlags.Config == "" || topicFlags.Value == "":
@@ -25,7 +24,7 @@ var cmdAdminSetTopic = &cobra.Command{
 		default:
 			topicConfigs = kafka.SetTopicConfig(topicFlags.Config, topicFlags.Value, args...)
 		}
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

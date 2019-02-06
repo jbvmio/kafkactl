@@ -16,8 +16,7 @@ var CmdGetGroup = &cobra.Command{
 	Short:   "Get Group Info",
 	Run: func(cmd *cobra.Command, args []string) {
 		var glm []kafkactl.GroupListMeta
-		match := true
-		switch match {
+		switch true {
 		case groupFlags.Lag:
 			lag.CmdGetLag.Run(cmd, args)
 			return
@@ -28,7 +27,7 @@ var CmdGetGroup = &cobra.Command{
 		default:
 			glm = kafka.SearchGroupListMeta(args...)
 		}
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

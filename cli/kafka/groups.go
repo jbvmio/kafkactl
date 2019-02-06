@@ -30,8 +30,7 @@ type GroupFlags struct {
 func SearchGroupListMeta(groups ...string) []kafkactl.GroupListMeta {
 	var groupListMeta []kafkactl.GroupListMeta
 	var err error
-	match := true
-	switch match {
+	switch true {
 	case len(groups) < 1:
 		groupListMeta, err = client.GetGroupListMeta()
 		if err != nil {
@@ -78,8 +77,7 @@ func SearchGroupMeta(group ...string) []kafkactl.GroupMeta {
 	if err != nil {
 		closeFatal("Error getting group metadata: %s\n", err)
 	}
-	match := true
-	switch match {
+	switch true {
 	case len(group) < 1:
 		return grpMeta
 	case len(group) > 0:
@@ -115,8 +113,7 @@ func GroupMetaByTopics(topics ...string) []kafkactl.GroupMeta {
 	matchMap := make(map[string]bool)
 	topicsAvail, err := client.ListTopics()
 	handleC("Metadata Error: %v", err)
-	match := true
-	switch match {
+	switch true {
 	case exact:
 		for _, topic := range topics {
 			for _, t := range topicsAvail {
@@ -141,7 +138,7 @@ func GroupMetaByTopics(topics ...string) []kafkactl.GroupMeta {
 				matchCount++
 			}
 		}
-		switch match {
+		switch true {
 		case matchCount < 1:
 			continue
 		default:
@@ -180,8 +177,7 @@ func GroupMetaByMember(members ...string) []kafkactl.GroupMeta {
 	for _, gm := range grpMeta {
 		var gMeta kafkactl.GroupMeta
 		var MA []kafkactl.MemberMeta
-		match := true
-		switch match {
+		switch true {
 		case exact:
 			for _, ma := range gm.MemberAssignments {
 				for _, member := range members {

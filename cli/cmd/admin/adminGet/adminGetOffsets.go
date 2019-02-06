@@ -9,8 +9,7 @@ var cmdAdminGetOffsets = &cobra.Command{
 	Use:   "offsets",
 	Short: "Get Kafka Group Offsets",
 	Run: func(cmd *cobra.Command, args []string) {
-		match := true
-		switch match {
+		switch true {
 		case len(args) > 0:
 			out.Failf("No such resource: %v", args[0])
 		default:

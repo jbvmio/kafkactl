@@ -32,8 +32,7 @@ type TopicFlags struct {
 func SearchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 	var topicMeta []kafkactl.TopicMeta
 	var err error
-	match := true
-	switch match {
+	switch true {
 	case len(topics) < 1:
 		topicMeta, err = client.GetTopicMeta()
 		if err != nil {

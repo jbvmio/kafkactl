@@ -17,15 +17,14 @@ var CmdGetMember = &cobra.Command{
 	Args:    cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var groupMeta []kafkactl.GroupMeta
-		match := true
-		switch match {
+		switch true {
 		case memberFlags.Lag:
 			lag.CmdGetLag.Run(cmd, args)
 			return
 		default:
 			groupMeta = kafka.GroupMetaByMember(args...)
 		}
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

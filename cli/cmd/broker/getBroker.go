@@ -11,8 +11,7 @@ var CmdGetBroker = &cobra.Command{
 	Aliases: []string{"brokers"},
 	Short:   "Get Broker Details",
 	Run: func(cmd *cobra.Command, args []string) {
-		match := true
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

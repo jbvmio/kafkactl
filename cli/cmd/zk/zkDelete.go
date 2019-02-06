@@ -10,8 +10,7 @@ var cmdZKdelete = &cobra.Command{
 	Short: "Delete Zookeeper Paths and Values",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		match := true
-		switch match {
+		switch true {
 		case len(args) == 1:
 			zookeeper.ZKDelete(args[0], zkFlags.Recurse)
 		default:

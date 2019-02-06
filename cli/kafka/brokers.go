@@ -45,8 +45,7 @@ func GetBrokerInfo(b ...string) []*Broker {
 	brIDMap, err := client.BrokerIDMap()
 	if len(b) > 0 {
 		tmpMap := make(map[int32]string)
-		match := true
-		switch match {
+		switch true {
 		case exact:
 			for _, a := range b {
 				for id, addr := range brIDMap {

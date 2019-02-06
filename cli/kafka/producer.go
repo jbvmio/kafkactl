@@ -61,8 +61,7 @@ func ProduceFromFile(flags SendFlags, data io.Reader, topics ...string) {
 	b := bytes.TrimSpace(d)
 	var stringLines []string
 	var allData []sendData
-	match := true
-	switch match {
+	switch true {
 	case flags.FromStdin:
 		if flags.NoSplit {
 			stringLines = append(stringLines, string(b))
@@ -128,7 +127,7 @@ func ProduceFromFile(flags SendFlags, data io.Reader, topics ...string) {
 		var msgs []*kafkactl.Message
 		var parts []int32
 		var hash bool
-		switch match {
+		switch true {
 		case flags.AllPartitions:
 			topicSummary := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
 			if len(topicSummary) != 1 {

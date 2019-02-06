@@ -15,8 +15,7 @@ var CmdGetLag = &cobra.Command{
 	Short: "Get Lag Info",
 	Run: func(cmd *cobra.Command, args []string) {
 		var lag []kafka.PartitionLag
-		match := true
-		switch match {
+		switch true {
 		case strings.Contains(cmd.CalledAs(), "topic"):
 			lag = kafka.GetGroupLag(kafka.GroupMetaByTopics(args...))
 		case cmd.CalledAs() == "member":
@@ -26,7 +25,7 @@ var CmdGetLag = &cobra.Command{
 		default:
 			lag = kafka.FindLag()
 		}
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

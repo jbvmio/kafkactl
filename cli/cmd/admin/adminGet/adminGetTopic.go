@@ -14,15 +14,14 @@ var cmdAdminGetTopic = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var topicConfigs []kafka.TopicConfig
-		match := true
-		switch match {
+		switch true {
 		default:
 			topicConfigs = kafka.SearchTopicConfigs(topicFlags.Configs, args...)
 			if topicFlags.GetNonDefaults {
 				topicConfigs = kafka.GetNonDefaultConfigs(topicConfigs)
 			}
 		}
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

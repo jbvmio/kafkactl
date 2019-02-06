@@ -16,8 +16,7 @@ var CmdSend = &cobra.Command{
 	Aliases: []string{"produce"},
 	Short:   "Send/Produce Messages to a Kafka Topic",
 	Run: func(cmd *cobra.Command, args []string) {
-		match := true
-		switch match {
+		switch true {
 		case x.StdinAvailable():
 			sendFlags.FromStdin = true
 			kafka.ProduceFromFile(sendFlags, os.Stdin, args...)

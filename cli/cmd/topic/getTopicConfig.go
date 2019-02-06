@@ -13,12 +13,11 @@ var CmdGetTopicConfig = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var tom []kafkactl.TopicOffsetMap
-		match := true
-		switch match {
+		switch true {
 		default:
 			tom = kafka.SearchTOM(args...)
 		}
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

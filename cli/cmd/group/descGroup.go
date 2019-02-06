@@ -14,14 +14,13 @@ var CmdDescGroup = &cobra.Command{
 	Args:    cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var groupMeta []kafkactl.GroupMeta
-		match := true
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("groups"):
 			groupMeta = kafka.GroupMetaByTopics(args...)
 		default:
 			groupMeta = kafka.SearchGroupMeta(args...)
 		}
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

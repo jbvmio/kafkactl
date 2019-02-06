@@ -37,8 +37,7 @@ func FollowTopic(flags MSGFlags, outFlags out.OutFlags, topics ...string) {
 	for _, topic := range topics {
 		var parts []int32
 		topicSummary := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
-		match := true
-		switch match {
+		switch true {
 		case len(topicSummary) != 1:
 			closeFatal("Error isolating topic: %v\n", topic)
 		case flags.Partition != -1:

@@ -13,12 +13,11 @@ var cmdAdminSetPre = &cobra.Command{
 	Short: "Set Preferred Replica Elections",
 	Run: func(cmd *cobra.Command, args []string) {
 		var preMeta kafka.PRETopicMeta
-		match := true
-		switch match {
+		switch true {
 		default:
 			preMeta = kafka.PerformTopicPRE(args...)
 		}
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

@@ -13,12 +13,11 @@ var cmdAdminGetPre = &cobra.Command{
 	Short: "Get Preferred Replica Election Details",
 	Run: func(cmd *cobra.Command, args []string) {
 		var preMeta kafka.PRETopicMeta
-		match := true
-		switch match {
+		switch true {
 		default:
 			preMeta = kafka.GetPREMeta(args...)
 		}
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

@@ -31,8 +31,7 @@ type MSGFlags struct {
 func GetMessages(flags MSGFlags, topics ...string) []*kafkactl.Message {
 	exact = true
 	var messages []*kafkactl.Message
-	match := true
-	switch match {
+	switch true {
 	case flags.TailTouched:
 		return tailMSGs(flags, topics...)
 	default:
@@ -46,8 +45,7 @@ func getMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 	for _, topic := range topics {
 		var parts []int32
 		topicSummary := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
-		match := true
-		switch match {
+		switch true {
 		case len(topicSummary) != 1:
 			closeFatal("Error isolating topic: %v\n", topic)
 		case flags.Partition != -1:
@@ -58,7 +56,7 @@ func getMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 			parts = validateParts(flags.Partitions)
 		}
 		pMap := make(map[int32]int64, len(parts))
-		switch match {
+		switch true {
 		case flags.Offset == -1:
 			for _, p := range parts {
 				off, err := client.GetOffsetNewest(topic, p)
@@ -92,8 +90,7 @@ func tailMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 	for _, topic := range topics {
 		var parts []int32
 		topicSummary := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
-		match := true
-		switch match {
+		switch true {
 		case len(topicSummary) != 1:
 			closeFatal("Error isolating topic: %v\n", topic)
 		case flags.Partition != -1:

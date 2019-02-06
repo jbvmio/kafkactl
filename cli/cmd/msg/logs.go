@@ -21,15 +21,14 @@ var CmdLogs = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		var msgs []*kafkactl.Message
-		match := true
-		switch match {
+		switch true {
 		case logsFlags.Follow:
 			kafka.FollowTopic(logsFlags, outFlags, args...)
 			return
 		default:
 			msgs = kafka.GetMessages(logsFlags, args...)
 		}
-		switch match {
+		switch true {
 		case cmd.Flags().Changed("out"):
 			out.IfErrf(out.Marshal(msgs, outFlags.Format))
 		default:

@@ -62,8 +62,7 @@ type configChange struct {
 
 func GetTopicConfigs(configs []string, topics ...string) []TopicConfig {
 	var topicConfig []TopicConfig
-	match := true
-	switch match {
+	switch true {
 	case exact || len(configs) < 1:
 		for _, t := range topics {
 			c, err := client.GetTopicConfig(t, configs...)

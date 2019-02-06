@@ -52,8 +52,7 @@ var rootCmd = &cobra.Command{
 		kafka.CloseClient()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		match := true
-		switch match {
+		switch true {
 		case outFlags.Format != "":
 			out.IfErrf(out.Marshal(kafka.MetaData(), outFlags.Format))
 		default:

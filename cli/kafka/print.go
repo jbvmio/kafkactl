@@ -74,8 +74,7 @@ func PrintOut(i interface{}) {
 }
 
 func PrintMSGs(msgs []*kafkactl.Message, outFlags out.OutFlags) {
-	match := true
-	switch match {
+	switch true {
 	case outFlags.Header:
 		for _, msg := range msgs {
 			out.Infof("%s", msg.Value)
@@ -91,8 +90,7 @@ func PrintMSGs(msgs []*kafkactl.Message, outFlags out.OutFlags) {
 
 // PrintMSG returns messages displayed by the desired format while following a topic.
 func PrintMSG(msg *kafkactl.Message, outFlags out.OutFlags) {
-	match := true
-	switch match {
+	switch true {
 	case outFlags.Format != "":
 		out.Marshal(msg, outFlags.Format)
 	case outFlags.Header:

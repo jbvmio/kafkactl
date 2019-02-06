@@ -12,8 +12,7 @@ var cmdShowContext = &cobra.Command{
 	Aliases: []string{"current-context", "get-contexts"},
 	Short:   "Display current and available context details",
 	Run: func(cmd *cobra.Command, args []string) {
-		match := true
-		switch match {
+		switch true {
 		case cmd.CalledAs() == "current-context":
 			out.Marshal(GetContext(), outFlags.Format)
 		case len(args) < 1:
