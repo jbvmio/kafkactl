@@ -1,9 +1,12 @@
 package adminops
 
 import (
+	"github.com/jbvmio/kafkactl/cli/kafka"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
+
+var createFlags kafka.OpsCreateFlags
 
 var CmdAdminCreate = &cobra.Command{
 	Use:   "create",
@@ -20,6 +23,6 @@ var CmdAdminCreate = &cobra.Command{
 }
 
 func init() {
-	//CmdAdminCreate.AddCommand(cmdAdminGetTopic)
+	CmdAdminCreate.AddCommand(cmdAdminCreateTopic)
 	//CmdAdminCreate.AddCommand(cmdAdminGetPre)
 }

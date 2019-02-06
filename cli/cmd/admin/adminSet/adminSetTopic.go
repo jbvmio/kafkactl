@@ -9,9 +9,10 @@ import (
 var topicFlags kafka.TopicConfigFlags
 
 var cmdAdminSetTopic = &cobra.Command{
-	Use:   "topic",
-	Short: "Set Topic Configuration",
-	Args:  cobra.MinimumNArgs(1),
+	Use:       "topic",
+	Short:     "Set Topic Configuration",
+	Args:      cobra.MinimumNArgs(1),
+	ValidArgs: []string{"<topic name>"},
 	Run: func(cmd *cobra.Command, args []string) {
 		var topicConfigs []kafka.TopicConfig
 		match := true
@@ -19,7 +20,7 @@ var cmdAdminSetTopic = &cobra.Command{
 		case topicFlags.SetDefault:
 			topicConfigs = kafka.SetDefaultConfig(topicFlags.Config, args...)
 		case topicFlags.Config == "" || topicFlags.Value == "":
-			out.Warnf("ERROR: --config and --value flags required unless performing a reset.")
+			out.Warnf("Error: --config and --value flags required unless performing a reset.")
 			return
 		default:
 			topicConfigs = kafka.SetTopicConfig(topicFlags.Config, topicFlags.Value, args...)

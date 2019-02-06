@@ -20,6 +20,6 @@ var CmdAdminDelete = &cobra.Command{
 }
 
 func init() {
-	//CmdAdminDelete.AddCommand(cmdAdminGetTopic)
+	CmdAdminDelete.AddCommand(cmdAdminDeleteTopic)
 	//CmdAdminDelete.AddCommand(cmdAdminGetPre)
 }
