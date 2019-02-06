@@ -30,9 +30,9 @@ func PrintOut(i interface{}) {
 	var tbl table.Table
 	switch i := i.(type) {
 	case []*Broker:
-		tbl = table.New("BROKER", "ID", "GRPs", "LDR.REPLICAS", "PEER.REPLICAS", "TOTAL.REPLICAS", "NEED.PRE.COUNT")
+		tbl = table.New("BROKER", "ID", "GRPs", "LDR.REPLICAS", "PEER.REPLICAS", "TOTAL.REPLICAS", "MIGRATING.REPLICAS", "OVERLOAD")
 		for _, v := range i {
-			tbl.AddRow(v.Address, v.ID, v.GroupsCoordinating, v.LeaderReplicas, v.PeerReplicas, v.TotalReplicas, v.NeedsPRE)
+			tbl.AddRow(v.Address, v.ID, v.GroupsCoordinating, v.LeaderReplicas, v.PeerReplicas, v.TotalReplicas, v.MigratingReplicas, v.Overload)
 		}
 	case []kafkactl.TopicSummary:
 		tbl = table.New("TOPIC", "PART", "RFactor", "ISRs", "OFFLINE")

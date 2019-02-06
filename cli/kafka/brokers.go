@@ -26,14 +26,17 @@ type Broker struct {
 	LeaderReplicas     int64
 	PeerReplicas       int64
 	TotalReplicas      int64
-	NeedsPRE           int64
+	MigratingReplicas  int64
+	Overload           int64
 }
 
 func GetBrokerInfo(b ...string) []*Broker {
 	var brokers []*Broker
 	gl, err := client.GetGroupListMeta()
 	if err != nil {
-		closeFatal("Error getting group metadata: %s\n", err)
+		if len(gl) > 0 {
+			closeFatal("Error getting group metadata: %s\n", err)
+		}
 	}
 	tMeta, err := client.GetTopicMeta()
 	if err != nil {
@@ -85,9 +88,12 @@ func GetBrokerInfo(b ...string) []*Broker {
 					brMap[tm.Leader].PeerReplicas++
 				}
 			}
+			if len(tm.Replicas) > len(tm.ISRs) {
+				brMap[tm.Leader].MigratingReplicas++
+			}
 			if len(tm.Replicas) > 0 {
 				if tm.Leader != tm.Replicas[0] {
-					brMap[tm.Leader].NeedsPRE++
+					brMap[tm.Leader].Overload++
 				}
 			}
 		}

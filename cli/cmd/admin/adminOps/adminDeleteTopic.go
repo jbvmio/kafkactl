@@ -13,14 +13,11 @@ var cmdAdminDeleteTopic = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		match := true
 		switch match {
-		case len(args) > 1:
-			out.Warnf("Error: Too many arguments received: %v", args)
-			return
 		case cmd.Flags().Changed("out"):
 			out.Warnf("Error: Cannot use --out when deleting topics.")
 			return
 		default:
-			kafka.DeleteTopic(args[0])
+			kafka.DeleteTopics(args...)
 		}
 	},
 }

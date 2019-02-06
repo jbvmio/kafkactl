@@ -13,14 +13,11 @@ var cmdAdminCreateTopic = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		match := true
 		switch match {
-		case len(args) > 1:
-			out.Warnf("Error: Too many arguments received: %v", args)
-			return
 		case cmd.Flags().Changed("out"):
 			out.Warnf("Error: Cannot use --out when creating topics.")
 			return
 		default:
-			kafka.CreateTopic(args[0], createFlags.PartitionCount, createFlags.ReplicationFactor)
+			kafka.CreateTopics(createFlags.PartitionCount, createFlags.ReplicationFactor, args...)
 		}
 	},
 }

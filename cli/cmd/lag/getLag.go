@@ -40,5 +40,4 @@ var CmdGetLag = &cobra.Command{
 }
 
 func init() {
-	//CmdGetLag.Flags().BoolVar(&lagFlags.Topic, "describe", false, "Shortcut/Pass to Describe Command.")
 }

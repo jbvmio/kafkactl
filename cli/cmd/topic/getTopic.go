@@ -25,7 +25,7 @@ var CmdGetTopic = &cobra.Command{
 		case topicFlags.Group:
 			group.CmdDescGroup.Run(cmd, args)
 			return
-		case topicFlags.Describe:
+		case topicFlags.Describe || len(topicFlags.Leaders) > 0:
 			CmdDescTopic.Run(cmd, args)
 			return
 		default:
@@ -48,5 +48,5 @@ func init() {
 	CmdGetTopic.Flags().BoolVar(&topicFlags.Describe, "describe", false, "Shortcut/Pass to Describe Command.")
 	CmdGetTopic.Flags().BoolVar(&topicFlags.Group, "groups", false, "Show Active Groups Consuming from Specified Topics.")
 	CmdGetTopic.Flags().BoolVar(&topicFlags.Lag, "lag", false, "Show Any Lag from Specified Topics.")
-	CmdGetTopic.Flags().StringSliceVar(&topicFlags.Leaders, "leader", []string{""}, "Filter Topic Partitions by Current Leaders")
+	CmdGetTopic.Flags().Int32SliceVar(&topicFlags.Leaders, "leader", []int32{}, "Filter Topic Partitions by Current Leaders")
 }

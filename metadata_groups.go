@@ -226,10 +226,12 @@ func (kc *KClient) QuickGroupMeta() ([]QuickGroupMeta, error) {
 		if err != nil {
 			fmt.Println("ERROR on desc:", err)
 		}
-		for _, g := range desc.Groups {
-			code := int16(g.Err)
-			if code == 0 {
-				groups = append(groups, g)
+		if desc != nil {
+			for _, g := range desc.Groups {
+				code := int16(g.Err)
+				if code == 0 {
+					groups = append(groups, g)
+				}
 			}
 		}
 	}

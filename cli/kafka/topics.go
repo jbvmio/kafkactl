@@ -26,7 +26,7 @@ type TopicFlags struct {
 	Describe bool
 	Group    bool
 	Lag      bool
-	Leaders  []string
+	Leaders  []int32
 }
 
 func SearchTopicMeta(topics ...string) []kafkactl.TopicMeta {
@@ -39,10 +39,16 @@ func SearchTopicMeta(topics ...string) []kafkactl.TopicMeta {
 		if err != nil {
 			closeFatal("Error getting topic metadata: %s\n", err)
 		}
+		if len(topicMeta) < 1 {
+			closeFatal("No Topics Seem to Exist.")
+		}
 	default:
 		tMeta, err := client.GetTopicMeta()
 		if err != nil {
 			closeFatal("Error getting topic metadata: %s\n", err)
+		}
+		if len(tMeta) < 1 {
+			closeFatal("No Topics Seem to Exist.")
 		}
 		subMatch := true
 		switch subMatch {
@@ -91,8 +97,8 @@ func GetTopicOffsetMap(tm []kafkactl.TopicMeta) []kafkactl.TopicOffsetMap {
 	return client.MakeTopicOffsetMap(tm)
 }
 
-/*
-func filterTOMByLeader(tom []kafkactl.TopicOffsetMap, leaders []int32) []kafkactl.TopicOffsetMap {
+func FilterTOMByLeader(tom []kafkactl.TopicOffsetMap, leaders []int32) []kafkactl.TopicOffsetMap {
+	validateLeaders(leaders)
 	var TOM []kafkactl.TopicOffsetMap
 	done := make(map[string]bool)
 	for _, t := range tom {
@@ -118,6 +124,18 @@ func filterTOMByLeader(tom []kafkactl.TopicOffsetMap, leaders []int32) []kafkact
 	return TOM
 }
 
+func validateLeaders(leaders []int32) {
+	pMap := make(map[int32]bool, len(leaders))
+	for _, p := range leaders {
+		if pMap[p] {
+			closeFatal("Error: invalid leader/brokerID entered or duplicate.")
+		} else {
+			pMap[p] = true
+		}
+	}
+}
+
+/*
 func chanGetTopicOffsetMap(t []kafkactl.TopicMeta) []kafkactl.TopicOffsetMap {
 	var TOM []kafkactl.TopicOffsetMap
 	var count int
@@ -155,15 +173,6 @@ func refreshMetadata(topics ...string) {
 }
 
 
-func validateLeaders(leaders []int32) {
-	pMap := make(map[int32]bool, len(leaders))
-	for _, p := range leaders {
-		if pMap[p] {
-			closeFatal("Error: invalid leader/brokerID entered or duplicate.")
-		} else {
-			pMap[p] = true
-		}
-	}
-}
+
 
 */

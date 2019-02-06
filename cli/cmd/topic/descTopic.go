@@ -2,6 +2,7 @@ package topic
 
 import (
 	"github.com/jbvmio/kafkactl"
+	"github.com/jbvmio/kafkactl/cli/cmd/lag"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
@@ -16,6 +17,11 @@ var CmdDescTopic = &cobra.Command{
 		var tom []kafkactl.TopicOffsetMap
 		match := true
 		switch match {
+		case topicFlags.Lag:
+			lag.CmdGetLag.Run(cmd, args)
+			return
+		case len(topicFlags.Leaders) > 0:
+			tom = kafka.FilterTOMByLeader(kafka.SearchTOM(args...), topicFlags.Leaders)
 		default:
 			tom = kafka.SearchTOM(args...)
 		}
@@ -33,4 +39,6 @@ var CmdDescTopic = &cobra.Command{
 }
 
 func init() {
+	CmdDescTopic.Flags().BoolVar(&topicFlags.Lag, "lag", false, "Show Any Lag from Specified Topics.")
+	CmdDescTopic.Flags().Int32SliceVar(&topicFlags.Leaders, "leader", []int32{}, "Filter Topic Partitions by Current Leaders")
 }

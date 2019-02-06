@@ -23,16 +23,26 @@ type OpsCreateFlags struct {
 	ReplicationFactor int16
 }
 
-func CreateTopic(name string, partitions int32, rFactor int16) {
-	errd = client.AddTopic(name, partitions, rFactor)
-	handleC("Error creating topic: %v", errd)
-	out.Infof("\nSuccessfully created topic %v\n", name)
+func CreateTopics(partitions int32, rFactor int16, topics ...string) {
+	for _, topic := range topics {
+		errd = client.AddTopic(topic, partitions, rFactor)
+		if errd != nil {
+			out.Warnf("Error creating topic: %v", errd)
+		} else {
+			out.Infof("Successfully created topic %v", topic)
+		}
+	}
 }
 
-func DeleteTopic(topic string) {
-	errd = client.RemoveTopic(topic)
-	handleC("Error deleting topic: %v", errd)
-	out.Infof("\nSuccessfully deleted topic %v\n", topic)
+func DeleteTopics(topics ...string) {
+	for _, topic := range topics {
+		errd = client.RemoveTopic(topic)
+		if errd != nil {
+			out.Warnf("Error deleting topic: %v", errd)
+		} else {
+			out.Infof("Successfully deleted topic %v", topic)
+		}
+	}
 }
 
 func DeleteGroup(group string) {
