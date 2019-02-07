@@ -24,7 +24,7 @@ const (
 	yTime   = 1546300800
 	maint   = `19`
 	version = `1.0.`
-	contact = `jbonds@jbvm.io [contact]`
+	contact = `jbvm.io`
 )
 
 var (
