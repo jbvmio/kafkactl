@@ -29,7 +29,7 @@ var (
 	// verbose enables additional details to print.
 	verbose bool
 	// targetContext stores the targeted context.
-	targetContext string
+	targetContext *cx.Context
 )
 
 type ClientFlags struct {
@@ -52,7 +52,7 @@ var (
 func LaunchClient(context *cx.Context, flags ClientFlags) {
 	exact = flags.Exact
 	verbose = flags.Verbose
-	targetContext = flags.Context
+	targetContext = context
 	if verbose {
 		kafkactl.Logger("")
 	}

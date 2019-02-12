@@ -38,6 +38,7 @@ var (
 	cfgFile string
 )
 
+var cxFlags cfg.CXFlags
 var kafkaFlags kafka.ClientFlags
 var outFlags out.OutFlags
 
@@ -46,7 +47,12 @@ var rootCmd = &cobra.Command{
 	Use:   "kafkactl",
 	Short: "kafkactl: Kafka Management Tool",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		kafka.LaunchClient(cfg.GetContext(kafkaFlags.Context), kafkaFlags)
+		switch {
+		case cmd.Flags().Changed("broker"):
+			kafka.LaunchClient(cfg.AdhocContext(cxFlags), kafkaFlags)
+		default:
+			kafka.LaunchClient(cfg.GetContext(kafkaFlags.Context), kafkaFlags)
+		}
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		kafka.CloseClient()
@@ -77,6 +83,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&kafkaFlags.Version, "version", "", "Specify a client version.")
 	rootCmd.PersistentFlags().BoolVarP(&kafkaFlags.Verbose, "verbose", "v", false, "Display additional info or errors.")
 	rootCmd.PersistentFlags().BoolVarP(&kafkaFlags.Exact, "exact", "x", false, "Find exact matches.")
+	rootCmd.PersistentFlags().StringVarP(&cxFlags.Broker, "broker", "B", "", "Specify a single broker target host:port - Overrides config.")
+	rootCmd.PersistentFlags().StringVarP(&cxFlags.Zookeeper, "zookeeper", "Z", "", "Specify a single zookeeper target host:port - Overrides config.")
 
 	rootCmd.AddCommand(cfg.CmdConfig)
 	rootCmd.AddCommand(get.CmdGet)

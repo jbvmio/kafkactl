@@ -31,6 +31,13 @@ type Config struct {
 	ConfigVersion  int                   `yaml:"config-version"`
 }
 
+// CXFlags is used for ad-hoc Contexts.
+type CXFlags struct {
+	Broker    string
+	Zookeeper string
+	Burrow    string
+}
+
 func GetConfig() *Config {
 	var config Config
 	viper.Unmarshal(&config)
@@ -75,9 +82,18 @@ func getCurrentCtx() *cx.Context {
 	config := GetConfig()
 	ctx := config.Contexts[current]
 	if ctx.Name == "" {
-		output.Failf("Error: no context named %v", current)
+		output.Failf("Error: invalid config or context")
 	}
 	return &ctx
+}
+
+// AdhocContext return an adhoc Context built from Flag parameters.
+func AdhocContext(cxFlags CXFlags) *cx.Context {
+	return &cx.Context{
+		Brokers:   []string{cxFlags.Broker},
+		Burrow:    []string{cxFlags.Burrow},
+		Zookeeper: []string{cxFlags.Zookeeper},
+	}
 }
 
 // GenConfig generates and outputs sample config.

@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/jbvmio/kafkactl/cli/cmd/cfg"
 	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/jbvmio/zk"
@@ -71,8 +70,8 @@ func LaunchZKClient(context *cx.Context, flags ZKFlags) {
 	}
 }
 
-func KafkaZK(context string, verbose bool) error {
-	ctx := cfg.GetContext(context)
+func KafkaZK(ctx *cx.Context, verbose bool) error {
+	//ctx := cfg.GetContext(context)
 	if len(ctx.Zookeeper) < 1 {
 		out.Failf("No Zookeeper Servers Defined.\n")
 	}
