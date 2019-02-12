@@ -57,9 +57,11 @@ var (
 )
 
 func LaunchZKClient(context *cx.Context, flags ZKFlags) {
-	if len(context.Zookeeper) < 1 {
-		//kafka.CloseClient()
-		out.Failf("No Zookeeper Servers Defined.\n")
+	switch {
+	case len(context.Zookeeper) < 1:
+		out.Failf("No Zookeeper Servers Defined.")
+	case context.Zookeeper[0] == "":
+		out.Failf("No Zookeeper Servers Defined.")
 	}
 	zkClient = zk.NewZooKeeper()
 	zkClient.EnableLogger(flags.Verbose)
@@ -70,17 +72,19 @@ func LaunchZKClient(context *cx.Context, flags ZKFlags) {
 	}
 }
 
-func KafkaZK(ctx *cx.Context, verbose bool) error {
-	//ctx := cfg.GetContext(context)
-	if len(ctx.Zookeeper) < 1 {
-		out.Failf("No Zookeeper Servers Defined.\n")
+func KafkaZK(context *cx.Context, verbose bool) error {
+	switch {
+	case len(context.Zookeeper) < 1:
+		out.Failf("No Zookeeper Servers Defined.")
+	case context.Zookeeper[0] == "":
+		out.Failf("No Zookeeper Servers Defined.")
 	}
 	zkClient = zk.NewZooKeeper()
 	zkClient.EnableLogger(verbose)
-	zkClient.SetServers(ctx.Zookeeper)
+	zkClient.SetServers(context.Zookeeper)
 	ok, err := zkClient.Exists("/admin")
 	if !ok || err != nil {
-		return fmt.Errorf("Error Validating Zookeeper Configuration.", ctx.Zookeeper)
+		return fmt.Errorf("Error Validating Zookeeper Configuration.", context.Zookeeper)
 	}
 	return nil
 }

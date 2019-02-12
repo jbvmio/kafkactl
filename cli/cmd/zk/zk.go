@@ -16,7 +16,7 @@ var CmdZK = &cobra.Command{
 	Short: "Zookeeper Actions",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		switch {
-		case cmd.Flags().Changed("zookeeper"):
+		case cmd.Flags().Changed("zookeeper") || cmd.Flags().Changed("broker"):
 			zookeeper.LaunchZKClient(cfg.AdhocContext(cxFlags), zkFlags)
 		default:
 			zookeeper.LaunchZKClient(cfg.GetContext(zkFlags.Context), zkFlags)
