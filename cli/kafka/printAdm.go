@@ -35,6 +35,22 @@ func PrintAdm(i interface{}) {
 		for _, v := range i.Partitions {
 			tbl.AddRow(v.Topic, v.Partition, v.Replicas[0], v.Leader)
 		}
+	case RAPartList:
+		tbl = table.New("TOPIC", "PARTITION", "BROKERS")
+		for _, v := range i.Partitions {
+			tbl.AddRow(v.Topic, v.Partition, v.Replicas)
+		}
+	case ReplicaDetails:
+		tbl = table.New("TOPIC", "PART", "LEADER", "BROKERS", "INSYNC", "PRE")
+		for _, v := range i.TopicMetadata {
+			var pre string
+			if len(v.Replicas) > 0 {
+				if v.Leader != v.Replicas[0] {
+					pre = "x"
+				}
+			}
+			tbl.AddRow(v.Topic, v.Partition, v.Leader, v.Replicas, v.ISRs, pre)
+		}
 	case PRESummary:
 		tbl = table.New("TOPICS.NEED.PRE", "PARTITIONS.NEED.PRE")
 		var topicCount uint16

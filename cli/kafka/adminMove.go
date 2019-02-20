@@ -14,24 +14,27 @@
 
 package kafka
 
-/*
 import (
 	"bytes"
-	"regexp"
+	"io"
+	"io/ioutil"
 	"strings"
 
 	"github.com/jbvmio/kafkactl/cli/x"
 	"github.com/spf13/cast"
 )
 
-
 type topicStdinData struct {
 	topic     string
 	partition int32
 }
 
-// Parses Stdin passed from kafkactl topic metadata
-func parseTopicStdin(b []byte) []topicStdinData {
+// ParseTopicStdin parses Stdin passed from kafkactl topic metadata
+func ParseTopicStdin(r io.Reader) []topicStdinData {
+	b, err := ioutil.ReadAll(r)
+	if err != nil {
+		closeFatal("Failed to read from stdin: %v\n", err)
+	}
 	bits := bytes.TrimSpace(b)
 	lines := string(bits)
 
@@ -56,50 +59,27 @@ func parseTopicStdin(b []byte) []topicStdinData {
 	return topicData
 }
 
-func validateParts(partitions []string) []int32 {
-	var tParts []int32
-	for _, p := range partitions {
-		if match, err := regexp.MatchString(`^[0-9]`, p); !match || err != nil {
-			if err != nil {
-				closeFatal("Partition Error: %v\n", err)
-			}
-			closeFatal("Error: invalid partition entered or duplicate.")
+func MovePartitionsStdin(moveData []topicStdinData, brokers []int32) RAPartList {
+	var raparts []RAPartition
+	for _, tm := range moveData {
+		rap := RAPartition{
+			Topic:     tm.topic,
+			Partition: tm.partition,
+			Replicas:  brokers,
 		}
-		tParts = append(tParts, cast.ToInt32(p))
+		raparts = append(raparts, rap)
 	}
-	pMap := make(map[int32]bool, len(tParts))
-	for _, p := range tParts {
-		if pMap[p] {
-			closeFatal("Error: invalid partition entered or duplicate.")
-		} else {
-			pMap[p] = true
+	rapList := RAPartList{
+		Version:    1,
+		Partitions: raparts,
+	}
+	return rapList
+	/*
+		j, err := json.Marshal(rapList)
+		if err != nil {
+			closeFatal("Error on Marshal: %v\n", err)
 		}
-	}
-	return tParts
+			fmt.Printf("%s", j)
+			zkCreateReassignPartitions("/admin/reassign_partitions", j)
+	*/
 }
-
-func getTailValue(arg int64) int64 {
-	if arg < 0 {
-		return arg
-	}
-	return arg - (arg * 2)
-}
-
-
-func validateTailArgs(args []string) int64 {
-	var tailTarget int64
-	if len(args) > 1 {
-		closeFatal("Error: Too many tail arguments, try again.")
-	}
-	if len(args) < 1 {
-		tailTarget = -1
-	}
-	if len(args) == 1 {
-		tailTarget = cast.ToInt64(args[0])
-		if tailTarget > 0 {
-			tailTarget = tailTarget - (tailTarget * 2)
-		}
-	}
-	return tailTarget
-}
-*/

@@ -185,6 +185,13 @@ func SetOffsets(flags OpsOffsetFlags, topics ...string) {
 	}
 }
 
+func getTailValue(arg int64) int64 {
+	if arg < 0 {
+		return arg
+	}
+	return arg - (arg * 2)
+}
+
 func setTopicOffsets(topic, group string, offset int64, allPartitions bool, partitions ...int32) {
 	var details []OffsetDetail
 	exact = true

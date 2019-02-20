@@ -15,8 +15,11 @@
 package kafka
 
 import (
+	"regexp"
+
 	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+	"github.com/spf13/cast"
 )
 
 type MSGFlags struct {
@@ -141,6 +144,28 @@ func tailMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 		closeFatal("Error: No Messages Received.\n")
 	}
 	return messages
+}
+
+func validateParts(partitions []string) []int32 {
+	var tParts []int32
+	for _, p := range partitions {
+		if match, err := regexp.MatchString(`^[0-9]`, p); !match || err != nil {
+			if err != nil {
+				closeFatal("Partition Error: %v\n", err)
+			}
+			closeFatal("Error: invalid partition entered or duplicate.")
+		}
+		tParts = append(tParts, cast.ToInt32(p))
+	}
+	pMap := make(map[int32]bool, len(tParts))
+	for _, p := range tParts {
+		if pMap[p] {
+			closeFatal("Error: invalid partition entered or duplicate.")
+		} else {
+			pMap[p] = true
+		}
+	}
+	return tParts
 }
 
 /*

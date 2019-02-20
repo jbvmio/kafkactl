@@ -9,10 +9,9 @@ import (
 var topicFlags kafka.TopicConfigFlags
 
 var cmdAdminSetTopic = &cobra.Command{
-	Use:       "topic",
-	Short:     "Set Topic Configuration",
-	Args:      cobra.MinimumNArgs(1),
-	ValidArgs: []string{"<topic name>"},
+	Use:   "topic",
+	Short: "Set Topic Configuration",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var topicConfigs []kafka.TopicConfig
 		switch true {

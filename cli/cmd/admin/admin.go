@@ -28,6 +28,7 @@ func init() {
 	CmdAdmin.AddCommand(adminset.CmdAdminSet)
 	CmdAdmin.AddCommand(adminops.CmdAdminCreate)
 	CmdAdmin.AddCommand(adminops.CmdAdminDelete)
+	CmdAdmin.AddCommand(cmdAdminMove)
 
 	//CmdAdmin.AddCommand(topic.CmdGetTopic)
 	//CmdAdmin.AddCommand(group.CmdGetGroup)
