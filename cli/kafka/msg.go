@@ -167,25 +167,3 @@ func validateParts(partitions []string) []int32 {
 	}
 	return tParts
 }
-
-/*
-func GetMSG(topic string, partition int32, offset int64) *kafkactl.Message {
-	msg, err := client.ConsumeOffsetMsg(topic, partition, offset)
-	if err != nil {
-		closeFatal("Error retrieving message: %v\n", err)
-	}
-	return msg
-}
-
-func getMSGByTime(topic string, partition int32, datetime string) *kafkactl.Message {
-	msg, err := client.OffsetMsgByTime(topic, partition, datetime)
-	if err != nil {
-		if strings.Contains(err.Error(), "parsing time") && strings.Contains(err.Error(), "cannot parse") {
-			errMsg := fmt.Sprintf(`datetime parse error: format should be in the form "mm/dd/YYYY HH:MM:SS.000".`)
-			closeFatal("Error retrieving message:\n  %v", errMsg)
-		}
-		closeFatal("Error retrieving message: %v\n", err)
-	}
-	return msg
-}
-*/

@@ -20,10 +20,14 @@ var cmdAdminSetReplicas = &cobra.Command{
 		switch {
 		default:
 			rapList = kafka.SetTopicReplicas(replicaFlags, args...)
-			ok := kafka.ZkCreateRAP(rapList)
-			if !ok {
-				out.Warnf("Error Creating Reassign Partitions.")
-				return
+			if !replicaFlags.DryRun {
+				ok := kafka.ZkCreateRAP(rapList)
+				if !ok {
+					out.Warnf("Error Creating Reassign Partitions.")
+					return
+				}
+			} else {
+				out.Infof("Performing Dry Run ...")
 			}
 		}
 		switch {
@@ -44,7 +48,5 @@ func init() {
 	cmdAdminSetReplicas.Flags().Int32SliceVar(&replicaFlags.Brokers, "brokers", []int32{}, "Desired Brokers.")
 	cmdAdminSetReplicas.Flags().Int32SliceVar(&replicaFlags.Partitions, "partitions", []int32{}, "Target Partitions.")
 	cmdAdminSetReplicas.Flags().IntVar(&replicaFlags.ReplicationFactor, "replicas", 0, "Desired Replication Factor.")
-
-	//cmdAdminSetOffsets.AddCommand(cmdAdminGetTopic)
-	//cmdAdminSetOffsets.AddCommand(cmdAdminGetPre)
+	cmdAdminSetReplicas.Flags().BoolVar(&replicaFlags.DryRun, "dry-run", false, "Perform a Dry Run.")
 }

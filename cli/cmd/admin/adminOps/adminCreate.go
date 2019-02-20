@@ -23,5 +23,5 @@ var CmdAdminCreate = &cobra.Command{
 
 func init() {
 	CmdAdminCreate.AddCommand(cmdAdminCreateTopic)
-	//CmdAdminCreate.AddCommand(cmdAdminGetPre)
+	CmdAdminCreate.AddCommand(cmdAdminCreatePartitions)
 }

@@ -17,14 +17,16 @@ func AdminSetOffsets() string {
 
 func AdminGetReplicas() string {
 	return `  kafkactl admin get replicas <topicName>
+
+Perform Dry Runs for setting (set) replicas:
   kafkactl admin get replicas <topicName> --brokers "1,3,5" --partitions "0,2"
-  kafkactl admin get replicas <topicName> --rfactor 3 --allparts`
+  kafkactl admin get replicas <topicName> --replicas 3 --allparts`
 }
 
 func AdminSetReplicas() string {
-	return `  kafkactl admin set replicas <topicName>
-  kafkactl admin set replicas <topicName> --brokers "1,3,5" --partitions "0,2"
-  kafkactl admin set replicas <topicName> --rfactor 3 --allparts`
+	return `  kafkactl admin set replicas <topicName> --brokers "1,3,5" --partitions "0,2"
+  kafkactl admin set replicas <topicName> --replicas 3 --allparts
+  kafkactl admin set replicas <topicName> --replicas 5 --partitions 1 --dry-run`
 }
 
 func AdminMoveFunc() string {

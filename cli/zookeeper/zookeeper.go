@@ -102,12 +102,10 @@ func ZKls(path ...string) []ZKPathValue {
 		sp, err := zkClient.Children(p)
 		switch true {
 		case err != nil:
-			//kafka.CloseClient()
 			out.Failf("Error retrieving path: %v", p)
 		case len(sp) == 0:
 			val, err := zkClient.Get(p)
 			if err != nil {
-				//kafka.CloseClient()
 				out.Failf("Error retrieving value: %v", p)
 			}
 			value := fmt.Sprintf("%s", val)
@@ -201,7 +199,6 @@ func ZKCreate(path string, silent, force bool, value ...byte) {
 	case path != "" && value != nil:
 		zkCreateValue(path, silent, force, value)
 	default:
-		//kafka.CloseClient()
 		out.Failf("Invalid Path or Value")
 	}
 }
@@ -220,10 +217,8 @@ func zkCreatePath(path string, silent, force bool) {
 	check, err := zkClient.Exists(path)
 	switch true {
 	case err != nil:
-		//kafka.CloseClient()
 		out.Failf("Error Validating Path: %v", err)
 	case check:
-		//kafka.CloseClient()
 		out.Failf("Error: Path Exists.")
 	case force:
 		pathString, errd = zkClient.Create(path, nil, "", true)
@@ -231,7 +226,6 @@ func zkCreatePath(path string, silent, force bool) {
 		pathString, errd = zkClient.Create(path, nil, "", false)
 	}
 	if errd != nil {
-		//kafka.CloseClient()
 		out.Failf("Error Creating Path: %v. Try --force", errd)
 	}
 	if !silent {
@@ -247,18 +241,15 @@ func zkCreateValue(path string, silent, force bool, value []byte) {
 	children, errd = zkClient.HasChildren(path)
 	switch true {
 	case err != nil || (errd != nil && children):
-		//kafka.CloseClient()
 		fmt.Println(check, err)
 		fmt.Println(children, errd)
 		out.Failf("Error Validating Path:\n %v\n %v", err, errd)
 	case children:
-		//kafka.CloseClient()
 		out.Failf("Error: Child SubPaths Detected.")
 	case check && force:
 		_, errd = zkClient.Set(path, value)
 		pathString = path
 	case check:
-		//kafka.CloseClient()
 		out.Failf("Error: Path Exists. Use --force to override.")
 	case force:
 		pathString, errd = zkClient.Create(path, value, "", true)
@@ -266,7 +257,6 @@ func zkCreateValue(path string, silent, force bool, value []byte) {
 		pathString, errd = zkClient.Create(path, value, "", false)
 	}
 	if errd != nil {
-		//kafka.CloseClient()
 		out.Failf("Error Creating Path: %v", errd)
 	}
 	if !silent {
@@ -279,13 +269,10 @@ func ZKDelete(path string, RMR bool) {
 	check, err := zkClient.Exists(path)
 	switch true {
 	case path == "":
-		//kafka.CloseClient()
 		out.Failf("Empty Path Entered.")
 	case !check:
-		//kafka.CloseClient()
 		out.Failf("Path Does Not Exist.")
 	case err != nil:
-		//kafka.CloseClient()
 		out.Failf("Error Validating Path: %v", err)
 	case RMR:
 		errd = zkClient.DeleteRecursive(path)
@@ -293,48 +280,7 @@ func ZKDelete(path string, RMR bool) {
 		errd = zkClient.Delete(path)
 	}
 	if errd != nil {
-		//kafka.CloseClient()
 		out.Failf("Error Deleting Path: %v\n", errd)
 	}
 	out.Infof("Successfully Deleted: %v", path)
 }
-
-/*
-func zkCreatePRE(path string, value []byte) {
-	if path == "" {
-		log.Fatalf("Error: No Path Specified.\n")
-	}
-	check, err := zkClient.Exists(path)
-	if err != nil {
-		log.Fatalf("Error Validating Path: %v\n", err)
-	}
-	if check {
-		log.Fatalf("Error: Preferred Replica Election Already in Progress.\n")
-	}
-	_, err = zkClient.Create(path, value, "", false)
-	if err != nil {
-		log.Fatalf("Error Creating Preferred Replica Election: %v\n", err)
-	}
-	fmt.Println("\n\n", "Successfully Created Preferred Replica Election.\n")
-	return
-}
-
-func zkCreateReassignPartitions(path string, value []byte) {
-	if path == "" {
-		log.Fatalf("Error: No Path Specified.\n")
-	}
-	check, err := zkClient.Exists(path)
-	if err != nil {
-		log.Fatalf("Error Validating Path: %v\n", err)
-	}
-	if check {
-		log.Fatalf("Error: Reassign Partitions Already in Progress.\n")
-	}
-	_, err = zkClient.Create(path, value, "", false)
-	if err != nil {
-		log.Fatalf("Error Creating Reassign Partitions: %v\n", err)
-	}
-	fmt.Println("\n\n", "Successfully Started Reassign Partition Process.\n")
-	return
-}
-*/

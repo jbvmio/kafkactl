@@ -67,6 +67,11 @@ func PrintOut(i interface{}) {
 		for _, v := range i {
 			tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag)
 		}
+	case []TotalLag:
+		tbl = table.New("GROUP", "TOPIC", "TOTALLAG")
+		for _, v := range i {
+			tbl.AddRow(v.Group, v.Topic, v.TotalLag)
+		}
 	}
 	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
 	tbl.Print()

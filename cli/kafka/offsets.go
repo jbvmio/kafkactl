@@ -16,7 +16,6 @@ package kafka
 
 import (
 	"github.com/jbvmio/kafkactl"
-	"github.com/jbvmio/kafkactl/cli/x/out"
 )
 
 type GroupTopicOffsetMeta struct {
@@ -68,8 +67,7 @@ func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {
 				}
 			}
 		} else {
-			//closeFatal("Error retrieving details for specified group and/or topic: [%v > %v]\n", targetGroup, targetTopic)
-			out.Failf("Error retrieving details for specified group and/or topic: [%v > %v]\n") //, targetGroup, targetTopic)
+			closeFatal("Error retrieving details for specified group and/or topic: [%v > %v]", group, topic)
 		}
 		return GTMeta
 	}

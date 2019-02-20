@@ -15,10 +15,12 @@
 package kafka
 
 import (
+	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 )
 
 type OpsCreateFlags struct {
+	DryRun            bool
 	PartitionCount    int32
 	ReplicationFactor int16
 }
@@ -52,6 +54,28 @@ func DeleteGroups(groups ...string) {
 			out.Warnf("Error deleting group: %v", errd)
 		} else {
 			out.Infof("Successfully deleted group %v", group)
+		}
+	}
+}
+
+func ConfigurePartitionCount(flags OpsCreateFlags, topics ...string) {
+	if !ClientVersion().IsAtLeast(kafkactl.MinCreatePartsVer) {
+		closeFatal("Error: Required Version %v needed for create partitions. Using: %v", kafkactl.MinCreatePartsVer, ClientVersion())
+	}
+	for _, topic := range topics {
+		err := client.AddPartitions(topic, flags.PartitionCount, flags.DryRun)
+		switch {
+		case flags.DryRun:
+			switch {
+			case err != nil:
+				out.Warnf("Dry Run:\nERROR Adding Partitions: %v", err)
+			default:
+				out.Infof("Dry Run:\nIncrease Partitions Successful - Topic: %v Partitions: %v", topic, flags.PartitionCount)
+			}
+		case err != nil:
+			out.Warnf("ERROR Adding Partitions: %v", err)
+		default:
+			out.Infof("Increase Partitions Successful - Topic: %v Partitions: %v", topic, flags.PartitionCount)
 		}
 	}
 }

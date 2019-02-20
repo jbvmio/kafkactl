@@ -61,11 +61,12 @@ func GetTopicReplicas(topics ...string) ReplicaDetails {
 
 func SetTopicReplicas(flags OpsReplicaFlags, topics ...string) RAPartList {
 	var rapList RAPartList
+	exact = true
 	switch {
 	case len(flags.Brokers) < 1 && flags.ReplicationFactor == 0:
-		closeFatal("Error: Must Specify either --brokers or --rfactor.")
+		closeFatal("Error: Must Specify either --brokers or --replicas.")
 	case len(flags.Brokers) > 0 && flags.ReplicationFactor != 0:
-		closeFatal("Error: Cannot use both --brokers and --rfactor.")
+		closeFatal("Error: Cannot use both --brokers and --replicas.")
 	case len(flags.Brokers) > 0:
 		checkPRE()
 		switch {
@@ -149,13 +150,11 @@ func validateTopicParts(parts []int32, topics ...string) []kafkactl.TopicMeta {
 			pMap[p] = true
 		}
 	}
-	//exact = true
 	tMeta := SearchTopicMeta(topics...)
 	if len(tMeta) < 1 {
 		closeFatal("Error validating topics: %v\n", topics)
 	}
 	for _, topic := range topics {
-		//filterTMeta := make([]kafkactl.TopicMeta, 0, len(parts))
 		tMap := make(map[int32]bool, len(parts))
 		for _, p := range parts {
 			for _, tm := range tMeta {
@@ -190,23 +189,9 @@ func movePartitions(topicMeta []kafkactl.TopicMeta, brokers []int32) RAPartList 
 		Partitions: raparts,
 	}
 	return rapList
-	/*
-		j, err := json.Marshal(rapList)
-		if err != nil {
-			closeFatal("Error on Marshal: %v\n", err)
-		}
-		zkCreateReassignPartitions("/admin/reassign_partitions", j)
-	*/
 }
 
-func changeTopicRF(tMeta []kafkactl.TopicMeta, rFactor int) RAPartList { //[]byte {
-	/*
-		if rFactor < 1 {
-			closeFatal("Invalid Replication Factor Value: %v\n", rFactor)
-		}
-	*/
-	//exact = true
-	//tMeta := SearchTopicMeta(topic)
+func changeTopicRF(tMeta []kafkactl.TopicMeta, rFactor int) RAPartList {
 	if len(tMeta) < 1 {
 		closeFatal("No results given.")
 	}
@@ -233,13 +218,6 @@ func changeTopicRF(tMeta []kafkactl.TopicMeta, rFactor int) RAPartList { //[]byt
 		Partitions: raparts,
 	}
 	return rapList
-	/*
-		j, err := json.Marshal(rapList)
-		if err != nil {
-			closeFatal("Error on Marshal: %v\n", err)
-		}
-		return j
-	*/
 }
 
 func getRAParts(topic string, rFactor int, tMeta []kafkactl.TopicMeta, brokers kafkactl.ClusterMeta) []RAPartition {

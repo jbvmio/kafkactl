@@ -121,6 +121,7 @@ func (ca *clusterAdmin) CreatePartitions(topic string, count int32, assignment [
 	request := &sarama.CreatePartitionsRequest{
 		TopicPartitions: topicPartitions,
 		Timeout:         ca.conf.Admin.Timeout,
+		ValidateOnly:    validateOnly,
 	}
 
 	b, err := ca.Controller()

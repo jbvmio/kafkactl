@@ -221,9 +221,4 @@ func zkTopicChangeNotify(topic string) {
 	zookeeper.ZKCreate(topicEntityChangePath, true, false, j...)
 	zookeeper.ZKRemoveFlags()
 
-	/*
-		handleC("%v", zookeeper.KafkaZK(targetContext, verbose))
-		zookeeper.ZKSetSeq()
-		zookeeper.ZKCreate(path, false, false, []byte(value)...)
-	*/
 }

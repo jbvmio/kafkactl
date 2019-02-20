@@ -42,12 +42,10 @@ func ParseTopicStdin(r io.Reader) []topicStdinData {
 	a := strings.Split(lines, "\n")
 	headers := strings.Fields(strings.TrimSpace(a[0]))
 	if len(headers) < 3 {
-		closeFatal("Invalid Stdin Passed\n")
-		//log.Fatalf("Invalid Stdin Passed\n")
+		closeFatal("Invalid Stdin Passed")
 	}
 	if headers[0] != "TOPIC" || headers[1] != "PART" || headers[2] != "OFFSET" {
-		closeFatal("Best to pass stdin through kafkactl itself.\n")
-		//log.Fatalf("Best to pass stdin through kafkactl itself.\n")
+		closeFatal("Best to pass stdin through kafkactl itself.")
 	}
 	for _, b := range a[1:] {
 		td := topicStdinData{}
@@ -74,12 +72,4 @@ func MovePartitionsStdin(moveData []topicStdinData, brokers []int32) RAPartList 
 		Partitions: raparts,
 	}
 	return rapList
-	/*
-		j, err := json.Marshal(rapList)
-		if err != nil {
-			closeFatal("Error on Marshal: %v\n", err)
-		}
-			fmt.Printf("%s", j)
-			zkCreateReassignPartitions("/admin/reassign_partitions", j)
-	*/
 }

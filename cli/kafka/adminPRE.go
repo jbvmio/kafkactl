@@ -66,7 +66,6 @@ func PerformTopicPRE(topics ...string) PRETopicMeta {
 		out.Infof("Preferred Replica Election Successfully Sent.")
 	}
 	return preMeta
-	//zkCreatePRE("/admin/preferred_replica_election", j)
 }
 
 func zkCreatePRE(data []byte) bool {
@@ -124,7 +123,6 @@ func (pre PRETopicMeta) CreatePRESummary() PRESummary {
 }
 
 /*
-
 func preTopicsStdin(td []topicStdinData) {
 	var preParts []PREPartition
 	for _, t := range td {
@@ -147,60 +145,4 @@ func preTopicsStdin(td []topicStdinData) {
 	fmt.Printf("%s", j)
 	//zkCreatePRE("/admin/preferred_replica_election", j)
 }
-
-func performTopicPRE(topic string) {
-	exact = true
-	tom := GetTopicOffsetMap(SearchTopicMeta(topic))
-	if len(tom) < 1 {
-		closeFatal("Error: Cannot find topic: %v\n", topic)
-	}
-	var preParts []PREPartition
-	for _, to := range tom {
-		for k := range to.PartitionOffsets {
-			preP := PREPartition{
-				Topic:     to.Topic,
-				Partition: k,
-			}
-			preParts = append(preParts, preP)
-		}
-	}
-	preList := PREList{
-		Version:    1,
-		Partitions: preParts,
-	}
-	j, err := json.Marshal(preList)
-	if err != nil {
-		closeFatal("Error Marshaling Topic/Partition Data: %v\n", err)
-	}
-	fmt.Printf("%s", j)
-	//zkCreatePRE("/admin/preferred_replica_election", j)
-}
-
-func allTopicsPRE() {
-	tom := GetTopicOffsetMap(SearchTopicMeta())
-	if len(tom) < 1 {
-		closeFatal("Error: No Topics Available.\n")
-	}
-	var preParts []PREPartition
-	for _, to := range tom {
-		for k := range to.PartitionOffsets {
-			preP := PREPartition{
-				Topic:     to.Topic,
-				Partition: k,
-			}
-			preParts = append(preParts, preP)
-		}
-	}
-	preList := PREList{
-		Version:    1,
-		Partitions: preParts,
-	}
-	j, err := json.Marshal(preList)
-	if err != nil {
-		closeFatal("Error Marshaling Topic/Partition Data: %v\n", err)
-	}
-	fmt.Printf("%s", j)
-	//zkCreatePRE("/admin/preferred_replica_election", j)
-}
-
 */

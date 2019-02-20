@@ -88,6 +88,11 @@ func Client() *kafkactl.KClient {
 	return client
 }
 
+// ClientVersion returns the kafkactl client.
+func ClientVersion() sarama.KafkaVersion {
+	return clientVer
+}
+
 func CloseClient() {
 	if Alive {
 		if connected := client.IsConnected(); connected {
