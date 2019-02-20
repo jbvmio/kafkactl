@@ -21,8 +21,9 @@ import (
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
-	yaml "gopkg.in/yaml.v2"
 )
+
+const configVersion = 1
 
 // Config holds all values for a given context.
 type Config struct {
@@ -100,11 +101,8 @@ func AdhocContext(cxFlags CXFlags) *cx.Context {
 func GenSample() {
 	var config Config
 	config.Contexts = make(map[string]cx.Context)
-
 	for i := 1; i < 4; i++ {
-
 		thatOne := cast.ToString(i)
-
 		ctx := cx.Context{
 			Name: string("prod-atl0" + thatOne),
 		}
@@ -117,7 +115,6 @@ func GenSample() {
 		config.Contexts[ctx.Name] = ctx
 	}
 	config.CurrentContext = "prod-atl01"
-
-	y, _ := yaml.Marshal(config)
-	output.Infof("%s", y)
+	config.ConfigVersion = configVersion
+	out.Marshal(config, "yaml")
 }

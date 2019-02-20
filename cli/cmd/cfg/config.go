@@ -13,6 +13,11 @@ var CmdConfig = &cobra.Command{
 	Short: "Show and Edit kafkactl config",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 	},
+	Run: func(cmd *cobra.Command, args []string) {
+		if showSample {
+			GenSample()
+		}
+	},
 }
 
 func init() {
@@ -22,4 +27,5 @@ func init() {
 	CmdConfig.AddCommand(cmdView)
 	CmdConfig.AddCommand(cmdShowContext)
 	CmdConfig.AddCommand(cmdUseContext)
+	CmdConfig.AddCommand(cmdConvertConfig)
 }
