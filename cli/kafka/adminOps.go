@@ -45,14 +45,13 @@ func DeleteTopics(topics ...string) {
 	}
 }
 
-func DeleteGroup(group string) {
-	errd = client.RemoveGroup(group)
-	handleC("Error removing group: %v", errd)
-	out.Infof("\nSuccessfully removed group %v\n", group)
-}
-
-func DeleteToOffset(topic string, partition int32, offset int64) {
-	errd = client.DeleteToOffset(topic, partition, offset)
-	handleC("Error deleting to offset: %v", errd)
-	out.Infof("\nSuccessfully deleted to offset %v", offset)
+func DeleteGroups(groups ...string) {
+	for _, group := range groups {
+		errd = client.RemoveGroup(group)
+		if errd != nil {
+			out.Warnf("Error deleting group: %v", errd)
+		} else {
+			out.Infof("Successfully deleted group %v", group)
+		}
+	}
 }

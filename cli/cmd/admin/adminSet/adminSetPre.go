@@ -32,5 +32,4 @@ var cmdAdminSetPre = &cobra.Command{
 }
 
 func init() {
-	//cmdAdminSetPre.Flags().BoolVar(&preFlags.AllTopics, "alltopics", false, "Filter by Configuration or Key Names.")
 }

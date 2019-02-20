@@ -36,9 +36,26 @@ func PrintAdm(i interface{}) {
 			tbl.AddRow(v.Topic, v.Partition, v.Replicas[0], v.Leader)
 		}
 	case PRESummary:
-		tbl = table.New("TOPIC", "NEED.PRE.COUNT")
+		tbl = table.New("TOPICS.NEED.PRE", "PARTITIONS.NEED.PRE")
+		var topicCount uint16
+		var partCount uint32
 		for _, v := range i.Topics {
-			tbl.AddRow(v, i.PRECount[v])
+			topicCount++
+			partCount = partCount + i.PRECount[v]
+		}
+		tbl.AddRow(topicCount, partCount)
+	case OffsetDetails:
+		switch {
+		case i.IncludesGroups:
+			tbl = table.New("TOPIC", "PARTITION", "OLDEST", "NEWEST", "GROUP", "OFFSET", "LAG")
+			for _, v := range i.Details {
+				tbl.AddRow(v.Topic, v.Partition, v.TopicOffsetOldest, v.TopicOffsetNewest, v.Group, v.GroupOffset, v.Lag)
+			}
+		default:
+			tbl = table.New("TOPIC", "PARTITION", "OLDEST", "NEWEST")
+			for _, v := range i.Details {
+				tbl.AddRow(v.Topic, v.Partition, v.TopicOffsetOldest, v.TopicOffsetNewest)
+			}
 		}
 	}
 	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)

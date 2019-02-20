@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/jbvmio/kafkactl"
+	"github.com/jbvmio/kafkactl/cli/x/out"
 )
 
 type GroupFlags struct {
@@ -63,7 +64,7 @@ func SearchGroupListMeta(groups ...string) []kafkactl.GroupListMeta {
 		}
 	}
 	if len(groupListMeta) < 1 {
-		closeFatal("No Results Found.\n")
+		closeFatal("No Results Groups Found.\n")
 	}
 	sort.Slice(groupListMeta, func(i, j int) bool {
 		return groupListMeta[i].Group < groupListMeta[j].Group
@@ -102,9 +103,36 @@ func SearchGroupMeta(group ...string) []kafkactl.GroupMeta {
 		}
 	}
 	if len(groupMeta) < 1 {
-		closeFatal("No Results Found.\n")
+		closeFatal("No Group Results Found.")
 	}
 	return groupMeta
+}
+
+func GetGOM(group string, topics ...string) []kafkactl.GroupOffsetMap {
+	var GOM []kafkactl.GroupOffsetMap
+	TOM := SearchTOM(topics...)
+	if len(TOM) < 1 {
+		out.Warnf("no results for topic / group combination %v / %v", topics, group)
+	}
+	for _, tom := range TOM {
+		var parts []int32
+		for k := range tom.PartitionOffsets {
+			parts = append(parts, k)
+		}
+		gom, err := client.OffSetAdmin().Topic(tom.Topic).Group(group).GetGroupOffsets(parts)
+		switch {
+		case err != nil:
+			out.Warnf("Error getting %v Offsets: %v", group, err)
+		case len(gom.PartitionOffset) < 1:
+			out.Warnf("no results for topic / group combination %v / %v", tom.Topic, group)
+		default:
+			GOM = append(GOM, gom)
+		}
+	}
+	if len(GOM) < 1 {
+		closeFatal("no results for topic / group combination %v / %v", topics, group)
+	}
+	return GOM
 }
 
 func GroupMetaByTopics(topics ...string) []kafkactl.GroupMeta {
@@ -165,7 +193,7 @@ func GroupMetaByTopics(topics ...string) []kafkactl.GroupMeta {
 		}
 	}
 	if len(groupMeta) < 1 {
-		closeFatal("No Results Found.\n")
+		closeFatal("No Group Results Found.")
 	}
 	return groupMeta
 }
@@ -203,7 +231,7 @@ func GroupMetaByMember(members ...string) []kafkactl.GroupMeta {
 		}
 	}
 	if len(groupMeta) < 1 {
-		closeFatal("No Results Found.\n")
+		closeFatal("No Member Results Found.\n")
 	}
 	return groupMeta
 }

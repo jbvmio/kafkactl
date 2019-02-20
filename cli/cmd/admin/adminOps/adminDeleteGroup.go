@@ -6,18 +6,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var cmdAdminDeleteTopic = &cobra.Command{
-	Use:     "topic",
-	Aliases: []string{"topics"},
-	Short:   "Delete Kafka Topics",
+var cmdAdminDeleteGroup = &cobra.Command{
+	Use:     "group",
+	Aliases: []string{"groups"},
+	Short:   "Delete Kafka Groups",
 	Args:    cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		switch true {
 		case cmd.Flags().Changed("out"):
-			out.Warnf("Error: Cannot use --out when deleting topics.")
+			out.Warnf("Error: Cannot use --out when deleting groups.")
 			return
 		default:
-			kafka.DeleteTopics(args...)
+			kafka.DeleteGroups(args...)
 		}
 	},
 }

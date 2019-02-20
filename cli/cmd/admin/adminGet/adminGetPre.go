@@ -17,7 +17,7 @@ var cmdAdminGetPre = &cobra.Command{
 		default:
 			preMeta = kafka.GetPREMeta(args...)
 		}
-		switch true {
+		switch {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {
@@ -27,7 +27,6 @@ var cmdAdminGetPre = &cobra.Command{
 		default:
 			kafka.PrintAdm(preMeta.CreatePRESummary())
 		}
-
 	},
 }
 

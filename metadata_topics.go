@@ -29,6 +29,7 @@ type TopicOffsetMap struct {
 	Topic            string
 	TopicMeta        []TopicMeta
 	PartitionOffsets map[int32]int64
+	PartitionOldest  map[int32]int64
 	PartitionLeaders map[int32]int32
 }
 
@@ -36,6 +37,7 @@ type partitionOffset struct {
 	topic     string
 	partition int32
 	offset    int64
+	oldest    int64
 }
 
 func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
@@ -52,6 +54,7 @@ func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
 		pars := parts[topic]
 		go func(topic string, tMeta []TopicMeta, parts []int32) {
 			poMap := make(map[int32]int64)
+			oldMap := make(map[int32]int64)
 			poChan := make(chan partitionOffset, 10000)
 			for _, p := range parts {
 				go func(topic string, p int32) {
@@ -59,10 +62,15 @@ func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
 					if err != nil {
 						off = -7777
 					}
+					old, err := kc.GetOffsetOldest(topic, p)
+					if err != nil {
+						old = -7777
+					}
 					po := partitionOffset{
 						topic:     topic,
 						partition: p,
 						offset:    off,
+						oldest:    old,
 					}
 					poChan <- po
 				}(topic, p)
@@ -70,6 +78,7 @@ func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
 			for i := 0; i < len(parts); i++ {
 				po := <-poChan
 				poMap[po.partition] = po.offset
+				oldMap[po.partition] = po.oldest
 			}
 			pLdrMap := make(map[int32]int32, len(parts))
 			for _, tm := range tMeta {
@@ -79,6 +88,7 @@ func (kc *KClient) MakeTopicOffsetMap(topicMeta []TopicMeta) []TopicOffsetMap {
 				Topic:            topic,
 				TopicMeta:        tmMap[topic],
 				PartitionOffsets: poMap,
+				PartitionOldest:  oldMap,
 				PartitionLeaders: pLdrMap,
 			}
 			tomChan <- tom
