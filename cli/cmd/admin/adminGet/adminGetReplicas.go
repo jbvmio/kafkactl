@@ -50,6 +50,6 @@ func init() {
 	cmdAdminGetReplicas.Flags().BoolVar(&replicaFlags.AllParts, "allparts", false, "Target all Partitions.")
 	cmdAdminGetReplicas.Flags().Int32SliceVar(&replicaFlags.Brokers, "brokers", []int32{}, "Desired Brokers.")
 	cmdAdminGetReplicas.Flags().Int32SliceVar(&replicaFlags.Partitions, "partitions", []int32{}, "Target Partitions.")
-	cmdAdminGetReplicas.Flags().IntVar(&replicaFlags.ReplicationFactor, "rfactor", 0, "Desired Replication Factor.")
+	cmdAdminGetReplicas.Flags().IntVar(&replicaFlags.ReplicationFactor, "replicas", 0, "Desired Replication Factor.")
 
 }

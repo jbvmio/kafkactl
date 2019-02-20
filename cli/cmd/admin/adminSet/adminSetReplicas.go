@@ -14,6 +14,7 @@ var cmdAdminSetReplicas = &cobra.Command{
 	Aliases: []string{"replica"},
 	Short:   "Set Topic Replicas",
 	Example: examples.AdminSetReplicas(),
+	Args:    cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var rapList kafka.RAPartList
 		switch {
@@ -42,7 +43,7 @@ func init() {
 	cmdAdminSetReplicas.Flags().BoolVar(&replicaFlags.AllParts, "allparts", false, "Target all Partitions.")
 	cmdAdminSetReplicas.Flags().Int32SliceVar(&replicaFlags.Brokers, "brokers", []int32{}, "Desired Brokers.")
 	cmdAdminSetReplicas.Flags().Int32SliceVar(&replicaFlags.Partitions, "partitions", []int32{}, "Target Partitions.")
-	cmdAdminSetReplicas.Flags().IntVar(&replicaFlags.ReplicationFactor, "rfactor", 0, "Desired Replication Factor.")
+	cmdAdminSetReplicas.Flags().IntVar(&replicaFlags.ReplicationFactor, "replicas", 0, "Desired Replication Factor.")
 
 	//cmdAdminSetOffsets.AddCommand(cmdAdminGetTopic)
 	//cmdAdminSetOffsets.AddCommand(cmdAdminGetPre)

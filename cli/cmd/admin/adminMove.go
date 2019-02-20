@@ -22,6 +22,15 @@ var cmdAdminMove = &cobra.Command{
 		switch {
 		case x.StdinAvailable():
 			rapList = kafka.MovePartitionsStdin(kafka.ParseTopicStdin(os.Stdin), replicaFlags.Brokers)
+			if !replicaFlags.DryRun {
+				ok := kafka.ZkCreateRAP(rapList)
+				if !ok {
+					out.Warnf("Error Creating Reassign Partitions.")
+					return
+				}
+			} else {
+				out.Infof("Performing Dry Run ...")
+			}
 		default:
 			out.Warnf("Command requires piped stdin data.")
 			return
@@ -41,5 +50,6 @@ var cmdAdminMove = &cobra.Command{
 
 func init() {
 	cmdAdminMove.Flags().Int32SliceVar(&replicaFlags.Brokers, "brokers", []int32{}, "Desired Brokers.")
+	cmdAdminMove.Flags().BoolVar(&replicaFlags.DryRun, "dry-run", false, "Perform a Dry Run.")
 	cmdAdminMove.MarkFlagRequired("brokers")
 }
