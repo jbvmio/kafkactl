@@ -37,6 +37,8 @@ var (
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print kafkactl version and exit",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("kafkactl  : %s\n", contact)
 		fmt.Printf("Version   : %s\n", fullVer)
