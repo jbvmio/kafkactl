@@ -11,7 +11,7 @@ var cmdConvertConfig = &cobra.Command{
 	Aliases: []string{"convert-config"},
 	Short:   "Convert an older kafkactl config to the latest version",
 	Run: func(cmd *cobra.Command, args []string) {
-		testForOldConfig(configFilePath)
+		testReplaceOldConfig(configFilePath)
 	},
 }
 

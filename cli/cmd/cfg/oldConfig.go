@@ -16,12 +16,13 @@ package cfg
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
+	"time"
 
 	"github.com/jbvmio/kafkactl/cli/cx"
 
 	"github.com/jbvmio/kafkactl/cli/x/out"
+	"github.com/spf13/cast"
 	"github.com/spf13/viper"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -42,7 +43,7 @@ type Entry struct {
 	Zookeeper []string `json:"zookeeper" yaml:"zookeeper"`
 }
 
-func testForOldConfig(filePath ...string) {
+func testReplaceOldConfig(filePath ...string) {
 	var configFilePath string
 	defaultFilePath := homeDir() + `/` + homeConfigName
 	switch {
@@ -83,7 +84,13 @@ func testForOldConfig(filePath ...string) {
 				Contexts:       contexts,
 				ConfigVersion:  configVersion,
 			}
-			out.Marshal(newConfig, "yaml")
+			backupFilePath := configFilePath + `.bak-` + cast.ToString(time.Now().Unix())
+			oc, err := yaml.Marshal(oldConfig)
+			out.IfErrf(err)
+			nc, err := yaml.Marshal(newConfig)
+			out.IfErrf(err)
+			writeConfig(backupFilePath, oc)
+			writeConfig(configFilePath, nc)
 			out.Infof("config [%v] has been converted to Latest.", configFilePath)
 		}
 	default:
@@ -91,6 +98,26 @@ func testForOldConfig(filePath ...string) {
 	}
 }
 
+func writeConfig(path string, config []byte) {
+	err := ioutil.WriteFile(path, config, 0644)
+	out.IfErrf(err)
+}
+
+func homeDir() string {
+	if h := os.Getenv("HOME"); h != "" {
+		return h
+	}
+	return os.Getenv("USERPROFILE") // windows
+}
+
+func fileExists(filename string) bool {
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+/*
 func returnConfig(config []byte) OldConfig {
 	conf := OldConfig{}
 	err := yaml.Unmarshal(config, &conf)
@@ -107,24 +134,4 @@ func readConfig(path string) []byte {
 	}
 	return file
 }
-
-func writeConfig(path string, config []byte) {
-	err := ioutil.WriteFile(path, config, 0644)
-	if err != nil {
-		log.Fatalf("Error writing config: %v\n", err)
-	}
-}
-
-func homeDir() string {
-	if h := os.Getenv("HOME"); h != "" {
-		return h
-	}
-	return os.Getenv("USERPROFILE") // windows
-}
-
-func fileExists(filename string) bool {
-	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		return false
-	}
-	return true
-}
+*/
