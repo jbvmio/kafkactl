@@ -83,7 +83,10 @@ func getCurrentCtx() *cx.Context {
 	config := GetConfig()
 	ctx := config.Contexts[current]
 	if ctx.Name == "" {
-		output.Failf("Error: invalid config or context")
+		converted := testReplaceOldConfig()
+		if !converted {
+			output.Failf("Error: invalid config or context")
+		}
 	}
 	return &ctx
 }

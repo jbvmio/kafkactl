@@ -43,20 +43,20 @@ type Entry struct {
 	Zookeeper []string `json:"zookeeper" yaml:"zookeeper"`
 }
 
-func testReplaceOldConfig(filePath ...string) {
+func testReplaceOldConfig(filePath ...string) bool {
 	var configFilePath string
 	defaultFilePath := homeDir() + `/` + homeConfigName
 	switch {
 	case len(filePath) > 1:
 		out.Infof("Too Many Paths Specified.")
-		os.Exit(0)
+		return false
 	case len(filePath) == 1 && filePath[0] != "":
 		configFilePath = filePath[0]
 	default:
 		switch {
 		case !fileExists(defaultFilePath):
 			out.Infof("No default config file found.\n  Run kafkactl config --sample to display a sample config file.\n  Save your config in ~/.kafkactl.yaml")
-			os.Exit(0)
+			return false
 		case fileExists(defaultFilePath):
 			configFilePath = defaultFilePath
 		}
@@ -67,6 +67,7 @@ func testReplaceOldConfig(filePath ...string) {
 	switch {
 	case !v.InConfig("config-version") && !v.InConfig("current-context"):
 		if v.InConfig("current") {
+			out.Infof("old config detected, converting ...")
 			var oldConfig OldConfig
 			v.Unmarshal(&oldConfig)
 			contexts := make(map[string]cx.Context, len(oldConfig.Entries))
@@ -92,10 +93,13 @@ func testReplaceOldConfig(filePath ...string) {
 			writeConfig(backupFilePath, oc)
 			writeConfig(configFilePath, nc)
 			out.Infof("config [%v] has been converted to Latest.", configFilePath)
+			out.Infof("backup config saved as [%v]", backupFilePath)
+			return true
 		}
 	default:
 		out.Infof("config [%v] at Latest.", configFilePath)
 	}
+	return false
 }
 
 func writeConfig(path string, config []byte) {
