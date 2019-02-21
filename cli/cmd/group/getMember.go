@@ -12,6 +12,7 @@ var memberFlags kafka.GroupFlags
 
 var CmdGetMember = &cobra.Command{
 	Use:     "member",
+	Example: `  kafkactl get member <memberID> --lag`,
 	Aliases: []string{"clientid"},
 	Short:   "Get Groups by Member IDs",
 	Args:    cobra.MinimumNArgs(1),

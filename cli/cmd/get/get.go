@@ -13,8 +13,9 @@ import (
 var outFlags out.OutFlags
 
 var CmdGet = &cobra.Command{
-	Use:   "get",
-	Short: "Get Kafka Information",
+	Use:     "get",
+	Example: "  kafkactl get topic <topicName>\n  kafkactl get lag",
+	Short:   "Get Kafka Information",
 	Run: func(cmd *cobra.Command, args []string) {
 		switch true {
 		case len(args) > 0:

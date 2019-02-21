@@ -6,9 +6,10 @@ import (
 )
 
 var cmdZKdelete = &cobra.Command{
-	Use:   "delete",
-	Short: "Delete Zookeeper Paths and Values",
-	Args:  cobra.ExactArgs(1),
+	Use:     "delete",
+	Short:   "Delete Zookeeper Paths and Values",
+	Example: `  kafkactl zk delete /path/to/delete`,
+	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		switch true {
 		case len(args) == 1:

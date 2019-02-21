@@ -8,7 +8,7 @@ import (
 var cmdView = &cobra.Command{
 	Use:     "view",
 	Aliases: []string{"show"},
-	Short:   "Display kafkactl configurations",
+	Short:   "Display kafkactl config",
 	Run: func(cmd *cobra.Command, args []string) {
 		out.Marshal(GetConfig(), outFlags.Format)
 	},

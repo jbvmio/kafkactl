@@ -7,6 +7,7 @@ import (
 
 var CmdGetMsg = &cobra.Command{
 	Use:     "msg",
+	Example: `  kafkactl get msg -p 1 <topicName>`,
 	Aliases: []string{"log", "logs", "msgs"},
 	Short:   "Shortcut to logs/msgs command",
 	Args:    cobra.MinimumNArgs(1),

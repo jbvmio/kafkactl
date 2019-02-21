@@ -24,8 +24,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/gizak/termui"
+	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/tidwall/gjson"
 )
 
@@ -41,7 +41,12 @@ type burrowBundle struct {
 	Values []int64
 }
 
-func launchBurrowMonitor(cg, top string) {
+func LaunchBurrowMonitor(flags BurrowFlags) {
+	if flags.Topic == "" || flags.Group == "" {
+		out.Failf("missing topic or group.")
+	}
+	cg := flags.Group
+	top := flags.Topic
 	exact = true
 	u := getURLMatch([]string{cg})
 	if len(u) < 1 {

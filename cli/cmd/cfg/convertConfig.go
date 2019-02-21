@@ -8,6 +8,7 @@ var configFilePath string
 
 var cmdConvertConfig = &cobra.Command{
 	Use:     "convert",
+	Example: "  kafkactl config convert\n  kafkactl config convert --filepath /path/to/file",
 	Aliases: []string{"convert-config"},
 	Short:   "Convert an older kafkactl config to the latest version",
 	Run: func(cmd *cobra.Command, args []string) {

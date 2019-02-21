@@ -9,8 +9,9 @@ import (
 var preFlags kafka.PREFlags
 
 var cmdAdminSetPre = &cobra.Command{
-	Use:   "pre",
-	Short: "Set Preferred Replica Elections",
+	Use:     "pre",
+	Example: "  kafkactl admin set pre\n  kafkactl admin set pre <topicName>",
+	Short:   "Set Preferred Replica Elections",
 	Run: func(cmd *cobra.Command, args []string) {
 		var preMeta kafka.PRETopicMeta
 		switch true {

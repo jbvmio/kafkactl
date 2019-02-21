@@ -1,14 +1,16 @@
 package zk
 
 import (
+	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/zookeeper"
 	"github.com/spf13/cobra"
 )
 
 var cmdZKcreate = &cobra.Command{
-	Use:   "create",
-	Short: "Create Zookeeper Paths and Values",
-	Args:  cobra.ExactArgs(1),
+	Use:     "create",
+	Short:   "Create Zookeeper Paths and Values",
+	Example: examples.ZKCreate(),
+	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		switch true {
 		case len([]byte(zkFlags.Value)) > 0:

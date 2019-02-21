@@ -21,6 +21,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
 	"github.com/jbvmio/kafkactl/cli/cmd/admin"
+	"github.com/jbvmio/kafkactl/cli/cmd/bur"
 	"github.com/jbvmio/kafkactl/cli/cmd/cfg"
 	"github.com/jbvmio/kafkactl/cli/cmd/describe"
 	"github.com/jbvmio/kafkactl/cli/cmd/get"
@@ -44,8 +45,9 @@ var outFlags out.OutFlags
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "kafkactl",
-	Short: "kafkactl: Kafka Management Tool",
+	Use:     "kafkactl",
+	Short:   "kafkactl: Kafka Management Tool",
+	Example: `  kafkactl --context <contextName> get brokers`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		switch {
 		case cmd.Flags().Changed("broker"):
@@ -85,6 +87,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&kafkaFlags.Exact, "exact", "x", false, "Find exact matches.")
 	rootCmd.PersistentFlags().StringVarP(&cxFlags.Broker, "broker", "B", "", "Specify a single broker target host:port - Overrides config.")
 	rootCmd.PersistentFlags().StringVarP(&cxFlags.Zookeeper, "zookeeper", "Z", "", "Specify a single zookeeper target host:port - Overrides config.")
+	rootCmd.PersistentFlags().StringVar(&cxFlags.Burrow, "burrow", "", "Specify a single burrow endpoint http://host:port - Overrides config.")
 
 	rootCmd.AddCommand(cfg.CmdConfig)
 	rootCmd.AddCommand(get.CmdGet)
@@ -93,6 +96,7 @@ func init() {
 	rootCmd.AddCommand(send.CmdSend)
 	rootCmd.AddCommand(admin.CmdAdmin)
 	rootCmd.AddCommand(zk.CmdZK)
+	rootCmd.AddCommand(bur.CmdBur)
 
 }
 

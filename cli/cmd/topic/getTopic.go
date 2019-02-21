@@ -5,6 +5,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/cmd/group"
 	"github.com/jbvmio/kafkactl/cli/cmd/lag"
 	"github.com/jbvmio/kafkactl/cli/kafka"
+	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
@@ -14,6 +15,7 @@ var topicFlags kafka.TopicFlags
 var CmdGetTopic = &cobra.Command{
 	Use:     "topic",
 	Aliases: []string{"topics"},
+	Example: examples.GetTopics(),
 	Short:   "Get Topic Info",
 	Run: func(cmd *cobra.Command, args []string) {
 		var topicSummaries []kafkactl.TopicSummary

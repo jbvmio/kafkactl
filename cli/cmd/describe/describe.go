@@ -4,6 +4,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/cmd/broker"
 	"github.com/jbvmio/kafkactl/cli/cmd/group"
 	"github.com/jbvmio/kafkactl/cli/cmd/topic"
+	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
@@ -12,6 +13,7 @@ var outFlags out.OutFlags
 
 var CmdDescribe = &cobra.Command{
 	Use:     "describe",
+	Example: examples.Describe(),
 	Aliases: []string{"desc"},
 	Short:   "Get Kafka Details",
 	Run: func(cmd *cobra.Command, args []string) {

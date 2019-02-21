@@ -4,6 +4,7 @@ import (
 	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/cmd/lag"
 	"github.com/jbvmio/kafkactl/cli/kafka"
+	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
@@ -13,6 +14,7 @@ var groupFlags kafka.GroupFlags
 var CmdGetGroup = &cobra.Command{
 	Use:     "group",
 	Aliases: []string{"groups"},
+	Example: examples.GetGroups(),
 	Short:   "Get Group Info",
 	Run: func(cmd *cobra.Command, args []string) {
 		var glm []kafkactl.GroupListMeta

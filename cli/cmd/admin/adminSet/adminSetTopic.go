@@ -2,6 +2,7 @@ package adminset
 
 import (
 	"github.com/jbvmio/kafkactl/cli/kafka"
+	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
@@ -9,9 +10,10 @@ import (
 var topicFlags kafka.TopicConfigFlags
 
 var cmdAdminSetTopic = &cobra.Command{
-	Use:   "topic",
-	Short: "Set Topic Configuration",
-	Args:  cobra.MinimumNArgs(1),
+	Use:     "topic",
+	Example: examples.AdminSetTopics(),
+	Short:   "Set Topic Configuration",
+	Args:    cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var topicConfigs []kafka.TopicConfig
 		switch true {

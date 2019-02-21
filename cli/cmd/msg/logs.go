@@ -4,6 +4,7 @@ import (
 	"github.com/jbvmio/kafkactl"
 
 	"github.com/jbvmio/kafkactl/cli/kafka"
+	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
@@ -13,6 +14,7 @@ var outFlags out.OutFlags
 
 var CmdLogs = &cobra.Command{
 	Use:     "logs",
+	Example: examples.LOGS(),
 	Aliases: []string{"consume"},
 	Short:   "Get Messages from a Kafka Topic",
 	Args:    cobra.MinimumNArgs(1),

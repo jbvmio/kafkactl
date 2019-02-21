@@ -1,5 +1,6 @@
 package topic
 
+/*
 import (
 	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/kafka"
@@ -32,3 +33,4 @@ var CmdGetTopicConfig = &cobra.Command{
 
 func init() {
 }
+*/

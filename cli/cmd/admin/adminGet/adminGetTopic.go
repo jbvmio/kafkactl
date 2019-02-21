@@ -2,6 +2,7 @@ package adminget
 
 import (
 	"github.com/jbvmio/kafkactl/cli/kafka"
+	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
@@ -9,19 +10,20 @@ import (
 var topicFlags kafka.TopicConfigFlags
 
 var cmdAdminGetTopic = &cobra.Command{
-	Use:   "topic",
-	Short: "Get Topic Configurations",
-	Args:  cobra.MinimumNArgs(1),
+	Use:     "topic",
+	Example: examples.AdminGetTopics(),
+	Short:   "Get Topic Configurations",
+	Args:    cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var topicConfigs []kafka.TopicConfig
-		switch true {
+		switch {
 		default:
 			topicConfigs = kafka.SearchTopicConfigs(topicFlags.Configs, args...)
 			if topicFlags.GetNonDefaults {
 				topicConfigs = kafka.GetNonDefaultConfigs(topicConfigs)
 			}
 		}
-		switch true {
+		switch {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {
