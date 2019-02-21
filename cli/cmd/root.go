@@ -78,7 +78,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.Flags().StringVarP(&outFlags.Format, "out", "o", "", "Change Output Format - yaml|json.")
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "cfg", "", "config file (default is $HOME/.2kafkactl.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "cfg", "", "config file (default is $HOME/.kafkactl.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&kafkaFlags.Context, "context", "C", "", "Specify a context.")
 	rootCmd.PersistentFlags().StringVar(&kafkaFlags.Version, "version", "", "Specify a client version.")
 	rootCmd.PersistentFlags().BoolVarP(&kafkaFlags.Verbose, "verbose", "v", false, "Display additional info or errors.")
@@ -106,7 +106,7 @@ func initConfig() {
 			os.Exit(1)
 		}
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".2kafkactl")
+		viper.SetConfigName(".kafkactl")
 	}
 	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err == nil {
