@@ -15,8 +15,7 @@
 package burrow
 
 import (
-	"log"
-
+	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +39,7 @@ var burrowCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if beginMonitor {
 			if !cmd.Flags().Changed("topic") || !cmd.Flags().Changed("group") {
-				log.Fatalf("Error: Specify both --topic and --group for monitoring, try again.\n")
+				out.Failf("Error: Specify both --topic and --group for monitoring, try again.\n")
 			}
 			launchBurrowMonitor(targetGroup, targetTopic)
 			return

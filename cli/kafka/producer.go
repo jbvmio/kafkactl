@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/signal"
 	"strings"
@@ -266,7 +265,7 @@ ProducerLoop:
 				msgs := makeMessages(topic, key, line, partitions...)
 				errd = client.SendMessages(msgs)
 				if errd != nil {
-					log.Printf("Error sending messages: %v\n", errd)
+					out.Warnf("Error sending messages: %v", errd)
 				}
 				time.Sleep(time.Millisecond * 200)
 				fmt.Printf("[kafkactl] # ")

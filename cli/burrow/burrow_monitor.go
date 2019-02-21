@@ -21,10 +21,10 @@ package burrow
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/gizak/termui"
 	"github.com/tidwall/gjson"
 )
@@ -45,10 +45,10 @@ func launchBurrowMonitor(cg, top string) {
 	exact = true
 	u := getURLMatch([]string{cg})
 	if len(u) < 1 {
-		log.Fatalf("Group not found: %v\n  Confirm you are using the correct endpoint: %s\n", cg)
+		out.Failf("Group not found: %v\n  Confirm you are using the correct endpoint: %s\n", cg)
 	}
 	if err := termui.Init(); err != nil {
-		log.Fatalf("Error launching monitor: %v\n", err)
+		out.Failf("Error launching monitor: %v\n", err)
 	}
 	defer termui.Close()
 	par0 := termui.NewPar(string(" [Group]" + cg + " > [Topic]" + top + " > Partition Lag "))
@@ -167,7 +167,7 @@ func launchBurrowMonitor(cg, top string) {
 
 func createDash(g gjson.Result, cg, top string) burrowDash {
 	if !g.Get("0.topic").Exists() {
-		log.Fatalf("Topic not found: %v\n  Confirm you are using the correct endpoint: %s\n", top)
+		out.Failf("Topic not found: %v\n  Confirm you are using the correct endpoint: %s\n", top)
 	}
 	bd := burrowDash{}
 	bd.Consumer = cg
@@ -223,12 +223,12 @@ func getURLMatch(terms []string) (consumerPaths []string) {
 func curlIt(url string) []byte {
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatalf("Error: %v\n", err)
+		out.Failf("Error: %v\n", err)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Error: %v\n", err)
+		out.Failf("Error: %v\n", err)
 	}
 	return body
 }
