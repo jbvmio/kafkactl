@@ -2,12 +2,15 @@ package kafkactl
 
 import (
 	"fmt"
-	"log"
 	"os"
+	"time"
 
 	"github.com/Shopify/sarama"
 	"github.com/jbvmio/randstr"
+	log "github.com/sirupsen/logrus"
 )
+
+const defaultTimestampFormat = time.RFC3339
 
 type KClient struct {
 	apiVers map[int16]int16
@@ -114,7 +117,14 @@ func Logger(prefix string) {
 	if prefix == "" {
 		prefix = "[kafkactl] "
 	}
-	sarama.Logger = log.New(os.Stdout, prefix, log.LstdFlags)
+	logger := log.New()
+	logger.Out = os.Stdout
+	logger.Formatter = &log.TextFormatter{
+		TimestampFormat: defaultTimestampFormat,
+		FullTimestamp:   true,
+	}
+	sarama.Logger = logger
+	//sarama.Logger = log.New(os.Stdout, prefix, log.LstdFlags)
 }
 
 func (kc *KClient) Logf(format string, v ...interface{}) {

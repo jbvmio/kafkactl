@@ -2,7 +2,7 @@ package kafkactl
 
 import (
 	"fmt"
-	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -91,10 +91,12 @@ ConsumeLoop:
 		}
 	}
 	if err := partitionConsumer.Close(); err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	if err := consumer.Close(); err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
 
