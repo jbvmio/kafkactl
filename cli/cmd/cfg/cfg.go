@@ -87,6 +87,13 @@ func getCurrentCtx() *cx.Context {
 		if !converted {
 			output.Failf("Error: invalid config or context")
 		}
+		viper.ReadInConfig()
+		current = viper.GetString("current-context")
+		config = GetConfig()
+		ctx = config.Contexts[current]
+		if ctx.Name == "" {
+			output.Failf("Error: still invalid config or context")
+		}
 	}
 	return &ctx
 }
