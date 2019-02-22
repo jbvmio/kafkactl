@@ -21,10 +21,10 @@ import (
 )
 
 const (
-	majorVer = `1.`
-	minorVer = `1.`
-	patchVer = `1`
-	contact  = `jbvm.io`
+	//majorVer = `1.`
+	//minorVer = `0.`
+	//patchVer = `19`
+	contact = `jbvm.io`
 )
 
 // buildTime - revision := ~Year
@@ -46,9 +46,11 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print kafkactl version and exit",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		fullVer = majorVer + minorVer + patchVer
+		fullVer = latestMajor + `.` + latestMinor + `.` + latestPatch
 		if release != "true" {
 			fullVer = fullVer + `+` + revision
+		} else {
+			fullVer = nextRelease
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
