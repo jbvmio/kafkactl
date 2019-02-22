@@ -13,8 +13,8 @@ require (
 	github.com/gizak/termui v2.2.1-0.20180111180145-a433c24293cf+incompatible
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/jbvmio/abstraction v0.0.0-20190222034822-b193c66fabef
 	github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e
+	github.com/jbvmio/kafka v1.0.19
 	github.com/jbvmio/zk v0.0.0-20190205235113-4f4f6447230a
 	github.com/maruel/panicparse v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.0 // indirect

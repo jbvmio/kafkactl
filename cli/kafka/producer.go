@@ -28,7 +28,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
 	"github.com/Shopify/sarama"
-	kafkactl "github.com/jbvmio/abstraction/kafka"
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 const delim string = "!7dd###755^^^557D$!"

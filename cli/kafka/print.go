@@ -20,7 +20,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
 	"github.com/fatih/color"
-	kafkactl "github.com/jbvmio/abstraction/kafka"
+	kafkactl "github.com/jbvmio/kafka"
 	"github.com/rodaine/table"
 )
 

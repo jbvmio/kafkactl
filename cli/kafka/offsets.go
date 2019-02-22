@@ -15,7 +15,7 @@
 package kafka
 
 import (
-	kafkactl "github.com/jbvmio/abstraction/kafka"
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 type GroupTopicOffsetMeta struct {

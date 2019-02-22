@@ -1,7 +1,7 @@
 package msg
 
 import (
-	kafkactl "github.com/jbvmio/abstraction/kafka"
+	kafkactl "github.com/jbvmio/kafka"
 
 	"github.com/jbvmio/kafkactl/cli/kafka"
 	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
