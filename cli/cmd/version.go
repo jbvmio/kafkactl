@@ -33,6 +33,7 @@ var (
 	fullVer    string
 
 	release     bool
+	nextRelease string
 	latestMajor string
 	latestMinor string
 	latestPatch string
@@ -59,9 +60,11 @@ var versionCmd = &cobra.Command{
 		if showLatest {
 			switch {
 			case latestMajor == "" || latestMinor == "" || latestPatch == "":
-				fmt.Printf("Latest*   : N/A\n")
+				fmt.Printf("Latest*    : N/A\n")
+				fmt.Printf("NextRel*   : %s\n", nextRelease)
 			default:
-				fmt.Printf("Latest*   : %s\n", string(latestMajor+`.`+latestMinor+`.`+latestPatch))
+				fmt.Printf("Latest*    : %s\n", string(latestMajor+`.`+latestMinor+`.`+latestPatch))
+				fmt.Printf("NextRel*   : %s\n", nextRelease)
 			}
 		}
 	},
