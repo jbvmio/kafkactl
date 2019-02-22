@@ -18,10 +18,9 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/jbvmio/kafkactl/cli/zookeeper"
-
-	"github.com/jbvmio/kafkactl"
 )
 
 type TopicConfigFlags struct {

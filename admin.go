@@ -1,7 +1,7 @@
 package kafkactl
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/Shopify/sarama"
 )
@@ -33,7 +33,7 @@ func (ca *clusterAdmin) CreateTopic(topic string, detail *sarama.TopicDetail, va
 	}
 
 	if detail == nil {
-		return errors.New("You must specify topic details")
+		return fmt.Errorf("You must specify topic details")
 	}
 
 	topicDetails := make(map[string]*sarama.TopicDetail)
@@ -202,7 +202,8 @@ func (ca *clusterAdmin) DescribeConfig(resource sarama.ConfigResource) ([]sarama
 	for _, rspResource := range rsp.Resources {
 		if rspResource.Name == resource.Name {
 			if rspResource.ErrorMsg != "" {
-				return nil, errors.New(rspResource.ErrorMsg)
+				//return nil, errors.New(rspResource.ErrorMsg)
+				return nil, fmt.Errorf("%v", rspResource.ErrorMsg)
 			}
 			for _, cfgEntry := range rspResource.Configs {
 				entries = append(entries, *cfgEntry)
@@ -239,7 +240,8 @@ func (ca *clusterAdmin) AlterConfig(resourceType sarama.ConfigResourceType, name
 	for _, rspResource := range rsp.Resources {
 		if rspResource.Name == name {
 			if rspResource.ErrorMsg != "" {
-				return errors.New(rspResource.ErrorMsg)
+				//return errors.New(rspResource.ErrorMsg)
+				return fmt.Errorf(rspResource.ErrorMsg)
 			}
 		}
 	}

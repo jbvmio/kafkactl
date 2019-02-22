@@ -29,10 +29,4 @@ func init() {
 	CmdAdmin.AddCommand(adminops.CmdAdminCreate)
 	CmdAdmin.AddCommand(adminops.CmdAdminDelete)
 	CmdAdmin.AddCommand(cmdAdminMove)
-
-	//CmdAdmin.AddCommand(topic.CmdGetTopic)
-	//CmdAdmin.AddCommand(group.CmdGetGroup)
-	//CmdAdmin.AddCommand(group.CmdGetMember)
-	//CmdAdmin.AddCommand(lag.CmdGetLag)
-	//CmdAdmin.AddCommand(msg.CmdGetMsg)
 }
