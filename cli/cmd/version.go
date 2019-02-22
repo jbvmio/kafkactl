@@ -54,11 +54,11 @@ var versionCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("kafkactl  : %s\n", contact)
-		fmt.Printf("Version   : %s\n", fullVer)
-		fmt.Printf("Build     : %s\n", buildTime)
-		fmt.Printf("Revision  : %s\n", revision)
-		fmt.Printf("Commit    : %s\n", commitHash)
+		fmt.Printf("kafkactl   : %s\n", contact)
+		fmt.Printf("Version    : %s\n", fullVer)
+		fmt.Printf("Build      : %s\n", buildTime)
+		fmt.Printf("Revision   : %s\n", revision)
+		fmt.Printf("Commit     : %s\n", commitHash)
 		if showLatest {
 			switch {
 			case latestMajor == "" || latestMinor == "" || latestPatch == "":
