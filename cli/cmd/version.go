@@ -32,7 +32,7 @@ var (
 	showLatest bool
 	fullVer    string
 
-	release     bool
+	release     string
 	nextRelease string
 	latestMajor string
 	latestMinor string
@@ -47,7 +47,7 @@ var versionCmd = &cobra.Command{
 	Short: "Print kafkactl version and exit",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		fullVer = majorVer + minorVer + patchVer
-		if !release {
+		if release != "true" {
 			fullVer = fullVer + `+` + revision
 		}
 	},
