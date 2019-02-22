@@ -39,6 +39,10 @@ var CmdBur = &cobra.Command{
 			}
 			out.IfErrf(out.Marshal(burrowParts, outFmt))
 		default:
+			if burFlags.ShowID {
+				printBur(burrowParts, "id")
+				return
+			}
 			printBur(burrowParts)
 		}
 	},
@@ -50,6 +54,7 @@ func init() {
 	CmdBur.PersistentFlags().StringVar(&cxFlags.Burrow, "burrow", "", "Specify a single burrow endpoint http://host:port - Overrides config.")
 	CmdBur.PersistentFlags().BoolVarP(&burFlags.Exact, "exact", "x", false, "Find exact matches.")
 	CmdBur.Flags().BoolVar(&burFlags.ErrOnly, "errs", false, "Filter for NON OK status.")
+	CmdBur.Flags().BoolVarP(&burFlags.ShowID, "show-id", "i", false, "Toggle Group / MemberID on output.")
 	CmdBur.Flags().StringVarP(&burFlags.Topic, "topic", "t", "", "Filter by a Topic.")
 
 	CmdBur.AddCommand(cmdBurMon)

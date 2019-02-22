@@ -21,23 +21,34 @@ import (
 )
 
 const (
-	yTime   = 1546300800
-	maint   = `19`
-	version = `1.0.`
-	contact = `jbvm.io`
+	majorVer = `1.`
+	minorVer = `1.`
+	patchVer = `1`
+	contact  = `jbvm.io`
 )
 
+// buildTime - revision := ~Year
 var (
-	revision   string
-	buildTime  string
-	commitHash string
+	showLatest bool
 	fullVer    string
+
+	release     bool
+	latestMajor string
+	latestMinor string
+	latestPatch string
+	revision    string
+	buildTime   string
+	commitHash  string
 )
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print kafkactl version and exit",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		fullVer = majorVer + minorVer + patchVer
+		if !release {
+			fullVer = fullVer + `+` + revision
+		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("kafkactl  : %s\n", contact)
@@ -45,9 +56,20 @@ var versionCmd = &cobra.Command{
 		fmt.Printf("Build     : %s\n", buildTime)
 		fmt.Printf("Revision  : %s\n", revision)
 		fmt.Printf("Commit    : %s\n", commitHash)
+		if showLatest {
+			switch {
+			case latestMajor == "" || latestMinor == "" || latestPatch == "":
+				fmt.Printf("Latest*   : N/A\n")
+			default:
+				fmt.Printf("Latest*   : %s\n", string(latestMajor+`.`+latestMinor+`.`+latestPatch))
+			}
+		}
 	},
 }
 
 func init() {
+	versionCmd.Flags().BoolVar(&showLatest, "latest", false, "Show Latest Release.")
+	versionCmd.Flags().MarkHidden("latest")
+
 	rootCmd.AddCommand(versionCmd)
 }
