@@ -1,12 +1,13 @@
 package kafkactl
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/jbvmio/randstr"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -141,7 +142,7 @@ func (kc *KClient) SaramaConfig() *sarama.Config {
 }
 
 func GetConf() (*sarama.Config, error) {
-	random := randstr.Hex(3)
+	random := makeHex(3)
 	conf := sarama.NewConfig()
 	conf.ClientID = string("kafkactl" + "-" + random)
 	conf.Version = MinKafkaVersion
@@ -165,4 +166,20 @@ func ReturnFirstValid(brokers ...string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("Error: No Connectivity to Provided Brokers.")
+}
+
+func randomBytes(n int) []byte {
+	return makeByte(n)
+}
+
+func makeHex(s int) string {
+	b := randomBytes(s)
+	hexstring := hex.EncodeToString(b)
+	return hexstring
+}
+
+func makeByte(n int) []byte {
+	b := make([]byte, n)
+	rand.Read(b)
+	return b
 }
