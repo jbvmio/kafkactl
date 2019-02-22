@@ -1,16 +1,18 @@
 module github.com/jbvmio/kafkactl
 
 require (
+	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/DataDog/zstd v1.3.5 // indirect
 	github.com/Shopify/sarama v1.20.1
+	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect
 	github.com/bsm/sarama-cluster v2.1.15+incompatible // indirect
-	github.com/cjbassi/drawille-go v0.0.0-20190126131713-27dc511fe6fd // indirect
 	github.com/eapache/go-resiliency v1.1.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/fatih/color v1.7.0
 	github.com/gizak/termui v2.2.1-0.20180111180145-a433c24293cf+incompatible
 	github.com/golang/snappy v0.0.1 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jbvmio/abstraction v0.0.0-20190222034822-b193c66fabef
 	github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e
 	github.com/jbvmio/zk v0.0.0-20190205235113-4f4f6447230a
@@ -21,6 +23,8 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
 	github.com/nsf/termbox-go v0.0.0-20190121233118-02980233997d // indirect
+	github.com/onsi/ginkgo v1.7.0 // indirect
+	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/outbrain/golib v0.0.0-20180830062331-ab954725f502 // indirect
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
@@ -34,6 +38,5 @@ require (
 	github.com/tidwall/gjson v1.2.1
 	github.com/tidwall/match v1.0.1 // indirect
 	github.com/tidwall/pretty v0.0.0-20180105212114-65a9db5fad51
-	golang.org/x/arch v0.0.0-20181203225421-5a4828bb7045 // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )
