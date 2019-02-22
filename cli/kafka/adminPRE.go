@@ -17,9 +17,10 @@ package kafka
 import (
 	"encoding/json"
 
-	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/jbvmio/kafkactl/cli/zookeeper"
+
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 type PREFlags struct {

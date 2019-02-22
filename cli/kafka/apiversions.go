@@ -15,9 +15,10 @@
 package kafka
 
 import (
-	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 func findKafkaVersion(context *cx.Context) string {

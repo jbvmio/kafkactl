@@ -18,7 +18,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/jbvmio/kafkactl"
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 type TopicFlags struct {

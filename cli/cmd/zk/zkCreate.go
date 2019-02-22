@@ -3,6 +3,7 @@ package zk
 import (
 	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/zookeeper"
+
 	"github.com/spf13/cobra"
 )
 

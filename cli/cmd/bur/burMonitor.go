@@ -3,6 +3,7 @@ package bur
 import (
 	"github.com/jbvmio/kafkactl/cli/burrow"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
 	"github.com/spf13/cobra"
 )
 

@@ -17,10 +17,11 @@ package kafka
 import (
 	"time"
 
-	"github.com/Shopify/sarama"
-	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
+	"github.com/Shopify/sarama"
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 var (

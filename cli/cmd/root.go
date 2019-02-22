@@ -18,8 +18,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jbvmio/kafkactl/cli/x/out"
-
 	"github.com/jbvmio/kafkactl/cli/cmd/admin"
 	"github.com/jbvmio/kafkactl/cli/cmd/bur"
 	"github.com/jbvmio/kafkactl/cli/cmd/cfg"
@@ -29,6 +27,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/cmd/send"
 	"github.com/jbvmio/kafkactl/cli/cmd/zk"
 	"github.com/jbvmio/kafkactl/cli/kafka"
+	"github.com/jbvmio/kafkactl/cli/x/out"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"

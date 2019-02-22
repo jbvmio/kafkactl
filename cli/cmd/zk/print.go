@@ -17,8 +17,9 @@ package zk
 import (
 	"fmt"
 
-	"github.com/fatih/color"
 	"github.com/jbvmio/kafkactl/cli/zookeeper"
+
+	"github.com/fatih/color"
 	"github.com/rodaine/table"
 )
 

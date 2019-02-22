@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/jbvmio/kafkactl/cli/x"
+
 	"github.com/spf13/cast"
 )
 

@@ -7,6 +7,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/cmd/msg"
 	"github.com/jbvmio/kafkactl/cli/cmd/topic"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
 	"github.com/spf13/cobra"
 )
 

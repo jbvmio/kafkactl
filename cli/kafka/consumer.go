@@ -20,7 +20,7 @@ import (
 	"os/signal"
 	"strings"
 
-	"github.com/jbvmio/kafkactl"
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 func launchCG(groupID string, debug bool, topics ...string) {

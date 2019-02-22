@@ -20,6 +20,7 @@ import (
 
 	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
 	"github.com/jbvmio/zk"
 )
 

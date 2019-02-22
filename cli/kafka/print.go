@@ -16,11 +16,11 @@ package kafka
 import (
 	"fmt"
 
+	"github.com/jbvmio/kafkactl/cli/x"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
 	"github.com/fatih/color"
-	"github.com/jbvmio/kafkactl"
-	"github.com/jbvmio/kafkactl/cli/x"
+	kafkactl "github.com/jbvmio/kafka"
 	"github.com/rodaine/table"
 )
 

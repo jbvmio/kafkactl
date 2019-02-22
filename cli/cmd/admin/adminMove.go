@@ -4,9 +4,11 @@ import (
 	"os"
 
 	"github.com/jbvmio/kafkactl/cli/kafka"
-	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
+	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
+
 	"github.com/spf13/cobra"
 )
 

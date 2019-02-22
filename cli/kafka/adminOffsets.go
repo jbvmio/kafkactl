@@ -17,8 +17,9 @@ package kafka
 import (
 	"sort"
 
-	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 type OpsOffsetFlags struct {

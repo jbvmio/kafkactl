@@ -15,8 +15,9 @@
 package kafka
 
 import (
-	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 type OpsCreateFlags struct {

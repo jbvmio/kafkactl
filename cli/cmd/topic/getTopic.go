@@ -1,12 +1,13 @@
 package topic
 
 import (
-	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/cmd/group"
 	"github.com/jbvmio/kafkactl/cli/cmd/lag"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
+	kafkactl "github.com/jbvmio/kafka"
 	"github.com/spf13/cobra"
 )
 

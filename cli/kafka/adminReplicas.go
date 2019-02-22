@@ -18,8 +18,9 @@ import (
 	"encoding/json"
 	"sort"
 
-	"github.com/jbvmio/kafkactl"
 	"github.com/jbvmio/kafkactl/cli/zookeeper"
+
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 type OpsReplicaFlags struct {

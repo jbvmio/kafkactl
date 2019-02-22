@@ -4,6 +4,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/cmd/cfg"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/jbvmio/kafkactl/cli/zookeeper"
+
 	"github.com/spf13/cobra"
 )
 

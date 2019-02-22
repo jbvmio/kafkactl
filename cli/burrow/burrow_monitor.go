@@ -24,9 +24,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gizak/termui"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
+	"github.com/gizak/termui"
 	"github.com/tidwall/gjson"
+	//termui "gopkg.in/gizak/termui.v2"
 )
 
 type burrowDash struct {

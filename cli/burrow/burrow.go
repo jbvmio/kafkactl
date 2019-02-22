@@ -17,9 +17,10 @@ package burrow
 import (
 	"strings"
 
-	"github.com/jbvmio/burrow"
 	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
+	"github.com/jbvmio/burrow"
 )
 
 type BurrowFlags struct {

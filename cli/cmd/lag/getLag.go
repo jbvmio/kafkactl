@@ -6,6 +6,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/kafka"
 	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
 	"github.com/spf13/cobra"
 )
 

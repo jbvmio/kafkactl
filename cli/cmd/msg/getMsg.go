@@ -2,6 +2,7 @@ package msg
 
 import (
 	"github.com/jbvmio/kafkactl/cli/kafka"
+
 	"github.com/spf13/cobra"
 )
 

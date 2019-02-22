@@ -1,10 +1,11 @@
 package bur
 
 import (
-	jbbur "github.com/jbvmio/burrow"
 	"github.com/jbvmio/kafkactl/cli/burrow"
 	"github.com/jbvmio/kafkactl/cli/cmd/cfg"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
+	jbbur "github.com/jbvmio/burrow"
 	"github.com/spf13/cobra"
 )
 

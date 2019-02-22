@@ -2,6 +2,7 @@ package zk
 
 import (
 	"github.com/jbvmio/kafkactl/cli/zookeeper"
+
 	"github.com/spf13/cobra"
 )
 

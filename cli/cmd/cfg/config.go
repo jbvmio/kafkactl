@@ -3,6 +3,7 @@ package cfg
 import (
 	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+
 	"github.com/spf13/cobra"
 )
 

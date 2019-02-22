@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jbvmio/kafkactl"
+	kafkactl "github.com/jbvmio/kafka"
 )
 
 // ClusterDetails prints details for the current context.

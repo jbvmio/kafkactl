@@ -18,7 +18,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/jbvmio/kafkactl"
+	kafkactl "github.com/jbvmio/kafka"
 	"github.com/spf13/cast"
 )
 
