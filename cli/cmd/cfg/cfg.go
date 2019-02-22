@@ -15,8 +15,6 @@
 package cfg
 
 import (
-	"local/jbvmio/krc/output"
-
 	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/spf13/cast"
@@ -85,14 +83,14 @@ func getCurrentCtx() *cx.Context {
 	if ctx.Name == "" {
 		converted := testReplaceOldConfig()
 		if !converted {
-			output.Failf("Error: invalid config or context")
+			out.Failf("Error: invalid config or context")
 		}
 		viper.ReadInConfig()
 		current = viper.GetString("current-context")
 		config = GetConfig()
 		ctx = config.Contexts[current]
 		if ctx.Name == "" {
-			output.Failf("Error: still invalid config or context")
+			out.Failf("Error: still invalid config or context")
 		}
 	}
 	return &ctx
