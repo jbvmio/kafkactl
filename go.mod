@@ -15,7 +15,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e
 	github.com/jbvmio/kafka v1.0.19
-	github.com/jbvmio/zk v0.0.0-20190205235113-4f4f6447230a
+	github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c
 	github.com/maruel/panicparse v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.0 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
@@ -25,7 +25,6 @@ require (
 	github.com/nsf/termbox-go v0.0.0-20190121233118-02980233997d // indirect
 	github.com/onsi/ginkgo v1.7.0 // indirect
 	github.com/onsi/gomega v1.4.3 // indirect
-	github.com/outbrain/golib v0.0.0-20180830062331-ab954725f502 // indirect
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
 	github.com/rodaine/table v1.0.0
