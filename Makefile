@@ -42,6 +42,7 @@ clean: build
 # usage make version=0.0.4 release
 .PHONY: release
 release:
+	git add .
 	git commit -m "release $(NEXTVER)"
 	git tag -a $(NEXTVER) -m "release $(NEXTVER)"
 	git push origin
