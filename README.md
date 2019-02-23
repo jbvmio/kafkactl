@@ -1,5 +1,6 @@
 # kafkactl - Kafka Management Tool - **[wiki](https://github.com/jbvmio/kafkactl/wiki)**
 kafkactl - CLI Apache Kafka, Zookeeper and Burrow Management.
+
 ![Travis-CI Build Status](https://travis-ci.com/jbvmio/kafkactl.svg?branch=master)
 
 ### The kafkactl tool currently features the following:
