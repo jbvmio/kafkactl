@@ -5,7 +5,7 @@ builds:
 - env:
   - GO111MODULE=on
   ldflags:
-    - {{.Env.LD_FLAGS}}
+    - -X {{.Env.LD_FLAGS}}
   goos:
     - darwin
     - linux
