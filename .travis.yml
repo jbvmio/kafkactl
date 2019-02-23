@@ -1,0 +1,24 @@
+language: go
+go:
+- 1.11.x
+env:
+  global:
+  - GO111MODULE=on
+  - LATEST=$(curl -s https://github.com/jbvmio/kafkactl/releases/latest | awk -F '/' '/releases/{print $8}' | awk -F '"' '{print $1}')
+  - LATESTMAJ=$(echo $LATEST | cut -d '.' -f 1)
+  - LATESTMIN=$(echo $LATEST | cut -d '.' -f 2)
+  - LATESTPAT=$(echo $LATEST | cut -d '.' -f 3)
+  - NEXTPAT=$(echo $LATESTPAT + 1 | bc)
+  - NEXTVER="${LATESTMAJ}.${LATESTMIN}.${NEXTPAT}"
+  - LD_FLAGS="-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=${LATESTMAJ} -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=${LATESTMIN} -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=${LATESTPAT} -X github.com/jbvmio/kafkactl/cli/cmd.release=${PUBRELEASE} -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=${NEXTVER} -X github.com/jbvmio/kafkactl/cli/cmd.revision=${REV} -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=${BT} -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=${GC}"
+addons:
+  apt:
+    packages:
+    - rpm
+deploy:
+- provider: script
+  skip_cleanup: true
+  script: curl -sL https://git.io/goreleaser | bash
+  on:
+    tags: true
+    condition: $TRAVIS_OS_NAME = linux
