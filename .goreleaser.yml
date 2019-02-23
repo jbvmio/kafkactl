@@ -36,7 +36,7 @@ nfpm:
 release:
   disable: false
   prerelease: true
-  name_template: "{{ .Env.TRAVIS_BRANCH }}-{{ .TAG }}-beta"
+  name_template: "{{ .Env.TRAVIS_BRANCH }}-{{ .Tag }}-beta"
 snapshot:
   name_template: "{{ .Env.TRAVIS_BRANCH }}"
 changelog:
