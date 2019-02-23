@@ -1,5 +1,9 @@
 # kafkactl - Kafka Management Tool - **[wiki](https://github.com/jbvmio/kafkactl/wiki)**
-kafkactl - Package and CLI Tool (written in Go) for mgmt of Apache Kafka and related components.
+kafkactl - CLI for Apache Kafka, Zookeeper and Burrow Management.
+
+
+[![Travis-CI Build Status](https://travis-ci.com/jbvmio/kafkactl.svg?branch=master)](
+  https://travis-ci.com/jbvmio/kafkactl)
 
 ### The kafkactl tool currently features the following:
 
@@ -28,47 +32,17 @@ kafkactl - Package and CLI Tool (written in Go) for mgmt of Apache Kafka and rel
 
 kafkactl is actively developed with new features being added and tested. Thus, ongoing optimization and re-factoring will occur so ensure you are aware of the [latest releases](https://github.com/jbvmio/kafkactl/releases).
 
-# Package
-The package is mostly a wrapper around the excellent [sarama library](https://github.com/Shopify/sarama) and for the kafkactl tool itself. The kafkactl tool utilizes a context style config, similar to the kubernetes tool - kubectl, grouping a set of Kafka clusters to corresponding [Zookeeper](https://zookeeper.apache.org/) and [Burrow](https://github.com/linkedin/Burrow) instances.
-
-### package example usage:
-Get package:
-```
-go get -u github.com/jbvmio/kafkactl
-```
-List Topics:
-```
-package main
-
-import (
-	"fmt"
-	"log"
-
-	"github.com/jbvmio/kafkactl"
-)
-
-func main() {
-
-	client, err := kafkactl.NewClient("localhost:9092")
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-
-	topics, err := client.GetTopicMeta()
-	if err != nil {
-		log.Fatalf("Error: %v\n", err)
-	}
-
-	for _, t := range topics {
-		fmt.Printf("TOPIC> %v  PARTITION> %v  LEADER> %v\n", t.Topic, t.Partition, t.Leader)
-	}
-
-}
-
-```
 
 # kafkactl tool - Get Started
 
+### **From Source**
+* Requires Go Version 1.11+
+* Specifically Module Support
+```
+git clone https://github.com/jbvmio/kafkactl
+cd kafkactl/
+go build -o $GOPATH/bin/kafkactl
+```
 ### **Manual Download**
 - Download the [latest](https://github.com/jbvmio/kafkactl/releases) kafkactl tool and extract to a $PATH directory.
 - Run "kafkactl config --sample" to generate a sample config at $HOME/.kafkactl.yaml
@@ -76,7 +50,7 @@ func main() {
 
 * Alternatively, pass all arguments to the command when running.
 ```
-# kafkactl --broker brokerhost01:9092 admin create --topic newtopic01 --partitions 15 --rfactor 3
+# kafkactl --broker brokerhost01:9092 admin create topic newtopic01 --partitions 15 --rfactor 3
 
 ```
 
@@ -119,34 +93,61 @@ docker run --rm -v ${PWD}/.kafkactl.yaml:/home/kafkactl/.kafkactl.yaml jbvmio/ka
 ### example config commands
 ```
 kafkactl config --sample
-kafkactl config --show
-kafkactl config --use testcluster1
+kafkactl config view
+kafkactl config get-contexts
+kafkactl config current-context
 ```
 
 ### example config file (~/.kafkactl.yaml)
 ```
-current: testCluster1
-entries:
-- name: testCluster1
-  kafka:
-  - brokerHost1:9092
-  - brokerHost2:9092
-  burrow:
-  - http://burrow1:3000
-  - http://burrow2:3000
-  zookeeper:
-  - http://zk1:2181
-  - http://zk2:2181
-- name: testCluster2
-  kafka:
-  - brokerHost1:9092
-  - brokerHost2:9092
-  burrow:
-  - http://burrow1:3000
-  - http://burrow2:3000
-  zookeeper:
-  - http://zk1:2181
-  - http://zk2:2181
+contexts:
+  prod-atl01:
+    name: prod-atl01
+    brokers:
+    - broker01:9092
+    - broker02:9092
+    - broker03:9092
+    burrow:
+    - burrow01:8080
+    - burrow02:8080
+    - burrow03:8080
+    zookeeper:
+    - zkhost01:2181
+    - zkhost02:2181
+    - zkhost03:2181
+    clientVersion: ""
+  prod-atl02:
+    name: prod-atl02
+    brokers:
+    - broker01:9092
+    - broker02:9092
+    - broker03:9092
+    burrow:
+    - burrow01:8080
+    - burrow02:8080
+    - burrow03:8080
+    zookeeper:
+    - zkhost01:2181
+    - zkhost02:2181
+    - zkhost03:2181
+    clientVersion: ""
+  prod-atl03:
+    name: prod-atl03
+    brokers:
+    - broker01:9092
+    - broker02:9092
+    - broker03:9092
+    burrow:
+    - burrow01:8080
+    - burrow02:8080
+    - burrow03:8080
+    zookeeper:
+    - zkhost01:2181
+    - zkhost02:2181
+    - zkhost03:2181
+    clientVersion: ""
+current-context: prod-atl01
+config-version: 1
 
 ```
 
@@ -154,58 +155,77 @@ entries:
 
 ### kafkactl -h
 ```
-Usage of kafkactl:
+kafkactl: Kafka Management Tool
+
 Usage:
   kafkactl [flags]
   kafkactl [command]
 
+Examples:
+  kafkactl --context <contextName> get brokers
+
 Available Commands:
-  admin       Perform Various Kafka Administration Tasks
-  burrow      Query Burrow
-  config      Manage kafkactl Configuration
-  consume     Consume from Topics using Consumer Groups.
-  describe    Return Topic or Group details
-  group       Search and Retrieve Group Info
+  admin       Kafka Admin Actions
+  burrow      Show Burrow Lag Evaluations <wip>
+  config      Show and Edit kafkactl config
+  describe    Get Kafka Details
+  get         Get Kafka Information
   help        Help about any command
-  message     Retreive Targeted Messages from a Kafka Topic
-  meta        Return Metadata
-  produce     Produce messages to a Kafka topic
-  tail        Tail a Topic
-  topic       Search and Retrieve Available Topics
+  logs        Get Messages from a Kafka Topic
+  send        Send/Produce Messages to a Kafka Topic
   version     Print kafkactl version and exit
-  zk          Perform Various Zookeeper Administration Tasks
+  zk          Zookeeper Actions
 
 Flags:
-  -b, --broker string   Bootstrap Kafka Broker
-  -g, --group string    Specify a Target Group
-  -h, --help            help for kafkactl
-      --port string     Port used for Bootstrap Kafka Broker (default "9092")
-  -t, --topic string    Specify a Target Topic
-  -v, --verbose         Display any additional info and error output.
+  -B, --broker string      Specify a single broker target host:port - Overrides config.
+      --burrow string      Specify a single burrow endpoint http://host:port - Overrides config.
+      --cfg string         config file (default is $HOME/.kafkactl.yaml)
+  -C, --context string     Specify a context.
+  -x, --exact              Find exact matches.
+  -h, --help               help for kafkactl
+  -o, --out string         Change Output Format - yaml|json.
+  -v, --verbose            Display additional info or errors.
+      --version string     Specify a client version.
+  -Z, --zookeeper string   Specify a single zookeeper target host:port - Overrides config.
 
 ```
 
 ### kafkactl admin -h
 ```
-  conf        Get and Set Available Kafka Related Configs (Topics Only for Now)
-  create      Create Topics
-  delete      Delete Topics or Groups
-  offset      Manage Offsets
-  pre         Perform Preferred Replica Election Tasks
+Available Commands:
+  create      Create Kafka Resources
+  delete      Delete Kafka Resources
+  get         Get Kafka Configurations
+  move        Move Partitions using Stdin
+  set         Set Kafka Configurations
 ```
 
 ### kafkactl zk -h
 ```
+Zookeeper Actions
+
+Usage:
+  kafkactl zk [flags]
+  kafkactl zk [command]
+
 Available Commands:
-  ls          List or Get Values of a Given Path in Zookeeper
+  create      Create Zookeeper Paths and Values
+  delete      Delete Zookeeper Paths and Values
+  ls          Print Zookeeper Paths and Values
 
 Flags:
-  -c, --create string   Create a Zookeeper Path (Use with --value for setting a value)
-  -d, --delete string   Delete a Zookeeper Path/Value
-  -f, --force           Force Operation
-  -h, --help            help for zk
-  -s, --server string   Specify a targeted Zookeeper Server and Port (eg. localhost:2181
-      --value string    Create a Zookeeper Value (Use with --create to specify the path for the value) Wins over StdIn
+  -h, --help         help for zk
+  -o, --out string   Change Output Format - yaml|json.
+
+Global Flags:
+  -B, --broker string      Specify a single broker target host:port - Overrides config.
+      --burrow string      Specify a single burrow endpoint http://host:port - Overrides config.
+      --cfg string         config file (default is $HOME/.kafkactl.yaml)
+  -C, --context string     Specify a context.
+  -x, --exact              Find exact matches.
+  -v, --verbose            Display additional info or errors.
+      --version string     Specify a client version.
+  -Z, --zookeeper string   Specify a single zookeeper target host:port - Overrides config.
 ```
 
 
@@ -231,7 +251,7 @@ Cluster: (Kafka: v1.1)
 ```
 
 ```
-# kafkactl group mygroup05
+# kafkactl get group mygroup05
 
 GROUPTYPE  GROUP      COORDINATOR
 consumer   mygroup05  broker03:9092/3
@@ -239,7 +259,7 @@ consumer   mygroup05  broker03:9092/3
 ```
 
 ```
-kafkactl group mygroup05 --lag
+kafkactl get group mygroup05 --lag
 
 GROUP      TOPIC      PART  MEMBER                    OFFSET  LAG
 mygroup05  mytopic05  14    mygroup05-77885078-77abc  97      0
