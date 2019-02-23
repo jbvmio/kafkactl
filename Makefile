@@ -21,6 +21,7 @@ BT=$(shell date +%s)
 GCT=$(shell git rev-list -1 HEAD --timestamp | awk '{print $$1}')
 GC=$(shell git rev-list -1 HEAD --abbrev-commit)
 REV=$(shell echo $(GCT)-$(YTIME) | bc)
+FNAME=$(shell echo $(LATEST)+$(REV))
 
 ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) -X github.com/jbvmio/kafkactl/cli/cmd.release=$(PUBRELEASE) -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) -X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=$(BT) -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC)"
 
@@ -39,7 +40,7 @@ test: build clean
 release:
 	git log --oneline --decorate > .commit.log
 	git add .
-	git commit -m "release $(NEXTVER)"
-	git tag -a $(NEXTVER) -m "release $(NEXTVER)"
+	git commit -m "release $(FNAME)"
+	git tag -a $(FNAME) -m "release $(FNAME)"
 	git push origin
-	git push origin $(NEXTVER)
+	git push origin $(FNAME)
