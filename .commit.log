@@ -1,0 +1,141 @@
+09f197d (HEAD -> dev, origin/dev) update makefile
+de83d82 update makefile
+04373c8 update CI for dev branch
+6735cf2 update
+753a975 update with master
+da09af9 (origin/master, master) edit makefile; edit version info;
+328c2c6 edit value
+06eb526 (tag: v1.0.20) release v1.0.20
+1dcf755 release v1.0.20
+96ceb2c release v1.0.20
+e41b71b release v1.0.20
+e9ef074 release v..
+dd95aea release v1.0.20
+ec45216 fix makefile
+9e2e1f2 edit makefile
+bbbf551 release v1.0.20
+c7120f0 release v1.0.20
+53be440 release v1.0.20
+9867133 release 1.0.20
+5dffa88 release 1.0.20
+a7f4401 edit readme
+35b5b8a edit readme
+22c8509 edit readme
+51a1b2b edit readme
+708ddaf added CI configs
+0285687 edits
+47f64fb add goreleaser
+0dc081b updates
+217e65a updates
+ee79f5c updates
+14a3352 updates
+4e5524b updates
+57be5a2 update dependencies
+9f0328c update readme
+341f44d start reorg with modules
+1d410c0 edit imports; add go module;
+54abbeb updates
+ce64a4f lib separation; start using modules;
+468c85c cleanup
+c142756 remove dependancy
+aeb2ec9 remove missed import
+c586215 (tag: 1.0.19.4485809, origin/reorg, reorg) Add Examples; Add Burrow Monitor; Cleanup;
+f6e9beb switch to logsrus for logging
+690db6a switch to logsrus for logging
+5c84aad re-read config after conversion
+b152f33 add old config detection
+468ce16 disable client start on version
+d771af0 change config filename in help
+5ca94b7 finish config convert func
+c4acfee make config converter
+6022042 delete outdated files
+a6447d7 cleanup and updates
+76eac4a updates
+86e4097 cleanup; add replica moves, increases; more examples;
+64d2b09 Add Offset Operations; Start Examples;
+2de98d0 cleanup adhox context for zk with kafka
+449593d add adhoc contexts
+968e1c6 edit version
+f430de4 cleanup match bool; add sort lag;
+33d9333 topic ops edits; add replica migration counts;
+f45c06c add create/delete topic capabilies
+ad3ba86 re-add config view; add entity notifications for topic alter;
+1fd450b edit version output
+904b2dc add reset topic config capability
+f9a8930 updates
+e858472 fix validation check
+9e87a84 cleanup, add pre
+9c7037e cleanup zk funcs
+45591dd start pre and zk funcs
+3bb3d37 cleanup admin topic configs
+fee8cd4 add/expand produce/consume; start admin funcs;
+524c863 add follow
+3f824d6 cleanup; add msgs
+c5d7550 add lag; cleanup;
+b375605 cleanup offset map func; add describe;
+82261d3 reorg/cleanup start; create context usage;
+f92d331 fixes, edits
+ddafa6c add find topics requiring PRE
+4f3ee42 add pre with stdin; cleanup topicStdin;
+c80e982 cleanup
+a0819b6 fix version return for 0.11.0.0; add client version return;
+7be69e1 fix persistent flag conflict
+3ce3e09 Cleanup; Add broker command;
+70cf25d add client version funcs; return errors as stack so metadata can still return some data; general cleanup;
+a377cd9 updates; client connect cleanup; add moves from stdin;
+1283f7d add increase ISR for all topics; add client timeout getting metadata summary; add api versions return;
+e55026b add delete offsets for partition; use custom client for tool;
+88ce6a8 fix explicit zk call
+ae486e4 updates
+ca9e6f5 edits
+8be294c edits
+317c1a3 edits
+3728580 add docker instructions to readme
+a5d1c15 edit readme
+08c8508 cleanup; edits'
+a012738 updates
+0d63b6e updates
+a4ae93c (tag: v2018.12.17.115341) cleanup zookeeper funcs
+646962e add move partition function
+c4c375a add zk options/checks for replica increase
+617e368 close client on fatal; cleanup;
+daa3994 updates
+2546cf8 edits
+de34cb7 add increase rFactor functionality
+7246e94 start increase functions
+8ff43d4 edit pre description
+347681f fix
+99333b2 (tag: v2018.11.27.125943) edits
+533d845 edits
+a15660b Add README; Fix typo
+24387cc allow passing stdin as value for zookeeper values
+9599710 add version funcs; cleanup;
+8f1f92d cleanup
+a9278f3 Add note as WiP
+f6c80a7 add burrow monitor
+ebdc576 Add Burrow Functions; Cleanup ZK;
+babb7f2 add kafka version identification; add apikey retrieval;
+6553353 cleanup
+1a7a8c1 Add PRE for AllTopics
+d48d5a5 add zookeeper functions
+28eea7e cleanup console producer
+c1f5b23 cleanup; simplify client call to global for efficiency;
+b2714a9 append random string for clientID in config
+8655cfd rename default config file; add default output to config command;
+7998846 add consumer group functions
+6b5053a Edits and Additions; Added Configuration Mgmt.
+a4a7c27 Updates and Additions
+f8d87c2 edit tail start logic
+fd54839 add additional partition offset retrieval method, make partition offsets default topic display
+2780c48 add additional partition offset retrieval method, make partition offsets default topic display
+f6666de add consumer functions
+e7fe949 cleanup
+1232c58 Expand Offset Operations
+40356cb revise conf collections
+6e187fc various
+4182783 add offsetreset
+faa752c fix clusterMeta
+67f3b7b fix describe args; cleanup topic/group metadata
+58b3b03 Numerous Adds
+49502bc start of revamp
+879efa2 initial commit
