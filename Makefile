@@ -39,4 +39,3 @@ release:
 	git tag -a $(NEXTVER) -m "release $(NEXTVER)"
 	git push origin
 	git push origin $(NEXTVER)
-
