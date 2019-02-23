@@ -4,7 +4,7 @@ go:
 env:
   global:
   - GO111MODULE=on
-  - PUBRELEASE="true"
+  - PUBRELEASE=$(echo true)
   - LATEST=$(curl -s https://github.com/jbvmio/kafkactl/releases/latest | awk -F '/' '/releases/{print $8}' | awk -F '"' '{print $1}')
   - LATESTMAJ=$(echo $LATEST | cut -d '.' -f 1)
   - LATESTMIN=$(echo $LATEST | cut -d '.' -f 2)
