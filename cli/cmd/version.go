@@ -32,14 +32,15 @@ var (
 	showLatest bool
 	fullVer    string
 
-	release     string
-	nextRelease string
-	latestMajor string
-	latestMinor string
-	latestPatch string
-	revision    string
-	buildTime   string
-	commitHash  string
+	release       string
+	nextRelease   string
+	latestRelease string
+	latestMajor   string
+	latestMinor   string
+	latestPatch   string
+	revision      string
+	buildTime     string
+	commitHash    string
 )
 
 var versionCmd = &cobra.Command{
@@ -48,9 +49,12 @@ var versionCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		fullVer = latestMajor + `.` + latestMinor + `.` + latestPatch
 		if release != "true" {
+			latestRelease = latestMajor + `.` + latestMinor + `.` + latestPatch
 			fullVer = fullVer + `+` + revision
 		} else {
+			latestRelease = nextRelease
 			fullVer = nextRelease
+			nextRelease = `Latest*`
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -65,7 +69,7 @@ var versionCmd = &cobra.Command{
 				fmt.Printf("Latest*    : N/A\n")
 				fmt.Printf("NextRel*   : %s\n", nextRelease)
 			default:
-				fmt.Printf("Latest*    : %s\n", string(latestMajor+`.`+latestMinor+`.`+latestPatch))
+				fmt.Printf("Latest*    : %s\n", latestRelease)
 				fmt.Printf("NextRel*   : %s\n", nextRelease)
 			}
 		}
