@@ -11,11 +11,11 @@ env:
   - LATESTPAT=$(echo $LATEST | cut -d '.' -f 3)
   - NEXTPAT=$(echo $LATESTPAT + 1 | bc)
   - NEXTVER="v${LATESTMAJ}.${LATESTMIN}.${NEXTPAT}"
-  - YTIME=$(shell date -j -f "%b %d %Y %T" "Jan 1 2019 00:00:00" "+%s")
-  - BT=$(shell date +%s)
-  - GCT=$(shell git rev-list -1 HEAD --timestamp | awk '{print $$1}')
-  - GC=$(shell git rev-list -1 HEAD --abbrev-commit)
-  - REV=$(shell echo $(GCT)-$(YTIME) | bc)
+  - YTIME=$(date -j -f "%b %d %Y %T" "Jan 1 2019 00:00:00" "+%s")
+  - BT=$(date +%s)
+  - GCT=$(git rev-list -1 HEAD --timestamp | awk '{print $$1}')
+  - GC=$(git rev-list -1 HEAD --abbrev-commit)
+  - REV=$(echo $(GCT)-$(YTIME) | bc)
   - LD_FLAGS="-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=${LATESTMAJ} -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=${LATESTMIN} -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=${LATESTPAT} -X github.com/jbvmio/kafkactl/cli/cmd.release=${PUBRELEASE} -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=${NEXTVER} -X github.com/jbvmio/kafkactl/cli/cmd.revision=${REV} -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=${BT} -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=${GC}"
   - secure: "rhX4sCsYXAi4o/HfZ4b7v//aC0c/ShKXpxkJHuSrP8iZ/vjhtMW1jU9TBH8HNhqMmpw+kWiQRHRCCA2C9NPe2Mv1+j4Z44IJKU0Ux8OIqJYVqOcJcRXiKCghPxM9nfYm4iz4oTGFOXte9v6PXFpztpOp7D9ax5+PDSFoWBCPAaWQkKVMMVP4TlGAWdWE4i+KztxvSQSIshAfOm/2PT/jgUlFX9//rSldmT4Q6tUGR1ZXkiEIgz9ZkY2c1swi+OQSvbGojW4X7QlugPxAf5y/NGFwXRjgKFzTk5MWBxEJy8HCziD57OD/KyHoQjWSO1YZ5f9fiHmqgfHeBreQme/d8YrWRIMzytYlB+YuwVJgsJt+rGvgzruBpzSlxqsH/Ly0YXCGpL6WFC3j9ZOCTcPIFMJn9rDF//1pUoAlH2lYEf6CAiqRZrcq8zt1u0ggiS71sRDrB6SM2uml00t/afXs4wfY4gNuxrAXaBdxuno+0okbiuTyd0POBiRmZvMOnm4F8OxzrxcB8Z4xzK/wDqgftcjm2LTNcmI1zOZNmJQvgmmU7fbcfTLX9HX0nOXetyCndbUQcC5iIeVof66W5ctDJMvDSSEMhpuf1OKCouTdn/kjEJjyPYBjIrcyBOKuw2twjBgxXx8dR/7D8p66t+/CtevyWsz/RYGyK+4M9imoslo="
 addons:
