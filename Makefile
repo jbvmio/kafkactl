@@ -9,14 +9,13 @@ LATESTMAJ=$(shell echo $(LATEST) | cut -d '.' -f 1)
 LATESTMIN=$(shell echo $(LATEST) | cut -d '.' -f 2)
 LATESTPAT=$(shell echo $(LATEST) | cut -d '.' -f 3)
 NEXTPAT=$(shell echo $(LATESTPAT) + 1 | bc)
-NEXTVER="$(LATESTMAJ).$(LATESTMIN).$(NEXTPAT)"
+NEXTVER="v$(LATESTMAJ).$(LATESTMIN).$(NEXTPAT)"
 
 YTIME=$(shell date -j -f "%b %d %Y %T" "Jan 1 2019 00:00:00" "+%s")
 BT=$(shell date +%s)
 GCT=$(shell git rev-list -1 HEAD --timestamp | awk '{print $$1}')
 GC=$(shell git rev-list -1 HEAD --abbrev-commit)
 REV=$(shell echo $(GCT)-$(YTIME) | bc)
-FNAME="kafkactl_$(LATEST)+$(REV)"
 
 ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) \
 -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) \
