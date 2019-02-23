@@ -13,6 +13,7 @@ builds:
   goarch:
     - amd64
 archive:
+  name_template: "{{ .ProjectName }}_{{ .Version }}-beta_{{ .Os }}_{{ .Arch }}"
   replacements:
     darwin: Darwin
     linux: Linux
@@ -33,10 +34,11 @@ nfpm:
   formats:
     - deb
     - rpm
+  name_template: "{{ .ProjectName }}_{{ .Version }}-beta_{{ .Os }}_{{ .Arch }}"
 release:
   disable: false
   prerelease: true
-  name_template: "{{ .Env.TRAVIS_BRANCH }}-{{ .Tag }}-beta"
+  name_template: "{{ .Tag }}-beta"
 snapshot:
   name_template: "{{ .Env.TRAVIS_BRANCH }}"
 changelog:
