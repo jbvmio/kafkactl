@@ -8,7 +8,7 @@ LATESTMAJ=$(shell echo $(LATEST) | cut -d '.' -f 1)
 LATESTMIN=$(shell echo $(LATEST) | cut -d '.' -f 2)
 LATESTPAT=$(shell echo $(LATEST) | cut -d '.' -f 3)
 NEXTPAT=$(shell echo $(LATESTPAT) + 1 | bc)
-NEXTVER="v$(LATESTMAJ).$(LATESTMIN).$(NEXTPAT)"
+NEXTVER=$(shell echo v$(LATESTMAJ).$(LATESTMIN).$(NEXTPAT))
 
 if [ $(shell uname) != "Darwin" ]; then \
 	YTIME=$(shell date -d "Jan 1 2019 00:00:00" +%s) \
