@@ -1,3 +1,5 @@
+![Travis (.org)](https://img.shields.io/travis/jbvmio/kafkactl.svg?style=plastic)
+
 # kafkactl - Kafka Management Tool - **[wiki](https://github.com/jbvmio/kafkactl/wiki)**
 kafkactl - Package and CLI Tool (written in Go) for mgmt of Apache Kafka and related components.
 
