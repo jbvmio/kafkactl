@@ -37,6 +37,7 @@ clean:
 test: build clean
 
 release:
+	git log --oneline --decorate > .commit.log
 	git add .
 	git commit -m "release $(NEXTVER)"
 	git tag -a $(NEXTVER) -m "release $(NEXTVER)"
