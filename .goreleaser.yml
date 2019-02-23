@@ -36,11 +36,11 @@ nfpm:
 release:
   disable: false
   prerelease: true
-  name_template: "{{ .Env.TRAVIS_BRANCH }}-{{ .Env.FNAME }}-beta"
+  name_template: "{{ .Env.TRAVIS_BRANCH }}-{{ .TAG }}-beta"
 snapshot:
   name_template: "{{ .Env.TRAVIS_BRANCH }}"
 changelog:
-  skip: false
+  skip: true
   sort: asc
   filters:
     exclude:
