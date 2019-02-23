@@ -1,0 +1,42 @@
+before:
+  hooks:
+    - go mod download
+builds:
+- env:
+  - GO111MODULE=on
+  ldflags:
+    - {{.Env.LD_FLAGS}}
+  goos:
+    - darwin
+    - linux
+    - windows
+  goarch:
+    - amd64
+archive:
+  replacements:
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+    386: i386
+    amd64: x86_64
+checksum:
+  name_template: 'checksums.txt'
+nfpm:
+  vendor: jbvm.io
+  homepage: https://www.jbvm.io/
+  maintainer: Jimmy Bonds <[jbonds@jbvm.io]>
+  description: CLI for Apache Kafka Management
+  license: Apache 2.0
+  formats:
+    - deb
+    - rpm
+release:
+  disable: false
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
