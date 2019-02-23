@@ -1,4 +1,3 @@
-# https://opensource.com/article/18/8/what-how-makefile
 
 .DEFAULT_GOAL := clean
 
@@ -17,17 +16,22 @@ GCT=$(shell git rev-list -1 HEAD --timestamp | awk '{print $$1}')
 GC=$(shell git rev-list -1 HEAD --abbrev-commit)
 REV=$(shell echo $(GCT)-$(YTIME) | bc)
 
-ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) \
--X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) \
--X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) \
--X github.com/jbvmio/kafkactl/cli/cmd.release=false \
--X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) \
--X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) \
--X github.com/jbvmio/kafkactl/cli/cmd.buildTime=$(BT) \
--X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC)"
-
 .PHONY: build
 build: 
+    ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) \
+    -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) \
+    -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) \
+    -X github.com/jbvmio/kafkactl/cli/cmd.release=false \
+    -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) \
+    -X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) \
+    -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=$(BT) \
+    -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC)"
+    if [ $(shell uname) == "Darwin" ]; then \
+		YTIME=$(shell date -j -f "%b %d %Y %T" "Jan 1 2019 00:00:00" "+%s") \
+    fi
+	    if [ $(shell uname) == "Linux" ]; then \
+		YTIME=$(shell date -d "Jan 1 2019 00:00:00" +%s) \
+    fi
 	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.darwin
 	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.linux
 	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.exe
