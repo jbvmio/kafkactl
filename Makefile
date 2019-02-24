@@ -3,6 +3,7 @@
 
 export GO111MODULE=on
 
+PUBRELEASE="true"
 LATEST=$(shell curl -s https://github.com/jbvmio/kafkactl/releases/latest | awk -F '/' '/releases/{print $$8}' | awk -F '"' '{print $$1}')
 LATESTMAJ=$(shell echo $(LATEST) | cut -d '.' -f 1)
 LATESTMIN=$(shell echo $(LATEST) | cut -d '.' -f 2)
@@ -21,7 +22,7 @@ GCT=$(shell git rev-list -1 HEAD --timestamp | awk '{print $$1}')
 GC=$(shell git rev-list -1 HEAD --abbrev-commit)
 REV=$(shell echo $(GCT)-$(YTIME) | bc)
 
-ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) -X github.com/jbvmio/kafkactl/cli/cmd.release=true -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) -X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=$(BT) -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC)"
+ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) -X github.com/jbvmio/kafkactl/cli/cmd.release=$(PUBRELEASE) -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) -X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=$(BT) -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC)"
 
 build:
 	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.darwin
@@ -36,6 +37,8 @@ clean:
 test: build clean
 
 release:
+	printf "[ RELEASE $(NEXTVER) ]\n" > .commit.log
+	git log --oneline --decorate >> .commit.log
 	git add .
 	git commit -m "release $(NEXTVER)"
 	git tag -a $(NEXTVER) -m "release $(NEXTVER)"
