@@ -37,6 +37,9 @@ clean:
 
 test: build clean
 
+docker:
+	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o /kafkactl
+
 release:
 	printf "[ RELEASE v1.0.20+4622936 ]\n" > .commit.log
 	git log --oneline --decorate >> .commit.log

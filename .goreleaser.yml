@@ -48,3 +48,10 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
+dockers:
+  - image_templates:
+    - "jbvmio/kafkactl:{{ .Tag }}"
+  binaries:
+    - mybinary
+  build_flag_templates:
+  - "--label=maintainer=jbvm.io"
