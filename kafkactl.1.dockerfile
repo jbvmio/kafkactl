@@ -1,3 +1,3 @@
-FROM scratch
+FROM alpine:latest
 COPY kafkactl /
-ENTRYPOINT ["/kafkactl"]
+CMD ["/kafkactl"]
