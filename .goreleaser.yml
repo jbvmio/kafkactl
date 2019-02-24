@@ -54,6 +54,6 @@ dockers:
   - image_templates:
   - "jbvmio/kafkactl:{{ .Tag }}"
   binaries:
-    - kafkactl
+  - kafkactl
   build_flag_templates:
   - "--label=maintainer=jbvm.io"
