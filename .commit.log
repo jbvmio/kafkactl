@@ -1,6 +1,8 @@
-[ RELEASE v1.0.20-beta.4729440 ]
-25e969d (HEAD -> dev) change docker build options
-824bde6 (origin/dev) release v1.0.20-beta.4728472
+[ RELEASE v1.0.20-beta.4729734 ]
+0edba68 (HEAD -> dev) change docker build options
+fc08a45 (origin/dev) release v1.0.20-beta.4729440
+25e969d change docker build options
+824bde6 release v1.0.20-beta.4728472
 4d56dfb testing
 e73a0c5 release v1.0.20-beta.4713640
 d5b6335 release v1.0.20-beta.4713587
