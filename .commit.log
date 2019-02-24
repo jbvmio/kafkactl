@@ -1,6 +1,8 @@
-[ RELEASE v1.0.20-4709948-beta ]
-4a068a2 (HEAD -> dev) cleanup tagging
-76636c2 (origin/dev) release v1.0.20+4708583
+[ RELEASE v1.0.20-beta.4711623 ]
+5fdb281 (HEAD -> dev) change docker image and tag vals
+2359ddd (origin/dev) release v1.0.20-4709948-beta
+4a068a2 cleanup tagging
+76636c2 release v1.0.20+4708583
 174c8a4 docker modifications
 692c26c release v1.0.20+4707654
 de3c2bd docker edits
