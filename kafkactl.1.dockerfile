@@ -1,3 +1,3 @@
-FROM alpine:latest
-ADD kafkactl /usr/local/bin/kafkactl
-ENTRYPOINT ["kafkactl"]
+FROM scratch
+ADD kafkactl /usr/bin/kafkactl
+ENTRYPOINT ["/kafkactl"]
