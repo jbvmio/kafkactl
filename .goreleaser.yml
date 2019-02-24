@@ -49,11 +49,13 @@ changelog:
     - '^docs:'
     - '^test:'
 dockers:
-  goos: linux
-  dockerfile: Dockerfile
-  - image_templates:
-  - "jbvmio/kafkactl:{{ .Tag }}"
-  binaries:
-  - kafkactl
-  build_flag_templates:
-  - "--label=maintainer=jbvm.io"
+  - goos: linux
+    goarch: amd64
+    dockerfile: kafkactl.1.dockerfile
+    image_templates:
+    - "docker.io/jbvmio/kafkactl:{{ .Tag }}"
+    - "docker.io/jbvmio/kafkactl:latest"
+    binaries:
+    - kafkactl
+    build_flag_templates:
+    - "--label=maintainer=jbonds@jbvm.io"
