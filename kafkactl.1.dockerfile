@@ -1,3 +1,3 @@
-FROM amd64/alpine:latest
-COPY kafkactl /usr/local/bin/kafkactl
+FROM alpine:latest
+COPY dist/linux_amd64/kafkactl /usr/local/bin/kafkactl
 ENTRYPOINT ["kafkactl"]
