@@ -58,3 +58,5 @@ dockers:
     - kafkactl
     build_flag_templates:
     - "--label=maintainer=jbonds@jbvm.io"
+    extra_files:
+    - dist/linux_amd64/kafkactl
