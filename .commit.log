@@ -1,4 +1,8 @@
-1951e65 (HEAD -> dev, origin/dev) release v1.0.20+4622250
+[ RELEASE v1.0.20+4666551 ]
+78c0bdb (HEAD -> dev, origin/dev) add dockerfile
+3c12d2f edit makefile
+664de08 (tag: v1.0.20+4622936) release v1.0.20+4622936
+1951e65 release v1.0.20+4622250
 0816045 release v1.0.20+4622212
 7f703ac update CI files
 70b8d50 release v1.0.20+4620468
@@ -7,7 +11,7 @@ de83d82 update makefile
 04373c8 update CI for dev branch
 6735cf2 update
 753a975 update with master
-da09af9 (origin/master, master) edit makefile; edit version info;
+da09af9 edit makefile; edit version info;
 328c2c6 edit value
 06eb526 (tag: v1.0.20) release v1.0.20
 1dcf755 release v1.0.20
