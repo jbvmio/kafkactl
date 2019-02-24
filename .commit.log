@@ -1,6 +1,8 @@
-[ RELEASE v1.0.20-beta.4711623 ]
-5fdb281 (HEAD -> dev) change docker image and tag vals
-2359ddd (origin/dev) release v1.0.20-4709948-beta
+[ RELEASE v1.0.20-beta.4712542 ]
+c9b6625 (HEAD -> dev) fix binary path
+07867ff (origin/dev) release v1.0.20-beta.4711623
+5fdb281 change docker image and tag vals
+2359ddd release v1.0.20-4709948-beta
 4a068a2 cleanup tagging
 76636c2 release v1.0.20+4708583
 174c8a4 docker modifications
