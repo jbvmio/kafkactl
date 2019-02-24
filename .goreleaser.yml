@@ -13,7 +13,7 @@ builds:
   goarch:
     - amd64
 archive:
-  name_template: "{{ .ProjectName }}_{{ .Version }}-beta_{{ .Os }}_{{ .Arch }}"
+  name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
   replacements:
     darwin: Darwin
     linux: Linux
@@ -34,11 +34,11 @@ nfpm:
   formats:
     - deb
     - rpm
-  name_template: "{{ .ProjectName }}_{{ .Version }}-beta_{{ .Os }}_{{ .Arch }}"
+  name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 release:
   disable: false
   prerelease: true
-  name_template: "{{ .Tag }}-beta"
+  name_template: "{{ .Tag }}"
 snapshot:
   name_template: "{{ .Env.TRAVIS_BRANCH }}"
 changelog:
@@ -53,7 +53,7 @@ dockers:
     goarch: amd64
     dockerfile: kafkactl.1.dockerfile
     image_templates:
-    - "docker.io/jbvmio/kafkactl:{{.Env.DOCKERTAG}}"
+    - "docker.io/jbvmio/kafkactl:{{ .Tag }}"
     binaries:
     - kafkactl
     build_flag_templates:
