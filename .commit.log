@@ -1,6 +1,8 @@
-[ RELEASE v1.0.20+4707654 ]
-de3c2bd (HEAD -> dev) docker edits
-dfc8109 (origin/dev) release v1.0.20+4706215
+[ RELEASE v1.0.20+4708583 ]
+174c8a4 (HEAD -> dev) docker modifications
+692c26c (origin/dev) release v1.0.20+4707654
+de3c2bd docker edits
+dfc8109 release v1.0.20+4706215
 bc88d11 add docker hooks
 d5304da release v1.0.20+4704552
 fd0d82b make dockerfile edits
