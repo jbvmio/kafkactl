@@ -1,5 +1,7 @@
-[ RELEASE v1.0.20-beta.4713640 ]
-d5b6335 (HEAD -> dev, tag: v1.0.20-beta.4713587, origin/dev) release v1.0.20-beta.4713587
+[ RELEASE v1.0.20-beta.4728472 ]
+4d56dfb (HEAD -> dev) testing
+e73a0c5 (origin/dev) release v1.0.20-beta.4713640
+d5b6335 release v1.0.20-beta.4713587
 28905fc edit cmds
 73f260d release v1.0.20-beta.4712542
 c9b6625 fix binary path
