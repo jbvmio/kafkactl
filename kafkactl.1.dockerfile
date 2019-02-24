@@ -1,3 +1,3 @@
 FROM alpine:latest
-ADD kafkactl.linux /usr/local/bin/kafkactl
+ADD dist/linux_amd64/kafkactl /usr/local/bin/kafkactl
 ENTRYPOINT ["kafkactl"]
