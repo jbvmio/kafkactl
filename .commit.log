@@ -1,5 +1,6 @@
-[ RELEASE v1.0.20+4666551 ]
-78c0bdb (HEAD -> dev, origin/dev) add dockerfile
+[ RELEASE v1.0.20+4666762 ]
+996a655 (HEAD -> dev, origin/dev) release v1.0.20+4666551
+78c0bdb add dockerfile
 3c12d2f edit makefile
 664de08 (tag: v1.0.20+4622936) release v1.0.20+4622936
 1951e65 release v1.0.20+4622250
