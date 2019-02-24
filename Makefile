@@ -38,7 +38,8 @@ clean:
 test: build clean
 
 release:
-	git log --oneline --decorate > .commit.log
+	printf "[ RELEASE v1.0.20+4622936 ]\n" > .commit.log
+	git log --oneline --decorate >> .commit.log
 	git add .
 	git commit -m "release $(FNAME)"
 	git tag -a $(FNAME) -m "release $(FNAME)"
