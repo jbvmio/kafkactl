@@ -53,7 +53,7 @@ dockers:
     goarch: amd64
     dockerfile: kafkactl.1.dockerfile
     image_templates:
-    - "docker.io/jbvmio/kafkactl:{{ .Env.DOCKERTAG }}"
+    - "docker.io/jbvmio/kafkactl:{{.Env.DOCKERTAG}}"
     binaries:
     - kafkactl
     build_flag_templates:

@@ -1,3 +1,3 @@
 FROM alpine:latest
-COPY kafkactl /
-CMD ["/kafkactl"]
+COPY kafkactl /usr/local/bin/kafkactl
+ENTRYPOINT ["kafkactl"]
