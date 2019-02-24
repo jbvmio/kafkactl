@@ -32,7 +32,6 @@ build:
 
 clean:
 	rm -f kafkactl.darwin
-	rm -f kafkactl.linux
 	rm -f kafkactl.exe
 
 test: build clean
