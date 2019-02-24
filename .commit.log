@@ -1,6 +1,8 @@
-[ RELEASE v1.0.20+4703865 ]
-7d83ff7 (HEAD -> dev) add docker
-0cd5e35 (tag: v1.0.20+4667287, origin/dev) release v1.0.20+4667287
+[ RELEASE v1.0.20+4704552 ]
+fd0d82b (HEAD -> dev) make dockerfile edits
+9b71bd3 (origin/dev) release v1.0.20+4703865
+7d83ff7 add docker
+0cd5e35 release v1.0.20+4667287
 65f27a5 release v1.0.20+4666762
 996a655 release v1.0.20+4666551
 78c0bdb add dockerfile
