@@ -1,3 +1,3 @@
-FROM scratch
-ADD kafkactl /usr/bin/kafkactl
-ENTRYPOINT ["/kafkactl"]
+FROM alpine:latest
+ADD dist/linux_amd64/kafkactl /usr/local/bin/kafkactl
+ENTRYPOINT ["kafkactl"]
