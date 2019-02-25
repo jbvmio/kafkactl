@@ -10,7 +10,6 @@ LATESTMIN=$(shell echo $(LATEST) | cut -d '.' -f 2)
 LATESTPAT=$(shell echo $(LATEST) | cut -d '.' -f 3)
 NEXTPAT=$(shell echo $(LATESTPAT) + 1 | bc)
 NEXTVER=$(shell echo $(LATESTMAJ).$(LATESTMIN).$(NEXTPAT))
-YTIME=$(shell date -d "Jan 1 2019 00:00:00" +%s)
 ifeq ($(shell uname), "Darwin" )
 	YTIME=$(shell date -juf "%b %d %Y %T" "Jan 1 2019 00:00:00" +%s)
 else
@@ -25,9 +24,9 @@ FNAME=$(shell echo $(LATEST)-beta.$(REV))
 ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) -X github.com/jbvmio/kafkactl/cli/cmd.release=$(PUBRELEASE) -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) -X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=$(BT) -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC)"
 
 build:
-	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.darwin
-	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.linux
-	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.exe
+	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.$(FNAME).darwin
+	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.$(FNAME).linux
+	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.$(FNAME).exe
 
 clean:
 	rm -f kafkactl.darwin
