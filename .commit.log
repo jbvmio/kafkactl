@@ -1,6 +1,8 @@
-[ RELEASE v1.0.20-beta.4808104 ]
-6c2b8c8 (HEAD -> dev) change to static variable
-200cbb8 (origin/dev) testing
+[ RELEASE v1.0.20-beta.4809952 ]
+d52d9f0 (HEAD -> dev) release mods
+6e2a6f3 (origin/dev) release v1.0.20-beta.4808104
+6c2b8c8 change to static variable
+200cbb8 testing
 9400d53 release v1.0.20-beta.
 1ccf53e release v1.0.20-beta.
 be950ed updates
