@@ -37,7 +37,7 @@ clean:
 test: build clean
 
 docker:
-	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o /kafkactl
+	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o /usr/local/bin/kafkactl
 
 release:
 	printf "[ RELEASE $(FNAME) ]\n" > .commit.log
