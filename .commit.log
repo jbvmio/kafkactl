@@ -1,6 +1,13 @@
-[ RELEASE v1.0.20-beta.4816024 ]
-9f5f08a (HEAD -> dev) switch base docker image due to dynamic linking
-538b007 (origin/dev) modify ldflags
+[ RELEASE v1.0.20-beta.4828570 ]
+9973f71 (HEAD -> dev, origin/dev) remove extra $ sign
+cce579b minor mod
+eda7d81 CI mods
+2d45df2 CI mods
+383bd73 makefile/CI edits
+a4bb027 isolate version and envs; edit makefile;
+c9cc667 release v1.0.20-beta.4816024
+9f5f08a switch base docker image due to dynamic linking
+538b007 modify ldflags
 c06c2c3 release v1.0.20-beta.4809952
 d52d9f0 release mods
 6e2a6f3 release v1.0.20-beta.4808104
@@ -47,7 +54,7 @@ fd0d82b make dockerfile edits
 996a655 release v1.0.20+4666551
 78c0bdb add dockerfile
 3c12d2f edit makefile
-664de08 (tag: v1.0.20+4622936) release v1.0.20+4622936
+664de08 release v1.0.20+4622936
 1951e65 release v1.0.20+4622250
 0816045 release v1.0.20+4622212
 7f703ac update CI files
