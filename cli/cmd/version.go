@@ -33,6 +33,7 @@ var (
 	fullVer    string
 
 	release       string
+	gitVersion    string
 	nextRelease   string
 	latestRelease string
 	latestMajor   string
@@ -60,6 +61,7 @@ var versionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("kafkactl   : %s\n", contact)
 		fmt.Printf("Version    : %s\n", fullVer)
+		fmt.Printf("GitVersion : %s\n", gitVersion)
 		fmt.Printf("Build      : %s\n", buildTime)
 		fmt.Printf("Revision   : %s\n", revision)
 		fmt.Printf("Commit     : %s\n", commitHash)

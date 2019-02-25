@@ -5,7 +5,7 @@ builds:
 - env:
   - GO111MODULE=on
   ldflags:
-    - -s -w -X {{.Env.LD_FLAGS}}
+    - -s -w -X {{.Env.LD_FLAGS_STATIC}} -X github.com/jbvmio/kafkactl/cli/cmd.gitVersion=${ .Tag }
   goos:
     - darwin
     - linux
