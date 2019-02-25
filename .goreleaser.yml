@@ -5,7 +5,7 @@ builds:
 - env:
   - GO111MODULE=on
   ldflags:
-    - -s -w -linkmode external -extldflags \"-static\" -X {{.Env.LD_FLAGS}}
+    - -s -w -X {{.Env.LD_FLAGS}}
   goos:
     - darwin
     - linux
