@@ -15,7 +15,7 @@ env:
   - BT=$(date +%s)
   - GCT=$(git rev-list -1 HEAD --timestamp | awk '{print $$1}')
   - GC=$(git rev-list -1 HEAD --abbrev-commit)
-  - REV=$(echo $GCT - $YTIME | bc)
+  - REV=$(echo "$GCT - $YTIME" | bc)
   - FNAME="${LATEST}-beta.${REV}"
   - LD_FLAGS="github.com/jbvmio/kafkactl/cli/cmd.latestMajor=${LATESTMAJ} -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=${LATESTMIN} -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=${LATESTPAT} -X github.com/jbvmio/kafkactl/cli/cmd.release=${PUBRELEASE} -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=${NEXTVER} -X github.com/jbvmio/kafkactl/cli/cmd.revision=${REV} -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=${BT} -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=${GC}"
   - FNAME_STATIC=$(echo $FNAME)
@@ -25,6 +25,7 @@ addons:
   apt:
     packages:
     - rpm
+    - bc
 services:
 - docker
 script: make extest
