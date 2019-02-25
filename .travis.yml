@@ -5,13 +5,13 @@ env:
   global:
   - GO111MODULE=on
   - PUBRELEASE=false
+  - YTIME="1546300800"
   - LATEST=$(curl -s https://github.com/jbvmio/kafkactl/releases/latest | awk -F '/' '/releases/{print $8}' | awk -F '"' '{print $1}')
   - LATESTMAJ=$(echo $LATEST | cut -d '.' -f 1)
   - LATESTMIN=$(echo $LATEST | cut -d '.' -f 2)
   - LATESTPAT=$(echo $LATEST | cut -d '.' -f 3)
   - NEXTPAT=$(echo $LATESTPAT + 1 | bc)
   - NEXTVER="v${LATESTMAJ}.${LATESTMIN}.${NEXTPAT}"
-  - YTIME=$(date -d "Jan 1 2019 00:00:00" +%s)
   - BT=$(date +%s)
   - GCT=$(git rev-list -1 HEAD --timestamp | awk '{print $$1}')
   - GC=$(git rev-list -1 HEAD --abbrev-commit)
