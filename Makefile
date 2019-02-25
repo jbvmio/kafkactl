@@ -4,17 +4,13 @@
 export GO111MODULE=on
 
 PUBRELEASE="false"
+YTIME="1546300800"
 LATEST=$(shell curl -s https://github.com/jbvmio/kafkactl/releases/latest | awk -F '/' '/releases/{print $$8}' | awk -F '"' '{print $$1}')
 LATESTMAJ=$(shell echo $(LATEST) | cut -d '.' -f 1)
 LATESTMIN=$(shell echo $(LATEST) | cut -d '.' -f 2)
 LATESTPAT=$(shell echo $(LATEST) | cut -d '.' -f 3)
 NEXTPAT=$(shell echo $(LATESTPAT) + 1 | bc)
 NEXTVER=$(shell echo $(LATESTMAJ).$(LATESTMIN).$(NEXTPAT))
-ifeq ($(shell uname), "Darwin" )
-	YTIME=$(shell date -juf "%b %d %Y %T" "Jan 1 2019 00:00:00" +%s)
-else
-	YTIME=$(shell date -d "Jan 1 2019 00:00:00" +%s)
-endif
 BT=$(shell date +%s)
 GCT=$(shell git rev-list -1 HEAD --timestamp | awk '{print $$1}')
 GC=$(shell git rev-list -1 HEAD --abbrev-commit)
@@ -29,9 +25,9 @@ build:
 	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.$(FNAME).exe
 
 clean:
-	rm -f kafkactl.darwin
-	rm -f kafkactl.linux
-	rm -f kafkactl.exe
+	rm -f kafkactl.$(FNAME).darwin
+	rm -f kafkactl.$(FNAME).linux
+	rm -f kafkactl.$(FNAME).exe
 
 test: build clean
 
