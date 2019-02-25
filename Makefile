@@ -14,7 +14,7 @@ NEXTVER=$(shell echo $(LATESTMAJ).$(LATESTMIN).$(NEXTPAT))
 BT=$(shell date +%s)
 GCT=$(shell git rev-list -1 HEAD --timestamp | awk '{print $$1}')
 GC=$(shell git rev-list -1 HEAD --abbrev-commit)
-REV=$(shell echo $(GCT)-$(YTIME) | bc)
+REV=$(shell echo $(GCT) - $(YTIME) | bc)
 FNAME=$(shell echo $(LATEST)-beta.$(REV))
 
 ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) -X github.com/jbvmio/kafkactl/cli/cmd.release=$(PUBRELEASE) -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) -X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=$(BT) -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC) -X github.com/jbvmio/kafkactl/cli/cmd.gitVersion=$(FNAME)"
@@ -25,9 +25,9 @@ build:
 	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.$(FNAME).exe
 
 exbuild:
-	GOOS=darwin ARCH=amd64 go build -ldflags "$(LD_FLAGS_STATIC)" -o kafkactl.$(FNAME_STATIC).darwin
-	GOOS=linux ARCH=amd64 go build -ldflags "$(LD_FLAGS_STATIC)" -o kafkactl.$(FNAME_STATIC).linux
-	GOOS=darwin ARCH=amd64 go build -ldflags "$(LD_FLAGS_STATIC)" -o kafkactl.$(FNAME_STATIC).exe
+	GOOS=darwin ARCH=amd64 go build -ldflags "s -w -X $(LD_FLAGS_STATIC)" -o kafkactl.$(FNAME_STATIC).darwin
+	GOOS=linux ARCH=amd64 go build -ldflags "s -w -X $(LD_FLAGS_STATIC)" -o kafkactl.$(FNAME_STATIC).linux
+	GOOS=darwin ARCH=amd64 go build -ldflags "s -w -X $(LD_FLAGS_STATIC)" -o kafkactl.$(FNAME_STATIC).exe
 
 clean:
 	rm -f kafkactl.$(FNAME).darwin
@@ -41,7 +41,7 @@ exclean:
 
 test: build clean
 
-extest: exbuild clean
+extest: exbuild exclean
 
 docker:
 	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o /usr/local/bin/kafkactl
