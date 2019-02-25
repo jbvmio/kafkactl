@@ -1,6 +1,8 @@
-[ RELEASE v1.0.20-beta.4739962 ]
-96e63b5 (HEAD -> dev) edit
-0d33051 (origin/dev) release v1.0.20-beta.4730319
+[ RELEASE v1.0.20-beta.4740492 ]
+24db721 (HEAD -> dev) edit
+a5d812c (tag: v1.0.20-beta.4739962, origin/dev) release v1.0.20-beta.4739962
+96e63b5 edit
+0d33051 release v1.0.20-beta.4730319
 ef25b4d change docker build options
 4047a12 release v1.0.20-beta.4729734
 0edba68 change docker build options
