@@ -1,6 +1,9 @@
-[ RELEASE v1.0.20-beta.4809952 ]
-d52d9f0 (HEAD -> dev) release mods
-6e2a6f3 (origin/dev) release v1.0.20-beta.4808104
+[ RELEASE v1.0.20-beta.4816024 ]
+9f5f08a (HEAD -> dev) switch base docker image due to dynamic linking
+538b007 (origin/dev) modify ldflags
+c06c2c3 release v1.0.20-beta.4809952
+d52d9f0 release mods
+6e2a6f3 release v1.0.20-beta.4808104
 6c2b8c8 change to static variable
 200cbb8 testing
 9400d53 release v1.0.20-beta.
