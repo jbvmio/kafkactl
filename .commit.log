@@ -1,5 +1,6 @@
-[ RELEASE v1.0.20-beta.4828570 ]
-9973f71 (HEAD -> dev, origin/dev) remove extra $ sign
+[ RELEASE v1.0.20-beta.4829042 ]
+86f9963 (HEAD -> dev, tag: v1.0.20-beta.4828570, origin/dev) release v1.0.20-beta.4828570
+9973f71 remove extra $ sign
 cce579b minor mod
 eda7d81 CI mods
 2d45df2 CI mods
