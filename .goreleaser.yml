@@ -55,7 +55,5 @@ dockers:
     dockerfile: kafkactl.1.dockerfile
     image_templates:
     - "docker.io/jbvmio/kafkactl:{{ .Tag }}"
-    binaries:
-    - kafkactl
-    build_flag_templates:
-    - "--label=maintainer=jbonds@jbvm.io"
+    binary: kafkactl
+
