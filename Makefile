@@ -10,13 +10,12 @@ LATESTMIN=$(shell echo $(LATEST) | cut -d '.' -f 2)
 LATESTPAT=$(shell echo $(LATEST) | cut -d '.' -f 3)
 NEXTPAT=$(shell echo $(LATESTPAT) + 1 | bc)
 NEXTVER=$(shell echo $(LATESTMAJ).$(LATESTMIN).$(NEXTPAT))
-
-if [ $(shell uname) != "Darwin" ]; then \
-	YTIME=$(shell date -d "Jan 1 2019 00:00:00" +%s) \
-fi
-if [ $(shell uname) == "Darwin" ]; then \
-	YTIME=$(shell date -juf "%b %d %Y %T" "Jan 1 2019 00:00:00" +%s) \
-fi
+YTIME=$(shell date -d "Jan 1 2019 00:00:00" +%s)
+ifeq ($(shell uname), "Darwin" )
+	YTIME=$(shell date -juf "%b %d %Y %T" "Jan 1 2019 00:00:00" +%s)
+else
+	YTIME=$(shell date -d "Jan 1 2019 00:00:00" +%s)
+endif
 BT=$(shell date +%s)
 GCT=$(shell git rev-list -1 HEAD --timestamp | awk '{print $$1}')
 GC=$(shell git rev-list -1 HEAD --abbrev-commit)
