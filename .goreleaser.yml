@@ -5,7 +5,7 @@ builds:
 - env:
   - GO111MODULE=on
   ldflags:
-    - -X {{.Env.LD_FLAGS}}
+    - -s -w -linkmode external -extldflags \"-static\" -X {{.Env.LD_FLAGS}}
   goos:
     - darwin
     - linux
@@ -23,6 +23,8 @@ archive:
   format_overrides:
     - goos: windows
       format: zip
+  files:
+  - nOnE*
 checksum:
   name_template: 'checksums.txt'
 nfpm:
