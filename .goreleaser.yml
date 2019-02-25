@@ -12,6 +12,7 @@ builds:
     - windows
   goarch:
     - amd64
+  binary: kafkactl
 archive:
   name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
   replacements:
@@ -49,8 +50,8 @@ changelog:
     - '^docs:'
     - '^test:'
 dockers:
-  - goos: linux
-    goarch: amd64
+  -
+    goos: linux
     dockerfile: kafkactl.1.dockerfile
     image_templates:
     - "docker.io/jbvmio/kafkactl:{{ .Tag }}"
@@ -58,5 +59,3 @@ dockers:
     - kafkactl
     build_flag_templates:
     - "--label=maintainer=jbonds@jbvm.io"
-    extra_files:
-    - dist/linux_amd64/kafkactl
