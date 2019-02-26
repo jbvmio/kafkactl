@@ -54,3 +54,15 @@ dockers:
     dockerfile: kafkactl.1.dockerfile
     build_flag_templates:
     - "--label=maintainer=jbonds@jbvm.io"
+brew:
+  github:
+    owner: jbvmio
+    name: homebrew-tap
+  commit_author:
+    name: goreleaserbot
+    email: jbonds@jbvm.io
+  folder: Formula
+  homepage: "http://www.jbvm.io/kafkactl"
+  description: "CLI for Apache Kafka and Zookeeper Management."
+  test: |
+    system "#{bin}/kafkactl version"
