@@ -16,7 +16,7 @@ addons:
     - rpm
 services:
 - docker
-script: make extest
+script: make
 after_success:
 - test -n "$TRAVIS_TAG" && docker login -u=jbvmio -p="$DOCKER_PASSWORD"
 deploy:
