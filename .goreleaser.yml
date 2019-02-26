@@ -5,7 +5,7 @@ builds:
 - env:
   - GO111MODULE=on
   ldflags:
-    - -X {{.Env.LD_FLAGS}}
+    - -s -w -X {{.Env.LD_FLAGS_STATIC}}
   goos:
     - darwin
     - linux
@@ -22,6 +22,8 @@ archive:
   format_overrides:
     - goos: windows
       format: zip
+  files:
+  - nOnE*
 checksum:
   name_template: 'checksums.txt'
 nfpm:
@@ -44,3 +46,11 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
+dockers:
+  - image_templates:
+    - "docker.io/jbvmio/kafkactl:{{ .Tag }}"
+    goos: linux
+    goarch: amd64
+    dockerfile: kafkactl.1.dockerfile
+    build_flag_templates:
+    - "--label=maintainer=jbonds@jbvm.io"

@@ -3,44 +3,59 @@
 
 export GO111MODULE=on
 
+vars:
 PUBRELEASE="true"
+YTIME="1546300800"
 LATEST=$(shell curl -s https://github.com/jbvmio/kafkactl/releases/latest | awk -F '/' '/releases/{print $$8}' | awk -F '"' '{print $$1}')
 LATESTMAJ=$(shell echo $(LATEST) | cut -d '.' -f 1)
 LATESTMIN=$(shell echo $(LATEST) | cut -d '.' -f 2)
 LATESTPAT=$(shell echo $(LATEST) | cut -d '.' -f 3)
 NEXTPAT=$(shell echo $(LATESTPAT) + 1 | bc)
 NEXTVER=$(shell echo $(LATESTMAJ).$(LATESTMIN).$(NEXTPAT))
-
-if [ $(shell uname) != "Darwin" ]; then \
-	YTIME=$(shell date -d "Jan 1 2019 00:00:00" +%s) \
-fi
-if [ $(shell uname) == "Darwin" ]; then \
-	YTIME=$(shell date -juf "%b %d %Y %T" "Jan 1 2019 00:00:00" +%s) \
-fi
 BT=$(shell date +%s)
 GCT=$(shell git rev-list -1 HEAD --timestamp | awk '{print $$1}')
 GC=$(shell git rev-list -1 HEAD --abbrev-commit)
-REV=$(shell echo $(GCT)-$(YTIME) | bc)
+REV=$(shell echo $(GCT) - $(YTIME) | bc)
+FNAME=$(shell echo $(NEXTVER))
 
-ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) -X github.com/jbvmio/kafkactl/cli/cmd.release=$(PUBRELEASE) -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) -X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=$(BT) -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC)"
+flags: vars
+ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) -X github.com/jbvmio/kafkactl/cli/cmd.release=$(PUBRELEASE) -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) -X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC) -X github.com/jbvmio/kafkactl/cli/cmd.gitVersion=$(FNAME)"
 
-build:
-	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.darwin
-	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.linux
-	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.exe
+localbuild: flags
+	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.$(FNAME).darwin
+	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.$(FNAME).linux
+	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.$(FNAME).exe
+
+exbuild:
+	GOOS=darwin ARCH=amd64 go build -ldflags "s -w -X $(LD_FLAGS_STATIC)" -o kafkactl.$(FNAME_STATIC).darwin
+	GOOS=linux ARCH=amd64 go build -ldflags "s -w -X $(LD_FLAGS_STATIC)" -o kafkactl.$(FNAME_STATIC).linux
+	GOOS=darwin ARCH=amd64 go build -ldflags "s -w -X $(LD_FLAGS_STATIC)" -o kafkactl.$(FNAME_STATIC).exe
 
 clean:
-	rm -f kafkactl.darwin
-	rm -f kafkactl.linux
-	rm -f kafkactl.exe
+	rm -f kafkactl.$(FNAME).darwin
+	rm -f kafkactl.$(FNAME).linux
+	rm -f kafkactl.$(FNAME).exe
 
-test: build clean
+exclean:
+	rm -f kafkactl.$(FNAME_STATIC).darwin
+	rm -f kafkactl.$(FNAME_STATIC).linux
+	rm -f kafkactl.$(FNAME_STATIC).exe
 
-release:
-	printf "[ RELEASE $(NEXTVER) ]\n" > .commit.log
+test: localbuild clean
+
+extest: exbuild exclean
+
+docker:
+	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o /usr/local/bin/kafkactl
+
+exvars:
+	eval $(shell ./envvars.darwin)
+
+release: exvars
+	printf "[ RELEASE $(FNAME) ]\n" > .commit.log
 	git log --oneline --decorate >> .commit.log
 	git add .
-	git commit -m "release $(NEXTVER)"
-	git tag -a $(NEXTVER) -m "release $(NEXTVER)"
+	git commit -m "release $(FNAME)"
+	git tag -a $(FNAME) -m "release $(FNAME)"
 	git push origin
-	git push origin $(NEXTVER)
+	git push origin $(FNAME)
