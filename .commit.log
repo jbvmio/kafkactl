@@ -1,7 +1,11 @@
-[ RELEASE v1.0.20-beta.4912459 ]
-cc3876f (HEAD -> dev) update envvars
+[ RELEASE -beta.4917334 ]
+8ae7a2f (HEAD -> dev) revert back
+d8f78d4 quick fix envvars
+209b1a8 cleanup makefile, travis config and envvars
+5ee8077 (origin/dev) release v1.0.20-beta.4912459
+cc3876f update envvars
 0429d6d envvars testing
-fd88f0c (origin/dev) release v1.0.20-beta.4911614
+fd88f0c release v1.0.20-beta.4911614
 cfd4f31 envvars testing
 6ae5e7a release v1.0.20-beta.4859732
 004117c release v1.0.20-beta.4859724
