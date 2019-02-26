@@ -48,7 +48,10 @@ extest: exbuild exclean
 docker:
 	GOOS=linux ARCH=amd64 go build -ldflags $(ld_flags) -o /usr/local/bin/kafkactl
 
-release:
+exvars:
+	eval $(shell ./envvars.darwin)
+
+release: exvars
 	printf "[ RELEASE $(FNAME) ]\n" > .commit.log
 	git log --oneline --decorate >> .commit.log
 	git add .
