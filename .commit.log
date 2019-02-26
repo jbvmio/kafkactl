@@ -1,11 +1,12 @@
 [ RELEASE v1.0.20-beta.4829400 ]
-6b0d5bb (HEAD -> dev) make testing edits
-e5fae6c (tag: v1.0.20-beta.4829400, origin/dev) release v1.0.20-beta.4829400
+3be40aa (HEAD -> dev) release v1.0.20-beta.4829400
+6b0d5bb make testing edits
+e5fae6c (origin/dev) release v1.0.20-beta.4829400
 ff7c6c9 make testing edits
 5bfc2fd (tag: v1.0.20-beta.4856957) release v1.0.20-beta.4856957
 cad7e7a update envvars
 fc260db edit version vars; add envvars;
-b80c133 (tag: v1.0.20-beta.4829042) release v1.0.20-beta.4829042
+b80c133 release v1.0.20-beta.4829042
 86f9963 release v1.0.20-beta.4828570
 9973f71 remove extra $ sign
 cce579b minor mod
