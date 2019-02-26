@@ -1,5 +1,8 @@
-[ RELEASE v1.0.20-beta.4829042 ]
-86f9963 (HEAD -> dev, tag: v1.0.20-beta.4828570, origin/dev) release v1.0.20-beta.4828570
+[ RELEASE v1.0.20-beta.4856957 ]
+cad7e7a (HEAD -> dev) update envvars
+fc260db (origin/dev) edit version vars; add envvars;
+b80c133 (tag: v1.0.20-beta.4829042) release v1.0.20-beta.4829042
+86f9963 release v1.0.20-beta.4828570
 9973f71 remove extra $ sign
 cce579b minor mod
 eda7d81 CI mods
