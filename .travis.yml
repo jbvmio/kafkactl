@@ -3,6 +3,7 @@ go:
 - 1.11.x
 before_install:
 - eval $(./envvars)
+- export LD_FLAGS="github.com/jbvmio/kafkactl/cli/cmd.latestMajor=${LATESTMAJ} -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=${LATESTMIN} -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=${LATESTPAT} -X github.com/jbvmio/kafkactl/cli/cmd.release=${PUBRELEASE} -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=${NEXTVER} -X github.com/jbvmio/kafkactl/cli/cmd.revision=${REV} -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=${BT} -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=${GC} -X github.com/jbvmio/kafkactl/cli/cmd.gitVersion=${FNAME}"
 - export FNAME_STATIC=$(echo $FNAME)
 - export LD_FLAGS_STATIC=$(echo $LD_FLAGS)
 env:
