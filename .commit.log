@@ -1,5 +1,6 @@
-[ RELEASE -beta.4917334 ]
-8ae7a2f (HEAD -> dev) revert back
+[ RELEASE v1.0.20-beta.4917434 ]
+84e2077 (HEAD -> dev) release -beta.4917334
+8ae7a2f revert back
 d8f78d4 quick fix envvars
 209b1a8 cleanup makefile, travis config and envvars
 5ee8077 (origin/dev) release v1.0.20-beta.4912459
