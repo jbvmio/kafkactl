@@ -1,7 +1,9 @@
-[ RELEASE v1.0.20-beta.4829400 ]
-3be40aa (HEAD -> dev) release v1.0.20-beta.4829400
+[ RELEASE v1.0.20-beta.4859724 ]
+b7b2c24 (HEAD -> dev) revert changes
+5ced782 (tag: v1.0.20-beta.4829400, origin/dev) release v1.0.20-beta.4829400
+3be40aa release v1.0.20-beta.4829400
 6b0d5bb make testing edits
-e5fae6c (origin/dev) release v1.0.20-beta.4829400
+e5fae6c release v1.0.20-beta.4829400
 ff7c6c9 make testing edits
 5bfc2fd (tag: v1.0.20-beta.4856957) release v1.0.20-beta.4856957
 cad7e7a update envvars
