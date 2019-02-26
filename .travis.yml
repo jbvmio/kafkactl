@@ -1,22 +1,10 @@
 language: go
 go:
 - 1.11.x
+before_script: eval $(./envvars)
 env:
   global:
   - GO111MODULE=on
-  - PUBRELEASE=false
-  - YTIME="1546300800"
-  - LATEST=$(curl -s https://github.com/jbvmio/kafkactl/releases/latest | awk -F '/' '/releases/{print $8}' | awk -F '"' '{print $1}')
-  - LATESTMAJ=$(echo $LATEST | cut -d '.' -f 1)
-  - LATESTMIN=$(echo $LATEST | cut -d '.' -f 2)
-  - LATESTPAT=$(echo $LATEST | cut -d '.' -f 3)
-  - NEXTPAT=$(echo $LATESTPAT + 1 | bc)
-  - NEXTVER="${LATESTMAJ}.${LATESTMIN}.${NEXTPAT}"
-  - BT=$(date +%s)
-  - GCT=$(git rev-list -1 HEAD --timestamp | awk '{print $1}')
-  - GC=$(git rev-list -1 HEAD --abbrev-commit)
-  - REV=$(echo "${GCT} - ${YTIME}" | bc)
-  - FNAME="${LATEST}-beta.${REV}"
   - LD_FLAGS="github.com/jbvmio/kafkactl/cli/cmd.latestMajor=${LATESTMAJ} -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=${LATESTMIN} -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=${LATESTPAT} -X github.com/jbvmio/kafkactl/cli/cmd.release=${PUBRELEASE} -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=${NEXTVER} -X github.com/jbvmio/kafkactl/cli/cmd.revision=${REV} -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=${BT} -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=${GC} -X github.com/jbvmio/kafkactl/cli/cmd.gitVersion=${FNAME}"
   - FNAME_STATIC=$(echo $FNAME)
   - LD_FLAGS_STATIC=$(echo $LD_FLAGS)
