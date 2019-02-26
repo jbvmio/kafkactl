@@ -26,7 +26,6 @@ addons:
   apt:
     packages:
     - rpm
-    - bc
 services:
 - docker
 script: make extest
