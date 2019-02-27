@@ -1,12 +1,14 @@
-# kafkactl - Kafka Management Tool - **[wiki](https://github.com/jbvmio/kafkactl/wiki)**
+# kafkactl - Kafka Management Tool
 kafkactl - CLI for Apache Kafka, Zookeeper and Burrow Management.
 
 [![GitHub release](https://img.shields.io/github/release/jbvmio/kafkactl.svg)](
   https://github.com/jbvmio/kafkactl/releases/latest)
 [![Travis-CI Build Status](https://travis-ci.com/jbvmio/kafkactl.svg?branch=master)](
   https://travis-ci.com/jbvmio/kafkactl)
-  [![Go Report Card](https://goreportcard.com/badge/github.com/jbvmio/kafkactl)](
+[![Go Report Card](https://goreportcard.com/badge/github.com/jbvmio/kafkactl)](
   https://goreportcard.com/report/github.com/jbvmio/kafkactl)
+[![github wiki](https://img.shields.io/badge/docs-wiki-lightgrey.svg)](
+  https://github.com/jbvmio/kafkactl/wiki)
 
 #### Current Features:
 - [x] Search / Filter for Groups and Topics
