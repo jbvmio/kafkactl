@@ -49,6 +49,7 @@ changelog:
 dockers:
   - image_templates:
     - "docker.io/jbvmio/kafkactl:{{ .Tag }}"
+    - "docker.io/jbvmio/kafkactl:latest"
     goos: linux
     goarch: amd64
     dockerfile: kafkactl.1.dockerfile

@@ -35,13 +35,11 @@ type MSGFlags struct {
 func GetMessages(flags MSGFlags, topics ...string) []*kafkactl.Message {
 	exact = true
 	var messages []*kafkactl.Message
-	switch true {
+	switch {
 	case flags.TailTouched:
 		return tailMSGs(flags, topics...)
-	default:
-		return getMSGs(flags, topics...)
 	}
-	return messages
+	return getMSGs(flags, topics...)
 }
 
 func getMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {

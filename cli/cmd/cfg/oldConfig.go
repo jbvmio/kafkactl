@@ -37,10 +37,10 @@ type OldConfig struct {
 
 // Entry contains kafka and burrow node details for a cluster
 type Entry struct {
-	Name      string   `json:"name" yaml:"name"`
-	Kafka     []string `json:"kafka yaml:"kafka"`
-	Burrow    []string `json:"burrow" yaml:"burrow"`
-	Zookeeper []string `json:"zookeeper" yaml:"zookeeper"`
+	Name      string   `yaml:"name"`
+	Kafka     []string `yaml:"kafka"`
+	Burrow    []string `yaml:"burrow"`
+	Zookeeper []string `yaml:"zookeeper"`
 }
 
 func testReplaceOldConfig(filePath ...string) bool {

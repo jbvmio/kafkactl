@@ -1,101 +1,86 @@
 # kafkactl - Kafka Management Tool - **[wiki](https://github.com/jbvmio/kafkactl/wiki)**
 kafkactl - CLI for Apache Kafka, Zookeeper and Burrow Management.
 
-
+[![GitHub release](https://img.shields.io/github/release/jbvmio/kafkactl.svg)](
+  https://github.com/jbvmio/kafkactl/releases/latest
+)
 [![Travis-CI Build Status](https://travis-ci.com/jbvmio/kafkactl.svg?branch=master)](
   https://travis-ci.com/jbvmio/kafkactl)
 
-### The kafkactl tool currently features the following:
+#### Current Features:
+- [x] Search / Filter for Groups and Topics
+- [x] Show Topic Partition Details - Offsets, Replicas, Leaders, etc.
+- [x] Show Group Details - Lag, Offsets, Members, etc.
+- [x] Display / Modify Topic Configs
+- [x] Create / Delete Topics
+- [x] Delete Consumer Groups
+- [x] Reset Partition Offsets for a Group
+- [x] Tail Topics in realtime
+- [x] Produce to a Specific Topic Partition or all Partitions at once
+- [x] Perform a Preferred Replica Election for a target topic or for all topics
+- [x] Increase / Decrease Replicas
+- [x] Migrate Topics between Brokers
+- [x] Query burrow details
+- [x] Monitor burrow lag via Terminal Graph
+- [x] Explore Zookeeper Paths
+- [x] Create and Delete Zookeeper Values
+- [x] Pass stdin to create Kafka messages or Zookeeper Values
 
-* Search and Manage Groups and Topics
-* Show Topic Partition Details - Offsets, Replicas, Leaders, etc.
-* Show Group Details - Lag, Offsets, Members, etc.
-* Display / Modify Topic Configs
-* Create / Delete Topics
-* Delete Consumer Groups
-* Reset Partition Offsets for a Group
-* Tail a Topic in realtime
-* Launch a Consumer Group for a Topic
-* Produce to a Specific Topic Partition or all Partitions at once
-* Perform a Preferred Replica Election for a target topic or for all topics
-* Increase / Decrease Replicas
-* Perform Topic Partition Migrations between Brokers
-* Query burrow details
-* Monitor burrow lag via Terminal Graph
-* Explore Zookeeper Paths
-* Create and Delete Zookeeper Values
-* Pass stdin to create Kafka messages or Zookeeper Values
+#### ToDo:
+- [ ] Add Security Features
+- [ ] Add Metrics Testing
+- [ ] Test Avro Serialization
 
-### ToDo:
-- Add Security Features
-- Add Metrics Testing
-
-kafkactl is actively developed with new features being added and tested. Thus, ongoing optimization and re-factoring will occur so ensure you are aware of the [latest releases](https://github.com/jbvmio/kafkactl/releases).
+kafkactl is actively developed with new features being added and tested. Thus, ongoing optimization and re-factoring will occur so ensure you are aware of the [latest releases](https://github.com/jbvmio/kafkactl/releases/latest).
 
 
 # kafkactl tool - Get Started
 
 ### **From Source**
 * Requires Go Version 1.11+
-* Specifically Module Support
 ```
 git clone https://github.com/jbvmio/kafkactl
 cd kafkactl/
 go build -o $GOPATH/bin/kafkactl
-```
-### **Manual Download**
-- Download the [latest](https://github.com/jbvmio/kafkactl/releases) kafkactl tool and extract to a $PATH directory.
-- Run "kafkactl config --sample" to generate a sample config at $HOME/.kafkactl.yaml
-- Edit the config file and save.
 
-* Alternatively, pass all arguments to the command when running.
+# If inside your go path:
+GO111MODULE=on go build -o $GOPATH/bin/kafkactl
+```
+### **Homebrew**
+```
+# First time install:
+brew tap jbvmio/tap
+brew install jbvmio/tap/kafkactl
+
+# Upgrading
+brew upgrade jbvmio/tap/kafkactl
+
+```
+### **Docker**
+```
+docker pull docker.io/jbvmio/kafkactl:latest
+docker run --rm jbvmio/kafkactl -B broker:9092 get topics --lag
+docker run --rm jbvmio/kafkactl -Z zookeeper:2181 ls /brokers/ids/2
+docker run --rm jbvmio/kafkactl config --sample
+```
+### **Manual Download and Install (Linux, Windows, Mac)**
+- Download the [latest kafkactl tool](https://github.com/jbvmio/kafkactl/releases/latest) appropriate for your platform, extract and install to a valid directory, preferably located somewhere in your configured $PATH.
+- Run "kafkactl config --sample" to generate and display a sample config. Create your config and place as $HOME/.kafkactl.yaml
+
+#### **Alternatively, pass all arguments using flags instead of using a config file when running kafkactl:**
 ```
 # kafkactl --broker brokerhost01:9092 admin create topic newtopic01 --partitions 15 --rfactor 3
 
 ```
 
-### **Using Docker**
-**Run with Docker using cmdline args:**
-```
-docker run --rm jbvmio/kafkactl -b brokerAddress:9092
-docker run --rm jbvmio/kafkactl -b brokerAddress:9092 topics
-docker run --rm jbvmio/kafkactl -b brokerAddress:9092 topics mytopic -x -m
-docker run --rm jbvmio/kafkactl -b brokerAddress:9092 groups
-docker run --rm jbvmio/kafkactl -b brokerAddress:9092 groups mygroup --lag
-docker run --rm jbvmio/kafkactl -b brokerAddress:9092 admin create --topic mytopic2 --partitions 5 --rfactor 3
-
-```
-**Using a config file with Docker:**
-- Generate a sample config:
-```
-docker run --rm -v ${PWD}:/home/kafkactl jbvmio/kafkactl config --sample
-
-```
-- This will generate a sample config named .kafkactl.yaml, edit this file with your values.
-- At minimum, specify at least one entry containing a Kafka broker.
-```
-# Minimum Config:
-current: Cluster1
-entries:
-- name: Cluster1
-  kafka:
-  - broker01:9092
-```
-- Now mount your .kafkactl.yaml file whenever running the Docker image:
-```
-docker run --rm -v ${PWD}/.kafkactl.yaml:/home/kafkactl/.kafkactl.yaml jbvmio/kafkactl
-docker run --rm -v ${PWD}/.kafkactl.yaml:/home/kafkactl/.kafkactl.yaml jbvmio/kafkactl topics
-docker run --rm -v ${PWD}/.kafkactl.yaml:/home/kafkactl/.kafkactl.yaml jbvmio/kafkactl groups
-
-```
-
-# kafkactl tool - Example Commands
+# kafkactl - Example Commands
 ### example config commands
 ```
 kafkactl config --sample
 kafkactl config view
 kafkactl config get-contexts
 kafkactl config current-context
+kafkactl config use cluster1
 ```
 
 ### example config file (~/.kafkactl.yaml)
