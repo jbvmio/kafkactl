@@ -143,12 +143,12 @@ func SetTopicConfig(config, value string, topics ...string) []TopicConfig {
 			out.Warnf("Error validating topic: %v", topic)
 		}
 		// Validation Check:
-		tc := GetTopicConfigs([]string{config}, topic)
+		GetTopicConfigs([]string{config}, topic)
 
 		err := client.SetTopicConfig(topic, config, value)
 		handleC("Error setting configuration: %v\n", err)
 
-		tc = GetTopicConfigs([]string{config}, topic)
+		tc := GetTopicConfigs([]string{config}, topic)
 		topicConfigs = append(topicConfigs, tc...)
 	}
 	return topicConfigs
