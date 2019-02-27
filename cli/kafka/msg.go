@@ -32,11 +32,10 @@ type MSGFlags struct {
 	Follow      bool
 }
 
+// GetMessages returns messages from a kafka topic
 func GetMessages(flags MSGFlags, topics ...string) []*kafkactl.Message {
 	exact = true
-	var messages []*kafkactl.Message
-	switch {
-	case flags.TailTouched:
+	if flags.TailTouched {
 		return tailMSGs(flags, topics...)
 	}
 	return getMSGs(flags, topics...)
