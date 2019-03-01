@@ -28,13 +28,15 @@ func findKafkaVersion(context *cx.Context) string {
 	}
 	apiVer, err := kafkactl.BrokerAPIVersions(bootStrap)
 	if err != nil {
-		out.Infof("ERR: %v", err)
+		if verbose {
+			kafkactl.Warnf("%v", err)
+		}
 	}
 	return getKafkaVersion(apiVer)
 }
 
 func getKafkaVersion(apiKeys map[int16]int16) string {
-	switch true {
+	switch {
 	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] == 2:
 		return "2.1.0"
 	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] == 1:

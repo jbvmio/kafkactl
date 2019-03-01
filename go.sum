@@ -40,6 +40,10 @@ github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e h1:Zzem15e22yv2tVwK9
 github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e/go.mod h1:LW55dMeQ3EiHbMjKbMprjWO9KSP5DvBCnN94qoFCVTg=
 github.com/jbvmio/kafka v1.0.19 h1:bonOZ/+b8X8CvukkSWQtWq/aY2plBEBhq3vaMDPz7uA=
 github.com/jbvmio/kafka v1.0.19/go.mod h1:FqaCh632++Acsax9LgDpzoglhM2FdHHD5vAEBrKgqtc=
+github.com/jbvmio/kafka v1.0.20-0.20190301041317-a86334f359ce h1:VhP/i3Uf2Xy/IUfU9ncL5Yp4TZ17/WKFLzFNcyVo5JI=
+github.com/jbvmio/kafka v1.0.20-0.20190301041317-a86334f359ce/go.mod h1:FqaCh632++Acsax9LgDpzoglhM2FdHHD5vAEBrKgqtc=
+github.com/jbvmio/kafka v1.0.20-0.20190301043836-e35bf69eb878 h1:SqunrbNFi+7NgS3XmYNpLYfkSK35AoYl6RWGjmL2e9o=
+github.com/jbvmio/kafka v1.0.20-0.20190301043836-e35bf69eb878/go.mod h1:FqaCh632++Acsax9LgDpzoglhM2FdHHD5vAEBrKgqtc=
 github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c h1:HO34W0tgxrHLcMC968Qw+mW7hXl+acx/hKkHHfyn38Q=
 github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c/go.mod h1:OrnK3+IYa1mP+NCwcZ/Y1h+9+I4vTYKdm0OYjTbsmwI=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1 h1:mweAR1A6xJ3oS2pRaGiHgQ4OO8tzTaLawm8vnODuwDk=
