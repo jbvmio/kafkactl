@@ -20,7 +20,7 @@ var CmdGetTopic = &cobra.Command{
 	Short:   "Get Topic Info",
 	Run: func(cmd *cobra.Command, args []string) {
 		var topicSummaries []kafkactl.TopicSummary
-		switch true {
+		switch {
 		case topicFlags.Lag:
 			lag.CmdGetLag.Run(cmd, args)
 			return
@@ -33,7 +33,7 @@ var CmdGetTopic = &cobra.Command{
 		default:
 			topicSummaries = kafkactl.GetTopicSummaries(kafka.SearchTopicMeta(args...))
 		}
-		switch true {
+		switch {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

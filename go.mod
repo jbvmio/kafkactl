@@ -5,6 +5,7 @@ require (
 	github.com/DataDog/zstd v1.3.5 // indirect
 	github.com/Shopify/sarama v1.20.1
 	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect
+	github.com/alecthomas/chroma v0.6.2 // indirect
 	github.com/bsm/sarama-cluster v2.1.15+incompatible // indirect
 	github.com/eapache/go-resiliency v1.1.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
@@ -14,11 +15,10 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e
-	github.com/jbvmio/kafka v1.0.20-0.20190301043836-e35bf69eb878
+	github.com/jbvmio/kafka v1.0.20-0.20190301210718-5ac444a69f9f
 	github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c
 	github.com/maruel/panicparse v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.0 // indirect
-	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/mattn/go-runewidth v0.0.4 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect

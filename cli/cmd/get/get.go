@@ -5,6 +5,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/cmd/group"
 	"github.com/jbvmio/kafkactl/cli/cmd/lag"
 	"github.com/jbvmio/kafkactl/cli/cmd/msg"
+	"github.com/jbvmio/kafkactl/cli/cmd/metrics"
 	"github.com/jbvmio/kafkactl/cli/cmd/topic"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
@@ -36,4 +37,5 @@ func init() {
 	CmdGet.AddCommand(group.CmdGetMember)
 	CmdGet.AddCommand(lag.CmdGetLag)
 	CmdGet.AddCommand(msg.CmdGetMsg)
+	CmdGet.AddCommand(metrics.CmdGetMetrics)
 }
