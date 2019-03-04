@@ -58,3 +58,4 @@ dockers:
     dockerfile: kafkactl.1.dockerfile
     build_flag_templates:
     - "--label=maintainer=jbonds@jbvm.io"
+
