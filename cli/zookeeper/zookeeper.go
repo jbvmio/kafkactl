@@ -85,7 +85,7 @@ func KafkaZK(context *cx.Context, verbose bool) error {
 	zkClient.SetServers(context.Zookeeper)
 	ok, err := zkClient.Exists("/admin")
 	if !ok || err != nil {
-		return fmt.Errorf("Error Validating Zookeeper Configuration.", context.Zookeeper)
+		return fmt.Errorf("Error Validating Zookeeper Configuration: %v", context.Zookeeper)
 	}
 	return nil
 }

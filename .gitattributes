@@ -3,4 +3,8 @@
 envvars.yaml merge=ours
 Makefile merge=ours
 kafkactl.2.dockerfile merge=ours
+<<<<<<< HEAD
 .commit.log merge=ours
+=======
+.commit.log merge=ours
+>>>>>>> master

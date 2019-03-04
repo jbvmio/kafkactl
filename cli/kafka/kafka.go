@@ -19,6 +19,7 @@ import (
 
 	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+	metrics "github.com/rcrowley/go-metrics"
 
 	"github.com/Shopify/sarama"
 	kafkactl "github.com/jbvmio/kafka"
@@ -45,9 +46,11 @@ var (
 	Alive         bool
 	client        *kafkactl.KClient
 	errd          error
+	conf          *sarama.Config
 	clientVer     sarama.KafkaVersion
 	clientTimeout = (time.Second * 5)
 	clientRetries = 1
+	clientID      = `kafkactl`
 )
 
 func LaunchClient(context *cx.Context, flags ClientFlags) {
@@ -55,33 +58,39 @@ func LaunchClient(context *cx.Context, flags ClientFlags) {
 	verbose = flags.Verbose
 	targetContext = context
 	if verbose {
-		kafkactl.Logger("")
+		kafkactl.Logger()
 	}
-	conf, err := kafkactl.GetConf()
-	if err != nil {
-		out.Failf("Error: %v", err)
-	}
+	conf = kafkactl.GetConf()
 	switch true {
 	case flags.Version != "":
 		context.ClientVersion = flags.Version
 	case context.ClientVersion == "":
 		context.ClientVersion = findKafkaVersion(context)
 	}
-	conf.Version, err = kafkactl.MatchKafkaVersion(context.ClientVersion)
-	if err != nil {
-		out.Warnf("WARN: %v", err)
+	conf.Version, errd = kafkactl.MatchKafkaVersion(context.ClientVersion)
+	if errd != nil {
+		if verbose {
+			kafkactl.Warnf("%v Defaulting to %v", errd, kafkactl.MinKafkaVersion)
+		}
 		conf.Version = kafkactl.MinKafkaVersion
 	}
 	clientVer = conf.Version
+	conf.ClientID = clientID
 	conf.Net.DialTimeout = clientTimeout
 	conf.Net.ReadTimeout = clientTimeout
 	conf.Net.WriteTimeout = clientTimeout
 	conf.Metadata.Retry.Max = clientRetries
+	conf.MetricRegistry = metrics.NewRegistry()
 	client, errd = kafkactl.NewCustomClient(conf, context.Brokers...)
 	if errd != nil {
 		out.Failf("Error: %v", errd)
 	}
 	Alive = true
+}
+
+// MetricR returns the kafkactl metrics registry.
+func MetricR() *metrics.Registry {
+	return &conf.MetricRegistry
 }
 
 // Client returns the kafkactl client.

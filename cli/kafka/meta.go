@@ -27,16 +27,16 @@ func ClusterDetails() {
 	if err != nil {
 		closeFatal("Error getting cluster metadata: %v\n", err)
 	}
-	kafkaVer, _ := kafkactl.MatchKafkaVersion(getKafkaVersion(meta.APIMaxVersions))
-	c, err := client.Controller()
-	if err != nil {
-		closeFatal("Error obtaining controller: %v\n", err)
-	}
 	if len(meta.ErrorStack) > 0 {
 		fmt.Println("ERRORs:")
 		for _, e := range meta.ErrorStack {
 			fmt.Printf(" %v\n", e)
 		}
+	}
+	kafkaVer, _ := kafkactl.MatchKafkaVersion(getKafkaVersion(meta.APIMaxVersions))
+	c, err := client.Controller()
+	if err != nil {
+		closeFatal("Error obtaining controller: %v\n", err)
 	}
 	fmt.Println("\nBrokers: ", meta.BrokerCount())
 	fmt.Println(" Topics: ", meta.TopicCount())
