@@ -2,3 +2,4 @@
 .goreleaser.yml merge=ours
 envvars.yaml merge=ours
 Makefile merge=ours
+.commit.log merge=ours
