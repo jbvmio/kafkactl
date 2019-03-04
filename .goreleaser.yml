@@ -58,4 +58,21 @@ dockers:
     dockerfile: kafkactl.1.dockerfile
     build_flag_templates:
     - "--label=maintainer=jbonds@jbvm.io"
-
+brew:
+  github:
+    owner: jbvmio
+    name: homebrew-tap
+  commit_author:
+    name: goreleaserbot
+    email: jbonds@jbvm.io
+  folder: "Formula/devel"
+  homepage: "http://www.jbvm.io/kafkactl"
+  description: "CLI for Apache Kafka and Zookeeper Management."
+  custom_block: |
+    devel do
+      url "https://github.com/jbvmio/kafkactl/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+      sha256 "sha256here"
+    end
+  skip_upload: false
+  test: |
+    system "#{bin}/kafkactl version"
