@@ -2,4 +2,5 @@
 .goreleaser.yml merge=ours
 envvars.yaml merge=ours
 Makefile merge=ours
+kafkactl.2.dockerfile merge=ours
 .commit.log merge=ours
