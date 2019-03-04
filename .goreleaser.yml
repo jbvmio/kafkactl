@@ -67,3 +67,4 @@ brew:
   description: "CLI for Apache Kafka and Zookeeper Management."
   test: |
     system "#{bin}/kafkactl version"
+
