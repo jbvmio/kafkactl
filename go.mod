@@ -9,7 +9,7 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e
-	github.com/jbvmio/kafka v1.0.20
+	github.com/jbvmio/kafka v1.0.21-0.20190305200303-5348238bcbc8
 	github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c
 	github.com/maruel/panicparse v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.0 // indirect

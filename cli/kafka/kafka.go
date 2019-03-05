@@ -70,9 +70,9 @@ func LaunchClient(context *cx.Context, flags ClientFlags) {
 	conf.Version, errd = kafkactl.MatchKafkaVersion(context.ClientVersion)
 	if errd != nil {
 		if verbose {
-			kafkactl.Warnf("%v Defaulting to %v", errd, kafkactl.MinKafkaVersion)
+			kafkactl.Warnf("%v Defaulting to %v", errd, kafkactl.RecKafkaVersion)
 		}
-		conf.Version = kafkactl.MinKafkaVersion
+		conf.Version = kafkactl.RecKafkaVersion
 	}
 	clientVer = conf.Version
 	conf.ClientID = clientID
