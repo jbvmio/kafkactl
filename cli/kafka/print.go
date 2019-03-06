@@ -72,6 +72,11 @@ func PrintOut(i interface{}) {
 		for _, v := range i {
 			tbl.AddRow(v.Group, v.Topic, v.TotalLag)
 		}
+	case []APIVersion:
+		tbl = table.New("NAME", "KEY", "MAXVERSION")
+		for _, v := range i {
+			tbl.AddRow(v.Name, v.Key, v.MaxVersion)
+		}
 	}
 	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
 	tbl.Print()

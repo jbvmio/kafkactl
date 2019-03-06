@@ -7,10 +7,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var CmdGetBroker = &cobra.Command{
-	Use:     "broker",
-	Aliases: []string{"brokers"},
-	Short:   "Get Broker Details",
+var CmdGetApiVers = &cobra.Command{
+	Use:     "apis",
+	Aliases: []string{"api"},
+	Short:   "Get API Protocol Version Details",
 	Run: func(cmd *cobra.Command, args []string) {
 		switch {
 		case cmd.Flags().Changed("out"):
@@ -18,9 +18,9 @@ var CmdGetBroker = &cobra.Command{
 			if err != nil {
 				out.Warnf("WARN: %v", err)
 			}
-			out.IfErrf(out.Marshal(kafka.GetBrokerInfo(args...), outFmt))
+			out.IfErrf(out.Marshal(kafka.GetAPIVersions(), outFmt))
 		default:
-			kafka.PrintOut(kafka.GetBrokerInfo(args...))
+			kafka.PrintOut(kafka.GetAPIVersions())
 		}
 	},
 }
