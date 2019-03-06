@@ -32,6 +32,7 @@ func init() {
 	CmdGet.PersistentFlags().StringVarP(&outFlags.Format, "out", "o", "", "Change Output Format - yaml|json.")
 
 	CmdGet.AddCommand(broker.CmdGetBroker)
+	CmdGet.AddCommand(broker.CmdGetApiVers)
 	CmdGet.AddCommand(topic.CmdGetTopic)
 	CmdGet.AddCommand(group.CmdGetGroup)
 	CmdGet.AddCommand(group.CmdGetMember)

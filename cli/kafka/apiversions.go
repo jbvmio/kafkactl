@@ -15,11 +15,38 @@
 package kafka
 
 import (
+	"sort"
+
 	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
 	kafkactl "github.com/jbvmio/kafka"
 )
+
+// APIVersion describes an API Version Key and its Max Version.
+type APIVersion struct {
+	Name       string
+	Key        int16
+	MaxVersion int16
+}
+
+func GetAPIVersions() []APIVersion {
+	var apiVersions []APIVersion
+	apiVers, err := client.GetAPIVersions()
+	handleC("Error: %v", err)
+	for k := range apiVers {
+		api := APIVersion{
+			Name:       kafkactl.APIDescriptions[k],
+			Key:        k,
+			MaxVersion: apiVers[k],
+		}
+		apiVersions = append(apiVersions, api)
+	}
+	sort.Slice(apiVersions, func(i, j int) bool {
+		return apiVersions[i].Key < apiVersions[j].Key
+	})
+	return apiVersions
+}
 
 func findKafkaVersion(context *cx.Context) string {
 	bootStrap, err := kafkactl.ReturnFirstValid(context.Brokers...)
