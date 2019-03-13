@@ -99,6 +99,8 @@ github.com/jbvmio/kafka v1.0.21-0.20190305200132-73183bc55cf1 h1:6pv6UcP0Am7//iO
 github.com/jbvmio/kafka v1.0.21-0.20190305200132-73183bc55cf1/go.mod h1:eumblDF1HwMseBS4Vnq/LMmzqDGjVBw5yHAhbrfMtWc=
 github.com/jbvmio/kafka v1.0.21-0.20190305200303-5348238bcbc8 h1:kIAYhAMlrE+8fvYO3sSoFkzAyoeNWqjsq/NIk1i0LGE=
 github.com/jbvmio/kafka v1.0.21-0.20190305200303-5348238bcbc8/go.mod h1:eumblDF1HwMseBS4Vnq/LMmzqDGjVBw5yHAhbrfMtWc=
+github.com/jbvmio/kafka v1.0.21-0.20190311180517-dca5c29eddf1 h1:HdFarF4cmUq3ymzzjsuYMIvXjvILRywJ+SdSEB9SxBg=
+github.com/jbvmio/kafka v1.0.21-0.20190311180517-dca5c29eddf1/go.mod h1:eumblDF1HwMseBS4Vnq/LMmzqDGjVBw5yHAhbrfMtWc=
 github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c h1:HO34W0tgxrHLcMC968Qw+mW7hXl+acx/hKkHHfyn38Q=
 github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c/go.mod h1:OrnK3+IYa1mP+NCwcZ/Y1h+9+I4vTYKdm0OYjTbsmwI=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1 h1:mweAR1A6xJ3oS2pRaGiHgQ4OO8tzTaLawm8vnODuwDk=
