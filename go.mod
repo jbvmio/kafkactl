@@ -3,13 +3,12 @@ module github.com/jbvmio/kafkactl
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/Shopify/sarama v1.21.0
-	github.com/alecthomas/chroma v0.6.2 // indirect
 	github.com/fatih/color v1.7.0
 	github.com/gizak/termui v2.2.1-0.20180111180145-a433c24293cf+incompatible
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e
-	github.com/jbvmio/kafka v1.0.21-0.20190311180517-dca5c29eddf1
+	github.com/jbvmio/kafka v1.0.21-0.20190413034248-690ba3e046f0
 	github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c
 	github.com/maruel/panicparse v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.0 // indirect

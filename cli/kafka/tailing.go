@@ -65,17 +65,19 @@ func FollowTopic(flags MSGFlags, outFlags out.OutFlags, topics ...string) {
 		details = append(details, d)
 	}
 	msgChan := make(chan *kafkactl.Message, 100)
-	stopChan := make(chan bool, count)
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 	for _, d := range details {
 		for part, offset := range d.partMap {
-			go client.ChanPartitionConsume(d.topic, part, offset, msgChan, stopChan)
+			go client.ChanPartitionConsume(d.topic, part, offset, msgChan)
 		}
 	}
 ConsumeLoop:
 	for {
 		select {
+		case <-sigChan:
+			fmt.Printf("signal: interrupt\n  Stopping kafkactl ... ")
+			break ConsumeLoop
 		case msg := <-msgChan:
 			if msg.Timestamp == timeCheck {
 				if len(msg.Value) != 0 {
@@ -85,12 +87,8 @@ ConsumeLoop:
 				PrintMSG(msg, outFlags)
 			}
 			continue ConsumeLoop
-		case <-sigChan:
-			fmt.Printf("signal: interrupt\n  Stopping kafkactl ...\n")
-			for i := 0; i < count; i++ {
-				stopChan <- true
-			}
-			break ConsumeLoop
 		}
 	}
+	client.StopPartitionConsumers()
+	fmt.Println("Stopped")
 }
