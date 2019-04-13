@@ -1,6 +1,9 @@
-[ RELEASE v1.0.21-beta.5579665 ]
-878d88a (HEAD -> dev, origin/dev) merge master
-887566b (origin/master, master) add get apiversions
+[ RELEASE v1.0.21-beta.8827045 ]
+39ac275 (HEAD -> dev, origin/dev) merge master files
+83defb5 update deps
+da4bfe1 (tag: v1.0.21-beta.5579665) release v1.0.21-beta.5579665
+878d88a merge master
+887566b add get apiversions
 bc316f9 merge dev
 6b8fc2c edit kafka api versions return
 c542315 (tag: v1.0.21-beta.5439615) release v1.0.21-beta.5439615
