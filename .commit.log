@@ -1,5 +1,7 @@
-[ RELEASE v1.0.22 ]
-aa55b39 (HEAD -> master, origin/master) add topic rebalancing for cluster expansions
+[ RELEASE v1.0.23 ]
+395d079 (HEAD -> master, origin/master) remove testing bool
+413caff (tag: v1.0.22) release v1.0.22
+aa55b39 add topic rebalancing for cluster expansions
 3eba617 update consumergroup and tail process
 afeacd7 update deps
 887566b add get apiversions
