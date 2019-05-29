@@ -118,13 +118,10 @@ github.com/jbvmio/kafka v1.0.21-0.20190413033441-062b6ad47113 h1:dF60pkwKS8/erzd
 github.com/jbvmio/kafka v1.0.21-0.20190413033441-062b6ad47113/go.mod h1:eqsnXcc3k512Y4Uv/EJWe3Y8XI42gb1vRjnNwyaoumc=
 github.com/jbvmio/kafka v1.0.21-0.20190413034248-690ba3e046f0 h1:uBXvEySSPpqcUAPqI2k031bv2nDmgQeU+pRS34sZEG0=
 github.com/jbvmio/kafka v1.0.21-0.20190413034248-690ba3e046f0/go.mod h1:eqsnXcc3k512Y4Uv/EJWe3Y8XI42gb1vRjnNwyaoumc=
-<<<<<<< HEAD
-=======
 github.com/jbvmio/kafka v1.0.21-0.20190502184836-25de7358c6f1 h1:jHOWi6SLg97MWSFAy0x6KoZ9/6ZG+asAbdJQUceKQZk=
 github.com/jbvmio/kafka v1.0.21-0.20190502184836-25de7358c6f1/go.mod h1:eqsnXcc3k512Y4Uv/EJWe3Y8XI42gb1vRjnNwyaoumc=
 github.com/jbvmio/kafka v1.0.21-0.20190502192355-00709179cad1 h1:QPM+F5upNzV5iAJZOHN22MpW3r/fLwj8cR8DiTd/IL8=
 github.com/jbvmio/kafka v1.0.21-0.20190502192355-00709179cad1/go.mod h1:eqsnXcc3k512Y4Uv/EJWe3Y8XI42gb1vRjnNwyaoumc=
->>>>>>> master
 github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c h1:HO34W0tgxrHLcMC968Qw+mW7hXl+acx/hKkHHfyn38Q=
 github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c/go.mod h1:OrnK3+IYa1mP+NCwcZ/Y1h+9+I4vTYKdm0OYjTbsmwI=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1 h1:mweAR1A6xJ3oS2pRaGiHgQ4OO8tzTaLawm8vnODuwDk=
