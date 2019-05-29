@@ -26,6 +26,7 @@ import (
 type OpsReplicaFlags struct {
 	DryRun            bool
 	AllParts          bool
+	PreserveLeader    bool
 	Brokers           []int32
 	Partitions        []int32
 	ReplicationFactor int
@@ -94,6 +95,32 @@ func SetTopicReplicas(flags OpsReplicaFlags, topics ...string) RAPartList {
 		default:
 			closeFatal("Error: Must Specify either --partitions or --allparts.")
 		}
+	}
+	return rapList
+}
+
+func RebalanceTopics(flags OpsReplicaFlags, topics ...string) RAPartList {
+	var rapList RAPartList
+	exact = true
+	switch {
+	case len(flags.Brokers) > 0:
+		checkPRE()
+		validateBrokers(flags.Brokers)
+		rapList = rebalanceTopics(SearchTopicMeta(topics...), flags.PreserveLeader, flags.Brokers)
+	default:
+		var ids []int32
+		checkPRE()
+		b, err := client.BrokerIDMap()
+		if err != nil {
+			closeFatal("Error retrieving broker IDs: %v\n", err)
+		}
+		for id := range b {
+			ids = append(ids, id)
+		}
+		sort.SliceStable(ids, func(i int, j int) bool {
+			return ids[i] < ids[j]
+		})
+		rapList = rebalanceTopics(SearchTopicMeta(topics...), flags.PreserveLeader, ids)
 	}
 	return rapList
 }
@@ -192,6 +219,71 @@ func movePartitions(topicMeta []kafkactl.TopicMeta, brokers []int32) RAPartList 
 	return rapList
 }
 
+func rebalanceTopics(topicMeta []kafkactl.TopicMeta, preserve bool, brokers []int32) RAPartList {
+	if len(topicMeta) < 1 {
+		closeFatal("No results given.")
+	}
+	var validLeader map[int32]bool
+	topicHighestRF := make(map[string]int)
+	var count int
+	for _, t := range topicMeta {
+		if len(t.Replicas) > topicHighestRF[t.Topic] {
+			topicHighestRF[t.Topic] = len(t.Replicas)
+		}
+	}
+	if preserve {
+		validLeader = make(map[int32]bool)
+		for _, b := range brokers {
+			validLeader[b] = true
+		}
+	}
+assignLoop:
+	for count < len(topicMeta) {
+		for i := 0; i < len(brokers); i++ {
+			leader := topicMeta[count].Leader
+			if !validLeader[leader] {
+				leader = brokers[i]
+			}
+			topicMeta[count].Leader = leader
+			topicMeta[count].Replicas = []int32{leader}
+			topicMeta[count].ISRs = []int32{leader}
+			topicMeta[count].OfflineReplicas = []int32{}
+			count++
+			if count == len(topicMeta) {
+				break assignLoop
+			}
+		}
+	}
+
+	return rebalanceReplicas(topicHighestRF, topicMeta)
+
+}
+
+func rebalanceReplicas(topicRF map[string]int, tMeta []kafkactl.TopicMeta) RAPartList {
+	if len(tMeta) < 1 {
+		closeFatal("Modified Meta not Found.")
+	}
+	tom := client.MakeTopicOffsetMap(tMeta)
+	brokers, err := client.GetClusterMeta()
+	if err != nil {
+		closeFatal("Error retrieving metadata: %v\n", err)
+	}
+
+	var raparts []RAPartition
+	for _, t := range tom {
+		raparts = append(raparts, getRAParts(t.Topic, topicRF[t.Topic], t.TopicMeta, brokers)...)
+	}
+	if len(raparts) < 1 {
+		closeFatal("No Changes, Nothing to Assign.")
+	}
+
+	rapList := RAPartList{
+		Version:    1,
+		Partitions: raparts,
+	}
+	return rapList
+}
+
 func changeTopicRF(tMeta []kafkactl.TopicMeta, rFactor int) RAPartList {
 	if len(tMeta) < 1 {
 		closeFatal("No results given.")
@@ -207,7 +299,6 @@ func changeTopicRF(tMeta []kafkactl.TopicMeta, rFactor int) RAPartList {
 
 	var raparts []RAPartition
 	for _, t := range tom {
-		//rap := getRAParts(topic, rFactor, tMeta, brokers)
 		raparts = append(raparts, getRAParts(t.Topic, rFactor, t.TopicMeta, brokers)...)
 	}
 	if len(raparts) < 1 {
