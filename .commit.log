@@ -1,5 +1,12 @@
-[ RELEASE v1.0.21-beta.8827045 ]
-39ac275 (HEAD -> dev, origin/dev) merge master files
+[ RELEASE v1.0.22-beta.12856731 ]
+2bc6d87 (HEAD -> dev, origin/dev) save mod files
+9fa26bf merged master
+413caff (tag: v1.0.22, origin/master, master) release v1.0.22
+aa55b39 add topic rebalancing for cluster expansions
+d1ca6c2 (tag: v1.0.21-beta.8827045) release v1.0.21-beta.8827045
+39ac275 merge master files
+3eba617 update consumergroup and tail process
+afeacd7 update deps
 83defb5 update deps
 da4bfe1 (tag: v1.0.21-beta.5579665) release v1.0.21-beta.5579665
 878d88a merge master
