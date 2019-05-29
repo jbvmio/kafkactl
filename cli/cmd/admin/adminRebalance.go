@@ -20,8 +20,7 @@ var cmdAdminRebalance = &cobra.Command{
 		default:
 			rapList = kafka.RebalanceTopics(rebalanceFlags, args...)
 			if !rebalanceFlags.DryRun {
-				ok := false
-				//ok := kafka.ZkCreateRAP(rapList)
+				ok := kafka.ZkCreateRAP(rapList)
 				if !ok {
 					out.Warnf("Error Creating Reassign Partitions.")
 					return
