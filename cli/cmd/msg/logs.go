@@ -24,14 +24,14 @@ var CmdLogs = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		var msgs []*kafkactl.Message
-		switch true {
+		switch {
 		case logsFlags.Follow:
 			kafka.FollowTopic(logsFlags, outFlags, args...)
 			return
 		default:
 			msgs = kafka.GetMessages(logsFlags, args...)
 		}
-		switch true {
+		switch {
 		case cmd.Flags().Changed("out"):
 			out.IfErrf(out.Marshal(msgs, outFlags.Format))
 		default:
@@ -48,4 +48,5 @@ func init() {
 	CmdLogs.Flags().Int32VarP(&logsFlags.Partition, "partition", "p", -1, "Target a Specific Partition, otherwise all.")
 	CmdLogs.Flags().StringSliceVar(&logsFlags.Partitions, "partitions", []string{}, "Target Specific Partitions, otherwise all (comma separated list).")
 	CmdLogs.PersistentFlags().StringVarP(&outFlags.Format, "out", "o", "", "Change Output Format - yaml|json.")
+	CmdLogs.AddCommand(CmdQuery)
 }

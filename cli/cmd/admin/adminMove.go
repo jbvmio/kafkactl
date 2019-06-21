@@ -54,4 +54,6 @@ func init() {
 	cmdAdminMove.Flags().Int32SliceVar(&replicaFlags.Brokers, "brokers", []int32{}, "Desired Brokers.")
 	cmdAdminMove.Flags().BoolVar(&replicaFlags.DryRun, "dry-run", false, "Perform a Dry Run.")
 	cmdAdminMove.MarkFlagRequired("brokers")
+	cmdAdminMove.Flags().BoolVar(&kafka.FORCE, "Force", false, "bypasses any configured checks.")
+	cmdAdminMove.Flags().MarkHidden("Force")
 }

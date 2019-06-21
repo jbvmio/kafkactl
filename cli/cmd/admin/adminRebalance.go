@@ -46,4 +46,6 @@ func init() {
 	cmdAdminRebalance.Flags().Int32SliceVar(&rebalanceFlags.Brokers, "brokers", []int32{}, "Desired Broker Leaders.")
 	cmdAdminRebalance.Flags().BoolVar(&rebalanceFlags.PreserveLeader, "preserve-leaders", false, "Keep the current partition leaders in place, balance only peer replicas.")
 	cmdAdminRebalance.Flags().BoolVar(&rebalanceFlags.DryRun, "dry-run", false, "Perform a Dry Run.")
+	cmdAdminRebalance.Flags().BoolVar(&kafka.FORCE, "Force", false, "bypasses any configured checks.")
+	cmdAdminRebalance.Flags().MarkHidden("Force")
 }

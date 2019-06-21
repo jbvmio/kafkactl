@@ -32,6 +32,8 @@ var (
 	verbose bool
 	// targetContext stores the targeted context.
 	targetContext *cx.Context
+	// FORCE bypasses any configured checks.
+	FORCE bool
 )
 
 type ClientFlags struct {

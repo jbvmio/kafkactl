@@ -70,7 +70,7 @@ func SetTopicReplicas(flags OpsReplicaFlags, topics ...string) RAPartList {
 	case len(flags.Brokers) > 0 && flags.ReplicationFactor != 0:
 		closeFatal("Error: Cannot use both --brokers and --replicas.")
 	case len(flags.Brokers) > 0:
-		checkPRE()
+		checkPRE(FORCE)
 		switch {
 		case flags.AllParts && len(flags.Partitions) > 0:
 			closeFatal("Error: Cannot use both --partitions and --allparts.")
@@ -84,7 +84,7 @@ func SetTopicReplicas(flags OpsReplicaFlags, topics ...string) RAPartList {
 			closeFatal("Error: Must Specify either --partitions or --allparts.")
 		}
 	case flags.ReplicationFactor != 0:
-		checkPRE()
+		checkPRE(FORCE)
 		switch {
 		case flags.AllParts && len(flags.Partitions) > 0:
 			closeFatal("Cannot use both --partitions and --allparts.")
@@ -104,12 +104,12 @@ func RebalanceTopics(flags OpsReplicaFlags, topics ...string) RAPartList {
 	exact = true
 	switch {
 	case len(flags.Brokers) > 0:
-		checkPRE()
+		checkPRE(FORCE)
 		validateBrokers(flags.Brokers)
 		rapList = rebalanceTopics(SearchTopicMeta(topics...), flags.PreserveLeader, flags.Brokers)
 	default:
 		var ids []int32
-		checkPRE()
+		checkPRE(FORCE)
 		b, err := client.BrokerIDMap()
 		if err != nil {
 			closeFatal("Error retrieving broker IDs: %v\n", err)
@@ -484,17 +484,19 @@ func sortBrokerByReps(sl []BrokerReplicas) {
 	})
 }
 
-func checkPRE(topics ...string) {
-	var preMeta []kafkactl.TopicMeta
-	tMeta := SearchTopicMeta(topics...)
-	for _, tm := range tMeta {
-		if len(tm.Replicas) > 0 {
-			if tm.Leader != tm.Replicas[0] {
-				preMeta = append(preMeta, tm)
+func checkPRE(force bool, topics ...string) {
+	if !force {
+		var preMeta []kafkactl.TopicMeta
+		tMeta := SearchTopicMeta(topics...)
+		for _, tm := range tMeta {
+			if len(tm.Replicas) > 0 {
+				if tm.Leader != tm.Replicas[0] {
+					preMeta = append(preMeta, tm)
+				}
 			}
 		}
-	}
-	if len(preMeta) > 1 {
-		closeFatal("Error: Preferred Replica Election Needed.")
+		if len(preMeta) > 1 {
+			closeFatal("Error: Preferred Replica Election Needed.")
+		}
 	}
 }
