@@ -213,20 +213,13 @@ func GetMsgOffsets(flags MSGFlags, topics ...string) OffsetRangeMap {
 		closeFatal("Error Parsing Finish Time: %v: %v\n", flags.ToTime, finishTime)
 	}
 	for topic, parts := range topicOffsets {
-		var ok bool
-	partitionLoop:
 		for p := range parts {
 			oRange, v := getBeginFinishOffsets(topic, p, beginTime, finishTime)
 			if v {
-				ok = true
 				valid = true
 				topicOffsets[topic][p] = oRange
-			}
-			if !ok {
-				for x := range parts {
-					delete(topicOffsets[topic], x)
-				}
-				break partitionLoop
+			} else {
+				delete(topicOffsets[topic], p)
 			}
 		}
 	}
@@ -243,7 +236,7 @@ func getBeginFinishOffsets(topic string, partition int32, beginTime, finishTime 
 		closeFatal("Error retrieving begin offset: %v\n", err)
 	}
 	if offsets[0] == -1 {
-		out.Warnf("WARN: No valid timestamps found for topic: %v on partition: %v ... Aborting Topic.", topic, partition)
+		out.Warnf("WARN: No valid timestamps found for topic: %v on partition: %v", topic, partition)
 		return
 	}
 	var try int64
