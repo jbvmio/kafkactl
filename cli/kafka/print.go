@@ -79,8 +79,7 @@ func PrintOut(i interface{}) {
 			tbl.AddRow(v.Name, v.Key, v.MaxVersion)
 		}
 	case OffsetRangeMap:
-		tbl = table.New("TOPIC", "PARTITION", "OFFSET.RANGE")
-
+		tbl = table.New("TOPIC", "PARTITION", "OFFSET.RANGE", "COUNT")
 		for topic, parts := range i.Ranges {
 			var P []int32
 			for p := range parts {
@@ -91,7 +90,7 @@ func PrintOut(i interface{}) {
 			})
 			for _, x := range P {
 				offsets := fmt.Sprintf("%v-%v", parts[x][0], parts[x][1])
-				tbl.AddRow(topic, x, offsets)
+				tbl.AddRow(topic, x, offsets, (parts[x][1] - parts[x][0]))
 			}
 		}
 	}
