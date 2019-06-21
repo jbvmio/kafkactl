@@ -214,6 +214,7 @@ func GetMsgOffsets(flags MSGFlags, topics ...string) OffsetRangeMap {
 	}
 	for topic, parts := range topicOffsets {
 		var ok bool
+	partitionLoop:
 		for p := range parts {
 			oRange, v := getBeginFinishOffsets(topic, p, beginTime, finishTime)
 			if v {
@@ -225,7 +226,7 @@ func GetMsgOffsets(flags MSGFlags, topics ...string) OffsetRangeMap {
 				for x := range parts {
 					delete(topicOffsets[topic], x)
 				}
-				break
+				break partitionLoop
 			}
 		}
 	}
