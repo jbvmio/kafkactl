@@ -231,35 +231,25 @@ func GetMsgOffsets(flags MSGFlags, topics ...string) OffsetRangeMap {
 
 func getBeginFinishOffsets(topic string, partition int32, beginTime, finishTime int64) (offsets [2]int64, valid bool) {
 	var err error
+	valid = true
 	offsets[0], err = client.PartitionOffsetByTime(topic, partition, beginTime)
 	if err != nil {
-		closeFatal("Error retrieving begin offset: %v\n", err)
+		out.Warnf("Error retrieving begin offset: %v\n", err)
+		valid = false
 	}
-	if offsets[0] == -1 {
-		out.Warnf("WARN: No valid timestamps found for topic: %v on partition: %v", topic, partition)
-		return
+	switch o := offsets[0]; o {
+	case -1, -2:
+		offsets[0], err = client.PartitionOffsetByTime(topic, partition, o)
 	}
-	var try int64
-	var tries int64
-	var finishOffset int64
-	for ; finishOffset < offsets[0]; try += 500 {
-		tries++
-		finishOffset, err = client.PartitionOffsetByTime(topic, partition, finishTime-(try*tries))
-		if err != nil {
-			out.Warnf("WARN: Error retrieving finish offset for topic: %v on partition: %v", topic, partition)
-		}
-		if tries%10 == 0 {
-			tries *= 10
-		}
-		if tries%10000 == 0 {
-			break
-		}
+	offsets[1], err = client.PartitionOffsetByTime(topic, partition, finishTime)
+	if err != nil {
+		out.Warnf("Error retrieving finish offset: %v\n", err)
+		valid = false
 	}
-	if finishOffset != -1 {
-		valid = true
-		offsets[1] = finishOffset
+	switch o := offsets[1]; o {
+	case -1, -2:
+		offsets[1], err = client.PartitionOffsetByTime(topic, partition, o)
 	}
-
 	return
 }
 
