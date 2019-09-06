@@ -47,6 +47,7 @@ func init() {
 	CmdLogs.Flags().Int64Var(&logsFlags.Offset, "offset", -1, "Target a Specific Offset.")
 	CmdLogs.Flags().Int32VarP(&logsFlags.Partition, "partition", "p", -1, "Target a Specific Partition, otherwise all.")
 	CmdLogs.Flags().StringSliceVar(&logsFlags.Partitions, "partitions", []string{}, "Target Specific Partitions, otherwise all (comma separated list).")
+	CmdLogs.Flags().StringSliceVar(&logsFlags.JSONFilters, "json-filter", []string{}, "Filter Message Stream by JSON Filter, used with --follow.")
 	CmdLogs.PersistentFlags().StringVarP(&outFlags.Format, "out", "o", "", "Change Output Format - yaml|json.")
 	CmdLogs.AddCommand(CmdQuery)
 }

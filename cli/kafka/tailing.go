@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/jbvmio/kafkactl/cli/x/out"
+	"github.com/tidwall/gjson"
 
 	kafkactl "github.com/jbvmio/kafka"
 )
@@ -35,6 +36,10 @@ func FollowTopic(flags MSGFlags, outFlags out.OutFlags, topics ...string) {
 	var count int
 	var details []followDetails
 	var timeCheck time.Time
+	var useFilter bool
+	if len(flags.JSONFilters) > 0 {
+		useFilter = true
+	}
 	for _, topic := range topics {
 		var parts []int32
 		topicSummary := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
@@ -79,11 +84,14 @@ ConsumeLoop:
 			fmt.Printf("signal: interrupt\n  Stopping kafkactl ... ")
 			break ConsumeLoop
 		case msg := <-msgChan:
-			if msg.Timestamp == timeCheck {
+			switch {
+			case msg.Timestamp == timeCheck:
 				if len(msg.Value) != 0 {
 					out.Warnf("%s", msg.Value)
 				}
-			} else {
+			case useFilter:
+				fmt.Printf("%s\n\n", gjson.GetManyBytes(msg.Value, flags.JSONFilters...))
+			default:
 				PrintMSG(msg, outFlags)
 			}
 			continue ConsumeLoop
