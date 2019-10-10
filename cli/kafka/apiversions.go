@@ -64,7 +64,9 @@ func findKafkaVersion(context *cx.Context) string {
 
 func getKafkaVersion(apiKeys map[int16]int16) string {
 	switch {
-	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] == 2:
+	case apiKeys[kafkactl.APIKeyIncrementalAlterConfigs] == 0:
+		return "2.3.0"
+	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] >= 2:
 		return "2.1.0"
 	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] == 1:
 		return "2.0.0"

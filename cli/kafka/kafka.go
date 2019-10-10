@@ -83,6 +83,18 @@ func LaunchClient(context *cx.Context, flags ClientFlags) {
 	conf.Net.WriteTimeout = clientTimeout
 	conf.Metadata.Retry.Max = clientRetries
 	conf.MetricRegistry = metrics.NewRegistry()
+	sasl := context.Sasl
+	if sasl != nil {
+		tlsConfig, err := cx.SetupCerts(sasl.TLSCert, sasl.TLSCA, sasl.TLSKey, sasl.Insecure)
+		if err != nil {
+			out.Failf("Error setting up certs: %v", err)
+		}
+		conf.Net.TLS.Enable = true
+		conf.Net.TLS.Config = tlsConfig
+		conf.Net.SASL.Enable = true
+		conf.Net.SASL.User = context.Sasl.Username
+		conf.Net.SASL.Password = context.Sasl.Password
+	}
 	client, errd = kafkactl.NewCustomClient(conf, context.Brokers...)
 	if errd != nil {
 		out.Failf("Error: %v", errd)
