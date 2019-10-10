@@ -1,5 +1,13 @@
-[ RELEASE v1.0.23 ]
-395d079 (HEAD -> master, origin/master) remove testing bool
+[ RELEASE v1.0.24 ]
+2b51588 (HEAD -> master, origin/master, origin/HEAD) add sasl support; update apiversions;
+91e7f46 add stream filtering by JSON
+8cfd523 fix offset query by time
+bcc9f4e add counts to query results
+c5118af iterate over all partitions instead of aborting entire topic
+b36c056 add explicit break
+900f841 updates; add message query by time;
+ffafbe7 (tag: v1.0.23) release v1.0.23
+395d079 remove testing bool
 413caff (tag: v1.0.22) release v1.0.22
 aa55b39 add topic rebalancing for cluster expansions
 3eba617 update consumergroup and tail process
@@ -55,7 +63,7 @@ ee79f5c updates
 468c85c cleanup
 c142756 remove dependancy
 aeb2ec9 remove missed import
-c586215 (tag: 1.0.19.4485809, origin/reorg, reorg) Add Examples; Add Burrow Monitor; Cleanup;
+c586215 (tag: 1.0.19.4485809, origin/reorg) Add Examples; Add Burrow Monitor; Cleanup;
 f6e9beb switch to logsrus for logging
 690db6a switch to logsrus for logging
 5c84aad re-read config after conversion
