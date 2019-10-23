@@ -44,8 +44,8 @@ github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NH
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e h1:Zzem15e22yv2tVwK9L8QZ8+vxxHxqkziSJGJ0vk0AKw=
 github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e/go.mod h1:LW55dMeQ3EiHbMjKbMprjWO9KSP5DvBCnN94qoFCVTg=
-github.com/jbvmio/kafka v1.0.21-0.20191010144441-b95d78d7eb64 h1:KJD8VEwKbt7KEp+w1xiFOwKU2piYbEDXv56vzb5dijU=
-github.com/jbvmio/kafka v1.0.21-0.20191010144441-b95d78d7eb64/go.mod h1:eqsnXcc3k512Y4Uv/EJWe3Y8XI42gb1vRjnNwyaoumc=
+github.com/jbvmio/kafka v1.0.21-0.20191023140456-80fc0cd0c354 h1:kb3s/ZVlARTWJXhPn5SlhZ9MAVBMqGKPdLF2laqPkgw=
+github.com/jbvmio/kafka v1.0.21-0.20191023140456-80fc0cd0c354/go.mod h1:eqsnXcc3k512Y4Uv/EJWe3Y8XI42gb1vRjnNwyaoumc=
 github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c h1:HO34W0tgxrHLcMC968Qw+mW7hXl+acx/hKkHHfyn38Q=
 github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c/go.mod h1:OrnK3+IYa1mP+NCwcZ/Y1h+9+I4vTYKdm0OYjTbsmwI=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1 h1:mweAR1A6xJ3oS2pRaGiHgQ4OO8tzTaLawm8vnODuwDk=

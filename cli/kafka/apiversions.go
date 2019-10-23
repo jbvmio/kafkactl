@@ -17,6 +17,7 @@ package kafka
 import (
 	"sort"
 
+	"github.com/Shopify/sarama"
 	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
@@ -48,12 +49,12 @@ func GetAPIVersions() []APIVersion {
 	return apiVersions
 }
 
-func findKafkaVersion(context *cx.Context) string {
-	bootStrap, err := kafkactl.ReturnFirstValid(context.Brokers...)
+func findKafkaVersion(config *sarama.Config, context *cx.Context) string {
+	bootStrap, err := kafkactl.ReturnFirstValid(config, context.Brokers...)
 	if err != nil {
 		out.Failf("Error connecting to Kafka: %v", err)
 	}
-	apiVer, err := kafkactl.BrokerAPIVersions(bootStrap)
+	apiVer, err := kafkactl.BrokerAPIVersions(config, bootStrap)
 	if err != nil {
 		if verbose {
 			kafkactl.Warnf("%v", err)
@@ -63,8 +64,9 @@ func findKafkaVersion(context *cx.Context) string {
 }
 
 func getKafkaVersion(apiKeys map[int16]int16) string {
+	_, ok23 := apiKeys[kafkactl.APIKeyIncrementalAlterConfigs]
 	switch {
-	case apiKeys[kafkactl.APIKeyIncrementalAlterConfigs] == 0:
+	case ok23:
 		return "2.3.0"
 	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] >= 2:
 		return "2.1.0"

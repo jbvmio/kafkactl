@@ -28,17 +28,22 @@ type Context struct {
 	Burrow        []string `yaml:"burrow"`
 	Zookeeper     []string `yaml:"zookeeper"`
 	ClientVersion string   `yaml:"clientVersion"`
+	Ssl           *SSL     `yaml:"ssl"`
 	Sasl          *SASL    `yaml:"sasl"`
 }
 
 // SASL contains SASL Authentication Parameters.
 type SASL struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+// SSL contains SASL Authentication Parameters.
+type SSL struct {
 	Insecure bool   `yaml:"insecure"`
 	TLSCert  string `yaml:"tlscert"`
 	TLSCA    string `yaml:"tlsca"`
 	TLSKey   string `yaml:"tlskey"`
-	Username string `json:"username"`
-	Password string `json:"password"`
 }
 
 // SetupCerts takes the paths to a tls certificate, CA, and certificate key in
