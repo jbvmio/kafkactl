@@ -1,5 +1,6 @@
-[ RELEASE -beta.25544104 ]
-d181527 (HEAD -> dev) release -beta.25543709
+[ RELEASE v1.0.24-beta.25544104 ]
+7a7f475 (HEAD -> dev) release -beta.25544104
+d181527 release -beta.25543709
 c32467c (origin/dev) update deps
 13439fe merge from master
 828d817 (tag: v1.0.22-beta.12858318) release v1.0.22-beta.12858318
