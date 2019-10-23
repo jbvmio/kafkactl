@@ -1,7 +1,10 @@
-[ RELEASE v1.0.22-beta.12858318 ]
-97a5165 (HEAD -> dev) fix testing bool
-395d079 (origin/master, master) remove testing bool
-2000f0d (tag: v1.0.22-beta.12856731, origin/dev) release v1.0.22-beta.12856731
+[ RELEASE -beta.25543709 ]
+c32467c (HEAD -> dev, origin/dev) update deps
+13439fe merge from master
+828d817 (tag: v1.0.22-beta.12858318) release v1.0.22-beta.12858318
+97a5165 fix testing bool
+395d079 remove testing bool
+2000f0d (tag: v1.0.22-beta.12856731) release v1.0.22-beta.12856731
 2bc6d87 save mod files
 9fa26bf merged master
 413caff (tag: v1.0.22) release v1.0.22
@@ -165,7 +168,7 @@ ce64a4f lib separation; start using modules;
 468c85c cleanup
 c142756 remove dependancy
 aeb2ec9 remove missed import
-c586215 (tag: 1.0.19.4485809, origin/reorg, reorg) Add Examples; Add Burrow Monitor; Cleanup;
+c586215 (tag: 1.0.19.4485809, origin/reorg) Add Examples; Add Burrow Monitor; Cleanup;
 f6e9beb switch to logsrus for logging
 690db6a switch to logsrus for logging
 5c84aad re-read config after conversion
