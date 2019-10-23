@@ -15,6 +15,7 @@ package kafka
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/jbvmio/kafkactl/cli/x"
 	"github.com/jbvmio/kafkactl/cli/x/out"
@@ -76,6 +77,21 @@ func PrintOut(i interface{}) {
 		tbl = table.New("NAME", "KEY", "MAXVERSION")
 		for _, v := range i {
 			tbl.AddRow(v.Name, v.Key, v.MaxVersion)
+		}
+	case OffsetRangeMap:
+		tbl = table.New("TOPIC", "PARTITION", "OFFSET.RANGE", "COUNT")
+		for topic, parts := range i.Ranges {
+			var P []int32
+			for p := range parts {
+				P = append(P, p)
+			}
+			sort.SliceStable(P, func(i, j int) bool {
+				return P[i] < P[j]
+			})
+			for _, x := range P {
+				offsets := fmt.Sprintf("%v-%v", parts[x][0], parts[x][1])
+				tbl.AddRow(topic, x, offsets, (parts[x][1] - parts[x][0]))
+			}
 		}
 	}
 	tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)

@@ -51,4 +51,6 @@ func init() {
 	cmdAdminSetReplicas.Flags().Int32SliceVar(&replicaFlags.Partitions, "partitions", []int32{}, "Target Partitions.")
 	cmdAdminSetReplicas.Flags().IntVar(&replicaFlags.ReplicationFactor, "replicas", 0, "Desired Replication Factor.")
 	cmdAdminSetReplicas.Flags().BoolVar(&replicaFlags.DryRun, "dry-run", false, "Perform a Dry Run.")
+	cmdAdminSetReplicas.Flags().BoolVar(&kafka.FORCE, "Force", false, "bypasses any configured checks.")
+	cmdAdminSetReplicas.Flags().MarkHidden("Force")
 }
