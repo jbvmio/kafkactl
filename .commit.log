@@ -1,5 +1,6 @@
-[ RELEASE -beta.25543709 ]
-c32467c (HEAD -> dev, origin/dev) update deps
+[ RELEASE -beta.25544104 ]
+d181527 (HEAD -> dev) release -beta.25543709
+c32467c (origin/dev) update deps
 13439fe merge from master
 828d817 (tag: v1.0.22-beta.12858318) release v1.0.22-beta.12858318
 97a5165 fix testing bool

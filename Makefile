@@ -51,7 +51,7 @@ docker:
 exvars:
 	eval $(shell ./envvars.darwin)
 
-release: exvars
+release: vars
 	printf "[ RELEASE $(FNAME) ]\n" > .commit.log
 	git log --oneline --decorate >> .commit.log
 	git add .
