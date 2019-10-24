@@ -51,6 +51,20 @@ docker:
 exvars:
 	eval $(shell ./envvars.darwin)
 
+print: exvars
+	@printf "YTIME :\t\t$(YTIME)\n"
+	@printf "COMMITTAG :\t$(COMMITTAG)\n"
+	@printf "LATESTPAT :\t$(LATESTPAT)\n"
+	@printf "NEXTPAT :\t$(NEXTPAT)\n"
+	@printf "REV :\t\t$(REV)\n"
+	@printf "FNAME :\t\t$(FNAME)\n"
+	@printf "PUBRELEASE :\t$(PUBRELEASE)\n"
+	@printf "GC :\t\t$(GC)\n"
+	@printf "LATESTMAJ :\t$(LATESTMAJ)\n"
+	@printf "LATESTMIN :\t$(LATESTMIN)\n"
+	@printf "NEXTVER :\t$(NEXTVER)\n"
+	@printf "GCT :\t\t$(GCT)\n"
+
 release: exvars
 	printf "[ RELEASE $(FNAME) ]\n" > .commit.log
 	git log --oneline --decorate >> .commit.log
