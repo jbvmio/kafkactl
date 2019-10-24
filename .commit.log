@@ -1,5 +1,8 @@
-[ RELEASE v1.0.24 ]
-2b51588 (HEAD -> master, origin/master, origin/HEAD) add sasl support; update apiversions;
+[ RELEASE v1.0.25 ]
+ac709c0 (HEAD -> master, origin/master, origin/HEAD) add darwin version
+d9e0ec6 refine ssl and sasl
+83162a7 (tag: v1.0.24) release v1.0.24
+2b51588 add sasl support; update apiversions;
 91e7f46 add stream filtering by JSON
 8cfd523 fix offset query by time
 bcc9f4e add counts to query results
