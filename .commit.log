@@ -1,8 +1,11 @@
-Testing ....
-[ RELEASE v1.0.24-beta.25544104 ]
-7a7f475 (HEAD -> dev) release -beta.25544104
+[ RELEASE v1.0.25 ]
+d84f2ac (HEAD -> dev, origin/dev) update darwin version
+cb85c91 add darwin version
+ac5f6d6 demo
+43eec2f (tag: v1.0.24-beta.25544104) release v1.0.24-beta.25544104
+7a7f475 release -beta.25544104
 d181527 release -beta.25543709
-c32467c (origin/dev) update deps
+c32467c update deps
 13439fe merge from master
 828d817 (tag: v1.0.22-beta.12858318) release v1.0.22-beta.12858318
 97a5165 fix testing bool

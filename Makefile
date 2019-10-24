@@ -4,7 +4,7 @@
 export GO111MODULE=on
 
 vars:
-PUBRELEASE="false"
+PUBRELEASE="true"
 YTIME="1546300800"
 LATEST=$(shell curl -s https://github.com/jbvmio/kafkactl/releases/latest | awk -F '/' '/releases/{print $$8}' | awk -F '"' '{print $$1}')
 LATESTMAJ=$(shell echo $(LATEST) | cut -d '.' -f 1)
@@ -16,10 +16,10 @@ BT=$(shell date +%s)
 GCT=$(shell git rev-list -1 HEAD --timestamp | awk '{print $$1}')
 GC=$(shell git rev-list -1 HEAD --abbrev-commit)
 REV=$(shell echo $(GCT) - $(YTIME) | bc)
-FNAME=$(shell echo $(LATEST)-beta.$(REV))
+FNAME=$(shell echo $(NEXTVER))
 
 flags: vars
-ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) -X github.com/jbvmio/kafkactl/cli/cmd.release=$(PUBRELEASE) -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) -X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) -X github.com/jbvmio/kafkactl/cli/cmd.buildTime=$(BT) -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC) -X github.com/jbvmio/kafkactl/cli/cmd.gitVersion=$(FNAME)"
+ld_flags := "-X github.com/jbvmio/kafkactl/cli/cmd.latestMajor=$(LATESTMAJ) -X github.com/jbvmio/kafkactl/cli/cmd.latestMinor=$(LATESTMIN) -X github.com/jbvmio/kafkactl/cli/cmd.latestPatch=$(LATESTPAT) -X github.com/jbvmio/kafkactl/cli/cmd.release=$(PUBRELEASE) -X github.com/jbvmio/kafkactl/cli/cmd.nextRelease=$(NEXTVER) -X github.com/jbvmio/kafkactl/cli/cmd.revision=$(REV) -X github.com/jbvmio/kafkactl/cli/cmd.commitHash=$(GC) -X github.com/jbvmio/kafkactl/cli/cmd.gitVersion=$(FNAME)"
 
 localbuild: flags
 	GOOS=darwin ARCH=amd64 go build -ldflags $(ld_flags) -o kafkactl.$(FNAME).darwin
@@ -51,7 +51,7 @@ docker:
 exvars:
 	eval $(shell ./envvars.darwin)
 
-release: vars
+release: exvars
 	printf "[ RELEASE $(FNAME) ]\n" > .commit.log
 	git log --oneline --decorate >> .commit.log
 	git add .
