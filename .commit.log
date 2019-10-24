@@ -1,6 +1,7 @@
 [ RELEASE v1.0.25 ]
-ba90602 (HEAD -> master) release v1.0.25
-ac709c0 (origin/master, origin/HEAD) add darwin version
+b278d48 (HEAD -> master, origin/master, origin/HEAD) release v1.0.25
+ba90602 release v1.0.25
+ac709c0 add darwin version
 d9e0ec6 refine ssl and sasl
 83162a7 (tag: v1.0.24) release v1.0.24
 2b51588 add sasl support; update apiversions;
