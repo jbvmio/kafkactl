@@ -255,19 +255,15 @@ assignLoop:
 		}
 	}
 
-	return rebalanceReplicas(topicHighestRF, topicMeta)
+	return rebalanceReplicas(topicHighestRF, topicMeta, brokers)
 
 }
 
-func rebalanceReplicas(topicRF map[string]int, tMeta []kafkactl.TopicMeta) RAPartList {
+func rebalanceReplicas(topicRF map[string]int, tMeta []kafkactl.TopicMeta, brokers []int32) RAPartList {
 	if len(tMeta) < 1 {
 		closeFatal("Modified Meta not Found.")
 	}
 	tom := client.MakeTopicOffsetMap(tMeta)
-	brokers, err := client.GetClusterMeta()
-	if err != nil {
-		closeFatal("Error retrieving metadata: %v\n", err)
-	}
 
 	var raparts []RAPartition
 	for _, t := range tom {
@@ -299,7 +295,7 @@ func changeTopicRF(tMeta []kafkactl.TopicMeta, rFactor int) RAPartList {
 
 	var raparts []RAPartition
 	for _, t := range tom {
-		raparts = append(raparts, getRAParts(t.Topic, rFactor, t.TopicMeta, brokers)...)
+		raparts = append(raparts, getRAParts(t.Topic, rFactor, t.TopicMeta, brokers.BrokerIDs)...)
 	}
 	if len(raparts) < 1 {
 		closeFatal("No Changes, Nothing to Assign.")
@@ -312,10 +308,10 @@ func changeTopicRF(tMeta []kafkactl.TopicMeta, rFactor int) RAPartList {
 	return rapList
 }
 
-func getRAParts(topic string, rFactor int, tMeta []kafkactl.TopicMeta, brokers kafkactl.ClusterMeta) []RAPartition {
+func getRAParts(topic string, rFactor int, tMeta []kafkactl.TopicMeta, brokers []int32) []RAPartition {
 	var BR []BrokerReplicas
 	var mostReplicas int32
-	for _, b := range brokers.BrokerIDs {
+	for _, b := range brokers {
 		br := BrokerReplicas{
 			BrokerID: b,
 		}
