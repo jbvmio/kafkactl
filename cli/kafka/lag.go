@@ -38,6 +38,7 @@ type PartitionLag struct {
 	Group     string
 	Topic     string
 	Partition int32
+	Host      string
 	Member    string
 	Offset    int64
 	Lag       int64
@@ -149,6 +150,7 @@ func findPartitionLag() []PartitionLag {
 									Group:     gm.Group,
 									Topic:     topic,
 									Partition: p,
+									Host:      m.ClientHost,
 									Member:    m.ClientID,
 									Offset:    groupLag.PartitionOffset[p],
 									Lag:       groupLag.PartitionLag[p],
@@ -193,6 +195,7 @@ func GetGroupLag(grpMeta []kafkactl.GroupMeta) []PartitionLag {
 							Group:     gm.Group,
 							Topic:     topic,
 							Partition: p,
+							Host:      m.ClientHost,
 							Member:    m.ClientID,
 							Offset:    groupLag.PartitionOffset[p],
 							Lag:       groupLag.PartitionLag[p],

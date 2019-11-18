@@ -64,9 +64,9 @@ func PrintOut(i interface{}) {
 			}
 		}
 	case []PartitionLag:
-		tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER", "OFFSET", "LAG")
+		tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER", "OFFSET", "LAG", "HOST")
 		for _, v := range i {
-			tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag)
+			tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag, v.Host)
 		}
 	case []TotalLag:
 		tbl = table.New("GROUP", "TOPIC", "TOTALLAG")

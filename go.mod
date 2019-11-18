@@ -8,8 +8,8 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jbvmio/burrow v0.0.0-20190204223802-646e7559142e
-	github.com/jbvmio/kafka v1.0.21-0.20191023140456-80fc0cd0c354
-	github.com/jbvmio/zk v0.0.0-20190222142427-82e16500510c
+	github.com/jbvmio/kafka v1.0.21-0.20191118163820-b3b53cd7cc0a
+	github.com/jbvmio/zk v0.0.0-20191030153504-f48cb3c427b1
 	github.com/maruel/panicparse v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.0 // indirect
 	github.com/mattn/go-runewidth v0.0.4 // indirect
