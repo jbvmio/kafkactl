@@ -53,21 +53,19 @@ func SetupCerts(certPath, caPath, keyPath string, insecure bool) (*tls.Config, e
 		return nil, nil
 	}
 
-	if certPath == "" || caPath == "" || keyPath == "" {
-		err := fmt.Errorf("certificate, CA and key path are required - got cert=%#v ca=%#v key=%#v", certPath, caPath, keyPath)
-		return nil, err
-	}
+	var caPool *x509.CertPool = nil
+	if caPath != "" {
+		caString, err := ioutil.ReadFile(caPath)
+		if err != nil {
+			return nil, err
+		}
 
-	caString, err := ioutil.ReadFile(caPath)
-	if err != nil {
-		return nil, err
-	}
-
-	caPool := x509.NewCertPool()
-	ok := caPool.AppendCertsFromPEM(caString)
-	if !ok {
-		err := fmt.Errorf("unable to add ca at %s to certificate pool", caPath)
-		return nil, err
+		caPool = x509.NewCertPool()
+		ok := caPool.AppendCertsFromPEM(caString)
+		if !ok {
+			err := fmt.Errorf("unable to add ca at %s to certificate pool", caPath)
+			return nil, err
+		}
 	}
 
 	clientCert, err := tls.LoadX509KeyPair(certPath, keyPath)
