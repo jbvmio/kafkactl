@@ -17,6 +17,8 @@ var CmdAdmin = &cobra.Command{
 		switch true {
 		case len(args) > 0:
 			out.Failf("No such resource: %v", args[0])
+		default:
+			cmd.Help()
 		}
 	},
 }
