@@ -24,6 +24,7 @@ import (
 	kafkactl "github.com/jbvmio/kafka"
 )
 
+// TopicConfigFlags .
 type TopicConfigFlags struct {
 	Config         string
 	Value          string
@@ -60,6 +61,7 @@ type configChange struct {
 	EntityPath string `json:"entity_path"`
 }
 
+// GetTopicConfigs creates and returns Topic Configs.
 func GetTopicConfigs(configs []string, topics ...string) []TopicConfig {
 	var topicConfig []TopicConfig
 	switch true {
@@ -110,6 +112,7 @@ func GetTopicConfigs(configs []string, topics ...string) []TopicConfig {
 	return topicConfig
 }
 
+// SearchTopicConfigs searches and returns Topic Configs.
 func SearchTopicConfigs(configs []string, topics ...string) []TopicConfig {
 	var tops []string
 	for _, topic := range topics {
@@ -124,6 +127,7 @@ func SearchTopicConfigs(configs []string, topics ...string) []TopicConfig {
 	return GetTopicConfigs(configs, tops...)
 }
 
+// GetNonDefaultConfigs returns Topic Configs that have been altered.
 func GetNonDefaultConfigs(configs []TopicConfig) []TopicConfig {
 	var topicConfig []TopicConfig
 	for _, tc := range configs {
@@ -134,6 +138,7 @@ func GetNonDefaultConfigs(configs []TopicConfig) []TopicConfig {
 	return topicConfig
 }
 
+// SetTopicConfig sets a parameter for a Topic.
 func SetTopicConfig(config, value string, topics ...string) []TopicConfig {
 	var topicConfigs []TopicConfig
 	exact = true
@@ -154,6 +159,7 @@ func SetTopicConfig(config, value string, topics ...string) []TopicConfig {
 	return topicConfigs
 }
 
+// SetDefaultConfig sets the configuration for a Topic back to defaults.
 func SetDefaultConfig(config string, topics ...string) []TopicConfig {
 	var topicConfigs []TopicConfig
 	exact = true

@@ -63,9 +63,17 @@ func findKafkaVersion(config *sarama.Config, context *cx.Context) string {
 	return getKafkaVersion(apiVer)
 }
 
+// Release Notes:
+// https://downloads.apache.org/kafka/
 func getKafkaVersion(apiKeys map[int16]int16) string {
 	_, ok23 := apiKeys[kafkactl.APIKeyIncrementalAlterConfigs]
+	_, ok24 := apiKeys[kafkactl.APIKeyOffsetDelete]
+	_, ok26 := apiKeys[kafkactl.APIKeyDescribeClientQuotas]
 	switch {
+	case ok26:
+		return "2.6.0"
+	case ok24:
+		return "2.4.0"
 	case ok23:
 		return "2.3.0"
 	case apiKeys[kafkactl.APIKeyOffsetForLeaderEpoch] >= 2:
