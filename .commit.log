@@ -1,5 +1,14 @@
-[ RELEASE v1.0.25 ]
-b278d48 (HEAD -> master, origin/master, origin/HEAD) release v1.0.25
+[ RELEASE v1.0.26 ]
+8d33e02 (HEAD -> master, origin/master, origin/HEAD) Merge branch 'master' of https://github.com/jbvmio/kafkactl
+11a39f6 update sarama backend version; update apiVers;
+faa5ad3 Merge pull request #5 from ateijelo/allow-omitting-ca-cert
+99442af Merge pull request #4 from dmitryilyin/fixes
+ca516fa Allow omitting CA certificate
+1125899 display host with partition lag
+a557d89 Fix incorrect rebalance of replicas
+1de3613 Add the missing admin default help action
+020b625 (tag: v1.0.25) release v1.0.25
+b278d48 release v1.0.25
 ba90602 release v1.0.25
 ac709c0 add darwin version
 d9e0ec6 refine ssl and sasl
