@@ -1,5 +1,6 @@
 [ RELEASE v1.0.26 ]
-8d33e02 (HEAD -> master, origin/master, origin/HEAD) Merge branch 'master' of https://github.com/jbvmio/kafkactl
+2b034a8 (HEAD -> master, tag: v1.0.26, origin/master, origin/HEAD) release v1.0.26
+8d33e02 Merge branch 'master' of https://github.com/jbvmio/kafkactl
 11a39f6 update sarama backend version; update apiVers;
 faa5ad3 Merge pull request #5 from ateijelo/allow-omitting-ca-cert
 99442af Merge pull request #4 from dmitryilyin/fixes

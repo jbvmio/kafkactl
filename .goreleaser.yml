@@ -12,8 +12,8 @@ builds:
     - windows
   goarch:
     - amd64
-archive:
-  replacements:
+archives:
+- replacements:
     darwin: Darwin
     linux: Linux
     windows: Windows
@@ -26,8 +26,8 @@ archive:
   - nOnE*
 checksum:
   name_template: 'checksums.txt'
-nfpm:
-  vendor: jbvm.io
+nfpms:
+- vendor: jbvm.io
   homepage: https://www.jbvm.io/
   maintainer: Jimmy Bonds <[jbonds@jbvm.io]>
   description: CLI for Apache Kafka Management
@@ -55,8 +55,8 @@ dockers:
     dockerfile: kafkactl.1.dockerfile
     build_flag_templates:
     - "--label=maintainer=jbonds@jbvm.io"
-brew:
-  github:
+brews:
+- github:
     owner: jbvmio
     name: homebrew-tap
   commit_author:
