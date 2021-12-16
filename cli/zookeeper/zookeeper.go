@@ -194,7 +194,7 @@ func ZKFilterAllVals(zkp []ZKPath) []ZKPath {
 }
 
 func ZKCreate(path string, silent, force bool, value ...byte) {
-	switch true {
+	switch {
 	case path != "" && value == nil:
 		zkCreatePath(path, silent, force)
 	case path != "" && value != nil:

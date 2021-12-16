@@ -76,6 +76,7 @@ func SetupCerts(certPath, caPath, keyPath string, insecure bool) (*tls.Config, e
 	bundle := &tls.Config{
 		RootCAs:            caPool,
 		Certificates:       []tls.Certificate{clientCert},
+		Renegotiation:      tls.RenegotiateOnceAsClient,
 		InsecureSkipVerify: insecure,
 	}
 	bundle.BuildNameToCertificate()
