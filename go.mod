@@ -26,5 +26,5 @@ require (
 	github.com/spf13/viper v1.3.1
 	github.com/tidwall/gjson v1.12.1
 	github.com/tidwall/pretty v1.2.0
-	gopkg.in/yaml.v2 v2.2.3
+	gopkg.in/yaml.v2 v2.2.8
 )
