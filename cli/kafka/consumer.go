@@ -15,9 +15,11 @@
 package kafka
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
+	"sync"
 
 	kafkactl "github.com/jbvmio/kafka"
 )
@@ -28,7 +30,8 @@ func cgHandler(msg *kafkactl.Message) (bool, error) {
 }
 
 func launchCG(groupID string, topics ...string) {
-	consumer, err := client.NewConsumerGroup(groupID, topics...)
+	ctx, cancel := context.WithCancel(context.Background())
+	consumer, err := client.NewConsumerGroup(ctx, groupID, topics...)
 	if err != nil {
 		closeFatal("Error creating consumer group: %v\n", err)
 	}
@@ -38,6 +41,18 @@ func launchCG(groupID string, topics ...string) {
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt)
 	go consumer.Consume()
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if err := consumer.Consume(); err != nil {
+			closeFatal("Error from consumer: %v\n", err)
+		}
+	}()
 	<-signals
-	consumer.Close()
+	cancel()
+	wg.Wait()
+	if err = consumer.Close(); err != nil {
+		closeFatal("error shutting down consumer: %v\n", err)
+	}
 }

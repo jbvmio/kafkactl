@@ -42,5 +42,6 @@ func init() {
 	CmdSend.Flags().Int32VarP(&sendFlags.Partition, "partition", "p", -1, "Target a Specific Partition, otherwise dictated by partitioning scheme.")
 	CmdSend.Flags().StringSliceVar(&sendFlags.Partitions, "partitions", []string{}, "Target Specific Partitions, otherwise dictated by partitioning scheme (comma separated list).")
 	CmdSend.Flags().BoolVar(&sendFlags.NoSplit, "no-split", false, "Disable Line Splits.")
+	CmdSend.Flags().BoolVar(&sendFlags.NilValue, "nil", false, `Send NIL Value if Values are Empty ("").`)
 	CmdSend.Flags().StringVar(&sendFlags.LineSplit, "split", "\n", "Line Split Delimiter.")
 }

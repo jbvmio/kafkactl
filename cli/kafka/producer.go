@@ -43,6 +43,7 @@ type SendFlags struct {
 	AllPartitions bool
 	FromStdin     bool
 	NoSplit       bool
+	NilValue      bool
 	LineSplit     string
 }
 
@@ -67,8 +68,7 @@ func ProduceFromFile(flags SendFlags, data io.Reader, topics ...string) {
 		} else {
 			stringLines = strings.Split(string(b), flags.LineSplit)
 		}
-		subMatch := true
-		switch subMatch {
+		switch {
 		case flags.Value != "":
 			for _, line := range stringLines {
 				sd := sendData{
@@ -142,7 +142,7 @@ func ProduceFromFile(flags SendFlags, data io.Reader, topics ...string) {
 			parts = append(parts, flags.Partition)
 		}
 		for _, sd := range allData {
-			msgs = append(msgs, makeMessages(topic, sd.key, sd.value, parts...)...)
+			msgs = append(msgs, makeMessages(topic, sd.key, sd.value, flags.NilValue, parts...)...)
 		}
 		sendMessages(msgs, hash)
 	}
@@ -161,7 +161,7 @@ func sendMessages(msgs []*kafkactl.Message, hash bool) {
 	}
 }
 
-func makeMessages(topic, key, value string, partitions ...int32) []*kafkactl.Message {
+func makeMessages(topic, key, value string, nilVals bool, partitions ...int32) []*kafkactl.Message {
 	var msgs []*kafkactl.Message
 	for _, part := range partitions {
 		msg := &kafkactl.Message{
@@ -171,6 +171,12 @@ func makeMessages(topic, key, value string, partitions ...int32) []*kafkactl.Mes
 		}
 		if key != "" {
 			msg.Key = []byte(key)
+		}
+		if value == "" {
+			if nilVals {
+				fmt.Println(">> NIL")
+				msg.Value = nil
+			}
 		}
 		msgs = append(msgs, msg)
 	}
@@ -262,7 +268,7 @@ ProducerLoop:
 			break ProducerLoop
 		case line := <-stringChan:
 			if strings.TrimSpace(line) != "" {
-				msgs := makeMessages(topic, key, line, partitions...)
+				msgs := makeMessages(topic, key, line, false, partitions...)
 				errd = client.SendMessages(msgs)
 				if errd != nil {
 					out.Warnf("Error sending messages: %v", errd)
