@@ -19,6 +19,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Shopify/sarama"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
 	kafkactl "github.com/jbvmio/kafka"
@@ -44,7 +45,7 @@ type OffsetRangeMap struct {
 }
 
 // GetMessages returns messages from a kafka topic
-func GetMessages(flags MSGFlags, topics ...string) []*kafkactl.Message {
+func GetMessages(flags MSGFlags, topics ...string) []*sarama.ConsumerMessage {
 	exact = true
 	if flags.TailTouched {
 		return tailMSGs(flags, topics...)
@@ -52,8 +53,8 @@ func GetMessages(flags MSGFlags, topics ...string) []*kafkactl.Message {
 	return getMSGs(flags, topics...)
 }
 
-func getMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
-	var messages []*kafkactl.Message
+func getMSGs(flags MSGFlags, topics ...string) []*sarama.ConsumerMessage {
+	var messages []*sarama.ConsumerMessage
 	for _, topic := range topics {
 		var parts []int32
 		topicSummary := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
@@ -97,8 +98,8 @@ func getMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 	return messages
 }
 
-func tailMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
-	var messages []*kafkactl.Message
+func tailMSGs(flags MSGFlags, topics ...string) []*sarama.ConsumerMessage {
+	var messages []*sarama.ConsumerMessage
 	for _, topic := range topics {
 		var parts []int32
 		topicSummary := kafkactl.GetTopicSummaries(SearchTopicMeta(topic))
@@ -123,7 +124,7 @@ func tailMSGs(flags MSGFlags, topics ...string) []*kafkactl.Message {
 			startMap[p] = off + offset
 			endMap[p] = off
 		}
-		msgChan := make(chan *kafkactl.Message, 100)
+		msgChan := make(chan *sarama.ConsumerMessage, 100)
 		doneChan := make(chan bool, len(parts))
 		for _, p := range parts {
 			go func(topic string, p int32) {

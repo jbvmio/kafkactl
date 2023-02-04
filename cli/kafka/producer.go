@@ -123,7 +123,7 @@ func ProduceFromFile(flags SendFlags, data io.Reader, topics ...string) {
 	}
 	exact = true
 	for _, topic := range topics {
-		var msgs []*kafkactl.Message
+		var msgs []*sarama.ProducerMessage
 		var parts []int32
 		var hash bool
 		switch true {
@@ -148,7 +148,7 @@ func ProduceFromFile(flags SendFlags, data io.Reader, topics ...string) {
 	}
 }
 
-func sendMessages(msgs []*kafkactl.Message, hash bool) {
+func sendMessages(msgs []*sarama.ProducerMessage, hash bool) {
 	client.SaramaConfig().Producer.RequiredAcks = sarama.WaitForAll
 	client.SaramaConfig().Producer.Return.Successes = true
 	client.SaramaConfig().Producer.Return.Errors = true
@@ -161,16 +161,16 @@ func sendMessages(msgs []*kafkactl.Message, hash bool) {
 	}
 }
 
-func makeMessages(topic, key, value string, nilVals bool, partitions ...int32) []*kafkactl.Message {
-	var msgs []*kafkactl.Message
+func makeMessages(topic, key, value string, nilVals bool, partitions ...int32) []*sarama.ProducerMessage {
+	var msgs []*sarama.ProducerMessage
 	for _, part := range partitions {
-		msg := &kafkactl.Message{
+		msg := &sarama.ProducerMessage{
 			Topic:     topic,
-			Value:     []byte(value),
+			Value:     sarama.StringEncoder(value),
 			Partition: part,
 		}
 		if key != "" {
-			msg.Key = []byte(key)
+			msg.Key = sarama.StringEncoder(key)
 		}
 		if value == "" {
 			if nilVals {
@@ -184,34 +184,34 @@ func makeMessages(topic, key, value string, nilVals bool, partitions ...int32) [
 }
 
 func createMsgSend(topic, key, value string, partition int32) {
-	msg := &kafkactl.Message{
+	msg := &sarama.ProducerMessage{
 		Topic:     topic,
-		Value:     []byte(value),
+		Value:     sarama.StringEncoder(value),
 		Partition: partition,
 	}
 	if key != "" {
-		msg.Key = []byte(key)
+		msg.Key = sarama.StringEncoder(key)
 	}
 	sendMsg(msg)
 }
 
 func createMsgSendParts(topic, key, value string, partitions ...int32) {
-	var msgs []*kafkactl.Message
+	var msgs []*sarama.ProducerMessage
 	for _, part := range partitions {
-		msg := &kafkactl.Message{
+		msg := &sarama.ProducerMessage{
 			Topic:     topic,
-			Value:     []byte(value),
+			Value:     sarama.StringEncoder(value),
 			Partition: part,
 		}
 		if key != "" {
-			msg.Key = []byte(key)
+			msg.Key = sarama.StringEncoder(key)
 		}
 		msgs = append(msgs, msg)
 	}
 	sendMsgToPartitions(msgs)
 }
 
-func sendMsg(msg *kafkactl.Message) (part int32, off int64) {
+func sendMsg(msg *sarama.ProducerMessage) (part int32, off int64) {
 	if msg.Partition < -1 {
 		closeFatal("Error: Invalid Partition Specified - %v\n", msg.Partition)
 	}
@@ -230,7 +230,7 @@ func sendMsg(msg *kafkactl.Message) (part int32, off int64) {
 	return
 }
 
-func sendMsgToPartitions(msgs []*kafkactl.Message) {
+func sendMsgToPartitions(msgs []*sarama.ProducerMessage) {
 	client.SaramaConfig().Producer.RequiredAcks = sarama.WaitForAll
 	client.SaramaConfig().Producer.Return.Successes = true
 	client.SaramaConfig().Producer.Return.Errors = true

@@ -21,10 +21,10 @@ import (
 	"os/signal"
 	"sync"
 
-	kafkactl "github.com/jbvmio/kafka"
+	"github.com/Shopify/sarama"
 )
 
-func cgHandler(msg *kafkactl.Message) (bool, error) {
+func cgHandler(msg *sarama.ConsumerMessage) (bool, error) {
 	fmt.Printf("[%v] %v > %s\n", msg.Partition, msg.Offset, msg.Value)
 	return true, nil
 }

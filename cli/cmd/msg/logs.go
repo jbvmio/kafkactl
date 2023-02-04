@@ -1,8 +1,7 @@
 package msg
 
 import (
-	kafkactl "github.com/jbvmio/kafka"
-
+	"github.com/Shopify/sarama"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
@@ -23,7 +22,7 @@ var CmdLogs = &cobra.Command{
 		logsFlags.TailTouched = cmd.Flags().Changed("tail")
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		var msgs []*kafkactl.Message
+		var msgs []*sarama.ConsumerMessage
 		switch {
 		case logsFlags.Follow:
 			kafka.FollowTopic(logsFlags, outFlags, args...)

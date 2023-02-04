@@ -20,6 +20,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/Shopify/sarama"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/tidwall/gjson"
 
@@ -69,7 +70,7 @@ func FollowTopic(flags MSGFlags, outFlags out.OutFlags, topics ...string) {
 		}
 		details = append(details, d)
 	}
-	msgChan := make(chan *kafkactl.Message, 100)
+	msgChan := make(chan *sarama.ConsumerMessage, 100)
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 	for _, d := range details {

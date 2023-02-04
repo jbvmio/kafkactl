@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/Shopify/sarama"
 	"github.com/jbvmio/kafkactl/cli/x"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
@@ -99,7 +100,7 @@ func PrintOut(i interface{}) {
 	fmt.Println()
 }
 
-func PrintMSGs(msgs []*kafkactl.Message, outFlags out.OutFlags) {
+func PrintMSGs(msgs []*sarama.ConsumerMessage, outFlags out.OutFlags) {
 	switch true {
 	case outFlags.Header:
 		for _, msg := range msgs {
@@ -115,7 +116,7 @@ func PrintMSGs(msgs []*kafkactl.Message, outFlags out.OutFlags) {
 }
 
 // PrintMSG returns messages displayed by the desired format while following a topic.
-func PrintMSG(msg *kafkactl.Message, outFlags out.OutFlags) {
+func PrintMSG(msg *sarama.ConsumerMessage, outFlags out.OutFlags) {
 	switch true {
 	case outFlags.Format != "":
 		out.Marshal(msg, outFlags.Format)
