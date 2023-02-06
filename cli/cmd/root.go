@@ -25,6 +25,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/cmd/get"
 	"github.com/jbvmio/kafkactl/cli/cmd/msg"
 	"github.com/jbvmio/kafkactl/cli/cmd/send"
+	"github.com/jbvmio/kafkactl/cli/cmd/test"
 	"github.com/jbvmio/kafkactl/cli/cmd/zk"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 	"github.com/jbvmio/kafkactl/cli/x/out"
@@ -96,6 +97,8 @@ func init() {
 	rootCmd.AddCommand(admin.CmdAdmin)
 	rootCmd.AddCommand(zk.CmdZK)
 	rootCmd.AddCommand(bur.CmdBur)
+
+	rootCmd.AddCommand(test.CmdTest)
 
 }
 

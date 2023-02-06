@@ -13,6 +13,8 @@ import (
 var lagFlags kafka.LagFlags
 var onlyTotal bool
 
+var ValidOffsets bool
+
 var CmdGetLag = &cobra.Command{
 	Use:     "lag",
 	Short:   "Get Lag Info",
@@ -30,6 +32,11 @@ var CmdGetLag = &cobra.Command{
 		default:
 			totalLag = kafka.FindTotalLag()
 			onlyTotal = true
+		}
+		if ValidOffsets {
+			for i := 0; i < len(lag); i++ {
+				lag[i].GetValid()
+			}
 		}
 		switch true {
 		case cmd.Flags().Changed("out"):

@@ -37,6 +37,10 @@ type TopicPartitionMeta struct {
 	TopicLeader int32
 }
 
+func GetLastValidOffset(topic string, partition int32, fromOffset int64) (int64, error) {
+	return client.GetLastValidOffset(topic, partition, fromOffset)
+}
+
 func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {
 	exact = true
 	var GTMeta []GroupTopicOffsetMeta

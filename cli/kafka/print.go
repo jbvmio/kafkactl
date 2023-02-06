@@ -41,6 +41,14 @@ func PrintOut(i interface{}) {
 		for _, v := range i {
 			tbl.AddRow(v.Topic, v.Parts, v.RFactor, v.ISRs, v.OfflineReplicas)
 		}
+
+	case ValidOffsetTOM:
+		tbl = table.New("TOPIC", "PART", "BROKER.OFFSET", "VALID.OFFSET", "LEADER", "REPLICAS", "ISRs", "OFFLINE")
+		for _, v := range i.Tom {
+			for _, p := range v.TopicMeta {
+				tbl.AddRow(p.Topic, p.Partition, v.PartitionOffsets[p.Partition], i.ValidOffsets[p.Topic][p.Partition], p.Leader, p.Replicas, p.ISRs, p.OfflineReplicas)
+			}
+		}
 	case []kafkactl.TopicOffsetMap:
 		tbl = table.New("TOPIC", "PART", "OFFSET", "LEADER", "REPLICAS", "ISRs", "OFFLINE")
 		for _, v := range i {
@@ -65,9 +73,17 @@ func PrintOut(i interface{}) {
 			}
 		}
 	case []PartitionLag:
-		tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER", "OFFSET", "LAG", "HOST")
-		for _, v := range i {
-			tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag, v.Host)
+		switch {
+		case i[0].ValidOffset != 0:
+			tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER", "OFFSET", "LAG", "VALID.LAG", "HOST")
+			for _, v := range i {
+				tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag, v.ValidLag, v.Host)
+			}
+		default:
+			tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER", "BROKER.OFFSET", "LAG", "HOST")
+			for _, v := range i {
+				tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag, v.Host)
+			}
 		}
 	case []TotalLag:
 		tbl = table.New("GROUP", "TOPIC", "TOTALLAG")

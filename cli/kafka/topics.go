@@ -123,6 +123,59 @@ func FilterTOMByLeader(tom []kafkactl.TopicOffsetMap, leaders []int32) []kafkact
 	return TOM
 }
 
+// FilterTOMByPartitions needs testing ...
+func FilterTOMByPartitions(tom []kafkactl.TopicOffsetMap, partitions []int32) []kafkactl.TopicOffsetMap {
+	var TOM []kafkactl.TopicOffsetMap
+	done := make(map[string]struct{})
+	for _, t := range tom {
+		var topicMeta []kafkactl.TopicMeta
+		partOffsets := make(map[int32]int64)
+		leaderOffsets := make(map[int32]int32)
+		if _, there := done[t.Topic]; !there {
+			done[t.Topic] = struct{}{}
+			for _, tm := range t.TopicMeta {
+				for _, part := range partitions {
+					if _, ok := t.PartitionOffsets[part]; ok {
+						topicMeta = append(topicMeta, tm)
+						partOffsets[tm.Partition] = t.PartitionOffsets[tm.Partition]
+						leaderOffsets[part] = t.PartitionLeaders[part]
+					}
+				}
+			}
+		}
+		tom := kafkactl.TopicOffsetMap{
+			Topic:            t.Topic,
+			TopicMeta:        topicMeta,
+			PartitionOffsets: partOffsets,
+			PartitionLeaders: leaderOffsets,
+		}
+		TOM = append(TOM, tom)
+	}
+	return TOM
+}
+
+type ValidOffsetTOM struct {
+	Tom          []kafkactl.TopicOffsetMap
+	ValidOffsets map[string]map[int32]int64
+}
+
+func GetValidOffsets(tom []kafkactl.TopicOffsetMap) map[string]map[int32]int64 {
+	validOffsets := make(map[string]map[int32]int64)
+	for _, topic := range tom {
+		for part, offset := range topic.PartitionOffsets {
+			vOff, err := GetLastValidOffset(topic.Topic, part, offset)
+			if err != nil {
+				closeFatal("error retrieving last valid offset: %v\n", err)
+			}
+			if validOffsets[topic.Topic] == nil {
+				validOffsets[topic.Topic] = make(map[int32]int64)
+			}
+			validOffsets[topic.Topic][part] = vOff
+		}
+	}
+	return validOffsets
+}
+
 func validateLeaders(leaders []int32) {
 	pMap := make(map[int32]bool, len(leaders))
 	for _, p := range leaders {
