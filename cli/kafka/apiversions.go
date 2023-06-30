@@ -21,7 +21,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/cx"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 )
 
 // APIVersion describes an API Version Key and its Max Version.

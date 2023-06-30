@@ -1,9 +1,9 @@
 package metrics
 
 import (
-	kafkactl "github.com/jbvmio/kafka"
 	"github.com/jbvmio/kafkactl/cli/kafka"
 	"github.com/jbvmio/kafkactl/cli/x/out"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 	"github.com/spf13/cobra"
 )
 

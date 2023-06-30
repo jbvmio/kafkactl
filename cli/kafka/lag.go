@@ -18,7 +18,7 @@ import (
 	"sort"
 	"sync"
 
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 	"github.com/spf13/cast"
 )
 
@@ -35,15 +35,13 @@ type GrpLag struct {
 
 // PartitionLag struct def:
 type PartitionLag struct {
-	Group       string
-	Topic       string
-	Partition   int32
-	Host        string
-	Member      string
-	Offset      int64
-	Lag         int64
-	ValidOffset int64
-	ValidLag    int64
+	Group     string
+	Topic     string
+	Partition int32
+	Host      string
+	Member    string
+	Offset    int64
+	Lag       int64
 }
 
 // TotalLag struct def:
@@ -51,15 +49,6 @@ type TotalLag struct {
 	Group    string
 	Topic    string
 	TotalLag int64
-}
-
-func (PL *PartitionLag) GetValid() {
-	vOff, err := GetLastValidOffset(PL.Topic, PL.Partition, PL.Offset)
-	if err != nil {
-		closeFatal("error retrieving last valid offset: %v\n", err)
-	}
-	PL.ValidOffset = vOff
-	PL.ValidLag = PL.Offset - vOff
 }
 
 func FindPartitionLag() []PartitionLag {

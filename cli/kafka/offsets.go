@@ -15,7 +15,7 @@
 package kafka
 
 import (
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 )
 
 type GroupTopicOffsetMeta struct {
@@ -35,10 +35,6 @@ type TopicPartitionMeta struct {
 	Partition   int32
 	TopicOffset int64
 	TopicLeader int32
-}
-
-func GetLastValidOffset(topic string, partition int32, fromOffset int64) (int64, error) {
-	return client.GetLastValidOffset(topic, partition, fromOffset)
 }
 
 func getGroupTopicOffsets(group, topic string) []GroupTopicOffsetMeta {

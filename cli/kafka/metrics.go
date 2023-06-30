@@ -5,7 +5,7 @@ import (
 	"sort"
 	"time"
 
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 )
 
 // MetricFlags defines flags for reporting metrics.

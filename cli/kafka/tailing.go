@@ -24,7 +24,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/tidwall/gjson"
 
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 )
 
 type followDetails struct {

@@ -7,7 +7,7 @@ import (
 	examples "github.com/jbvmio/kafkactl/cli/kafkactlExamples"
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +20,6 @@ var CmdGetTopic = &cobra.Command{
 	Short:   "Get Topic Info",
 	Run: func(cmd *cobra.Command, args []string) {
 		var topicSummaries []kafkactl.TopicSummary
-		lag.ValidOffsets = validOffsets
 		switch {
 		case topicFlags.Lag:
 			lag.CmdGetLag.Run(cmd, args)
@@ -51,6 +50,5 @@ func init() {
 	CmdGetTopic.Flags().BoolVar(&topicFlags.Describe, "describe", false, "Shortcut/Pass to Describe Command.")
 	CmdGetTopic.Flags().BoolVar(&topicFlags.Group, "groups", false, "Show Active Groups Consuming from Specified Topics.")
 	CmdGetTopic.Flags().BoolVar(&topicFlags.Lag, "lag", false, "Show Any Lag from Specified Topics.")
-	CmdGetTopic.Flags().BoolVar(&validOffsets, "valid-offsets", false, "Discover Valid Offsets from Specified Topics.")
 	CmdGetTopic.Flags().Int32SliceVar(&topicFlags.Leaders, "leader", []int32{}, "Filter Topic Partitions by Current Leaders")
 }

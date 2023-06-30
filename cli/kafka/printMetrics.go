@@ -17,7 +17,7 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 	"github.com/rodaine/table"
 )
 

@@ -21,7 +21,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/x/out"
 	"github.com/jbvmio/kafkactl/cli/zookeeper"
 
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 )
 
 // TopicConfigFlags .

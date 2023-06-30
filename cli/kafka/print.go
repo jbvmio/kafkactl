@@ -22,7 +22,7 @@ import (
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
 	"github.com/fatih/color"
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 	"github.com/rodaine/table"
 )
 
@@ -40,14 +40,6 @@ func PrintOut(i interface{}) {
 		tbl = table.New("TOPIC", "PART", "RFactor", "ISRs", "OFFLINE")
 		for _, v := range i {
 			tbl.AddRow(v.Topic, v.Parts, v.RFactor, v.ISRs, v.OfflineReplicas)
-		}
-
-	case ValidOffsetTOM:
-		tbl = table.New("TOPIC", "PART", "BROKER.OFFSET", "VALID.OFFSET", "LEADER", "REPLICAS", "ISRs", "OFFLINE")
-		for _, v := range i.Tom {
-			for _, p := range v.TopicMeta {
-				tbl.AddRow(p.Topic, p.Partition, v.PartitionOffsets[p.Partition], i.ValidOffsets[p.Topic][p.Partition], p.Leader, p.Replicas, p.ISRs, p.OfflineReplicas)
-			}
 		}
 	case []kafkactl.TopicOffsetMap:
 		tbl = table.New("TOPIC", "PART", "OFFSET", "LEADER", "REPLICAS", "ISRs", "OFFLINE")
@@ -73,17 +65,9 @@ func PrintOut(i interface{}) {
 			}
 		}
 	case []PartitionLag:
-		switch {
-		case i[0].ValidOffset != 0:
-			tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER", "OFFSET", "LAG", "VALID.LAG", "HOST")
-			for _, v := range i {
-				tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag, v.ValidLag, v.Host)
-			}
-		default:
-			tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER", "BROKER.OFFSET", "LAG", "HOST")
-			for _, v := range i {
-				tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag, v.Host)
-			}
+		tbl = table.New("GROUP", "TOPIC", "PART", "MEMBER", "BROKER.OFFSET", "LAG", "HOST")
+		for _, v := range i {
+			tbl.AddRow(v.Group, v.Topic, v.Partition, v.Member, v.Offset, v.Lag, v.Host)
 		}
 	case []TotalLag:
 		tbl = table.New("GROUP", "TOPIC", "TOTALLAG")

@@ -22,7 +22,7 @@ import (
 	metrics "github.com/rcrowley/go-metrics"
 
 	"github.com/Shopify/sarama"
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 )
 
 var (

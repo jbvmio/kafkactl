@@ -33,12 +33,7 @@ var CmdGetLag = &cobra.Command{
 			totalLag = kafka.FindTotalLag()
 			onlyTotal = true
 		}
-		if ValidOffsets {
-			for i := 0; i < len(lag); i++ {
-				lag[i].GetValid()
-			}
-		}
-		switch true {
+		switch {
 		case cmd.Flags().Changed("out"):
 			outFmt, err := cmd.Flags().GetString("out")
 			if err != nil {

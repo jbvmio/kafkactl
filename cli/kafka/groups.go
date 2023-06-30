@@ -20,7 +20,7 @@ import (
 
 	"github.com/jbvmio/kafkactl/cli/x/out"
 
-	kafkactl "github.com/jbvmio/kafka"
+	kafkactl "github.com/jbvmio/kafkactl/kafka"
 )
 
 type GroupFlags struct {

@@ -24,7 +24,7 @@ import (
 	"github.com/Shopify/sarama"
 )
 
-func cgHandler(msg *sarama.ConsumerMessage) (bool, error) {
+func cgHandler(sess sarama.ConsumerGroupSession, msg *sarama.ConsumerMessage) (bool, error) {
 	fmt.Printf("[%v] %v > %s\n", msg.Partition, msg.Offset, msg.Value)
 	return true, nil
 }
